@@ -4,18 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Grand Golden Vault Login</title>
-  <link rel="stylesheet" href="style.css"> <!-- correct path -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body class="vault-page">
 
   <section class="login-section">
+    
+    <!-- GOLD DUST PARTICLES -->
+    <div id="loginParticles"></div>
+
+    <!-- LOGIN + SIGN-UP BOXES -->
     <div class="login-container">
 
       <!-- LOGIN BOX -->
       <div class="login-box">
         <h2>Member Login</h2>
-        <input type="text" id="loginName" placeholder="Name" />
-        <input type="password" id="loginPassword" placeholder="Vault Key" />
+        <input type="text" id="loginName" placeholder="Name">
+        <input type="password" id="loginPassword" placeholder="Vault Key">
         <button id="loginBtn">Login</button>
         <p class="login-msg" id="loginMsg"></p>
       </div>
@@ -26,10 +31,10 @@
         <p class="signup-story">
           Join the vault and claim your place alongside the legendary bull. Begin your journey from nothing to greatness.
         </p>
-        <input type="text" id="signName" placeholder="Name" />
-        <input type="text" id="signEmail" placeholder="Email or Phone" />
-        <input type="password" id="signPassword" placeholder="Vault Key" />
-        <input type="password" id="signConfirm" placeholder="Confirm Vault Key" />
+        <input type="text" id="signName" placeholder="Name">
+        <input type="text" id="signEmail" placeholder="Email or Phone">
+        <input type="password" id="signPassword" placeholder="Vault Key">
+        <input type="password" id="signConfirm" placeholder="Confirm Vault Key">
         <button id="signBtn">Register</button>
         <p class="signup-msg" id="signMsg"></p>
       </div>
@@ -37,6 +42,20 @@
     </div>
   </section>
 
-  <script src="script.js"></script> <!-- correct path -->
+  <!-- Scripts -->
+  <script src="script.js"></script>
+  <script>
+    // GOLD DUST PARTICLES
+    const particleContainer = document.getElementById('loginParticles');
+    for(let i=0; i<40; i++){
+      const p = document.createElement('div');
+      p.classList.add('particle');
+      p.style.left = Math.random()*100 + 'vw';
+      p.style.top = Math.random()*100 + 'vh';
+      p.style.width = p.style.height = (Math.random()*3 + 2) + 'px';
+      particleContainer.appendChild(p);
+    }
+  </script>
+
 </body>
 </html>
