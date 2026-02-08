@@ -111,3 +111,39 @@ unlockBtn.addEventListener("click", () => {
 
 setInterval(updateFeed, 7500);
 updateFeed();
+
+<script>
+// GOLD DUST PARTICLES
+const loginSection = document.querySelector('.login-section');
+
+for(let i=0; i<40; i++){
+  const particle = document.createElement('div');
+  particle.classList.add('particle');
+  particle.style.left = Math.random()*100 + 'vw';
+  particle.style.animationDuration = (Math.random()*8 + 5) + 's';
+  particle.style.width = particle.style.height = (Math.random()*3 + 2) + 'px';
+  loginSection.appendChild(particle);
+}
+
+// VAULT DOOR ANIMATION
+const leftDoor = document.querySelector('.vault-door-left');
+const rightDoor = document.querySelector('.vault-door-right');
+const loginContainer = document.querySelector('.login-container');
+
+window.addEventListener('load', () => {
+  // Open doors
+  leftDoor.classList.add('open');
+  rightDoor.classList.add('open');
+
+  // Fade in boxes after doors start opening
+  setTimeout(() => {
+    loginContainer.classList.add('visible');
+  }, 1200); // adjust delay for cinematic timing
+
+  // Remove doors after animation
+  setTimeout(() => {
+    leftDoor.style.display = 'none';
+    rightDoor.style.display = 'none';
+  }, 2200);
+});
+</script>
