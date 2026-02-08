@@ -199,3 +199,27 @@ a { color: var(--gold); text-decoration: none; }
   color: #f5e8b0; /* soft golden hue */
   text-shadow: 0 0 8px rgba(0,0,0,0.7);
 }
+
+/* CINEMATIC INITIAL STATES */
+.landing-hero h1, .landing-hero p, .landing-hero .cta-btn {
+  position: relative; z-index: 1;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+/* GOLD DUST PARTICLES */
+.landing-hero .particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(212,175,55,0.8);
+  border-radius: 50%;
+  animation: floatUp linear infinite;
+  opacity: 0; /* start invisible for fade-in */
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(100vh) scale(0.5); opacity: 0.2; }
+  50% { opacity: 0.8; }
+  100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+}
