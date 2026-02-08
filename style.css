@@ -490,3 +490,34 @@ body {
   font-size: 0.85rem;
   opacity: 0.9;
 }
+
+/* LOGIN PAGE BACKGROUND */
+.login-section {
+  position: relative;
+  background: url('images/bull-gold.jpg') center/cover no-repeat;
+  overflow: hidden;
+}
+
+/* FLOATING GOLD DUST PARTICLES */
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(212,175,55,0.8);
+  border-radius: 50%;
+  opacity: 0.7;
+  animation: floatUp linear infinite;
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(100vh) scale(0.5); opacity: 0.2; }
+  50% { opacity: 0.8; }
+  100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+}
+
+/* INPUT FOCUS GOLD GLOW */
+.login-box input:focus, .signup-box input:focus {
+  outline: none;
+  box-shadow: 0 0 10px 2px #d4af37;
+  border-color: #d4af37;
+}
