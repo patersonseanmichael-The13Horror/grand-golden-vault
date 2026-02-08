@@ -1,149 +1,160 @@
-const activities = [
-  "04******92 deposited $8,500 · Baccarat",
-  "04******17 withdrew $12,000 · Roulette",
-  "04******45 deposited $3,200 · Blackjack",
-  "04******61 deposited $15,750 · Private Table",
-  "04******08 withdrew $6,400 · Baccarat",
-  "04******39 deposited $21,000 · High Roller Room",
-  "04******74 deposited $4,950 · Roulette",
-  "04******56 withdrew $9,300 · Blackjack"
-];
+/* =========================================
+   LOGIN / SIGN-UP
+========================================= */
+const loginBtn = document.getElementById("loginBtn");
+const loginMsg = document.getElementById("loginMsg");
+const loginName = document.getElementById("loginName");
+const loginPassword = document.getElementById("loginPassword");
 
-const feed = document.getElementById("liveFeed");
-const text = feed.querySelector(".feed-text");
+const signBtn = document.getElementById("signBtn");
+const signMsg = document.getElementById("signMsg");
+const signName = document.getElementById("signName");
+const signEmail = document.getElementById("signEmail");
+const signPassword = document.getElementById("signPassword");
 
-let index = 0;
+const demoVaultKey = "GOLDENVAULT";
 
-function updateFeed() {
-  text.style.opacity = 0;
-
-  setTimeout(() => {
-    text.textContent = activities[index];
-    text.style.opacity = 1;
-    index = (index + 1) % activities.length;
-  }, 600);
+if(loginBtn){
+  loginBtn.addEventListener("click", () => {
+    if(loginPassword.value === demoVaultKey && loginName.value !== ""){
+      loginMsg.style.color = "#d4af37";
+      loginMsg.textContent = "Login successful! Redirecting...";
+      setTimeout(() => { window.location.href = "members.html"; }, 1200);
+    } else {
+      loginMsg.style.color = "red";
+      loginMsg.textContent = "Invalid credentials";
+    }
+  });
 }
 
-// -----------------------------
-// MEMBERS VAULT FAKE TRANSACTIONS FEED
-// -----------------------------
+if(signBtn){
+  signBtn.addEventListener("click", () => {
+    if(signName.value && signEmail.value && signPassword.value){
+      signMsg.style.color = "#d4af37";
+      signMsg.textContent = "Registration successful! Redirecting...";
+      setTimeout(() => { window.location.href = "members.html"; }, 1200);
+    } else {
+      signMsg.style.color = "red";
+      signMsg.textContent = "Please fill all fields";
+    }
+  });
+}
+
+/* =========================================
+   CINEMATIC VAULT DOORS + GOLD DUST
+========================================= */
+const leftDoor = document.querySelector('.vault-door-left');
+const rightDoor = document.querySelector('.vault-door-right');
+const loginContainer = document.querySelector('.login-container');
+const loginSection = document.querySelector('.login-section');
+
+if(loginSection){
+  // Create gold particles
+  for(let i=0; i<40; i++){
+    const particle = document.createElement('div');
+    particle.classList.add('particle');
+    particle.style.left = Math.random()*100 + 'vw';
+    particle.style.animationDuration = (Math.random()*8 + 5) + 's';
+    particle.style.width = particle.style.height = (Math.random()*3 + 2) + 'px';
+    loginSection.appendChild(particle);
+  }
+
+  window.addEventListener('load', () => {
+    if(leftDoor && rightDoor && loginContainer){
+      leftDoor.classList.add('open');
+      rightDoor.classList.add('open');
+
+      setTimeout(() => { loginContainer.classList.add('visible'); }, 1200);
+      setTimeout(() => {
+        leftDoor.style.display='none';
+        rightDoor.style.display='none';
+      }, 2200);
+    }
+  });
+}
+
+/* =========================================
+   MEMBERS VAULT UNLOCK + LIVE VIP FEED
+========================================= */
+const unlockBtn = document.getElementById("unlockBtn");
+const vaultPassword = document.getElementById("vaultPassword");
+const vaultMsg = document.getElementById("vaultMsg");
+const vaultContent = document.getElementById("vaultContent");
+
 const memberFeed = document.getElementById("memberFeed");
-const feedText = memberFeed.querySelector(".feed-text");
+const feedText = memberFeed ? memberFeed.querySelector(".feed-text") : null;
 
-function generateTransaction() {
-  const phone = `04******${Math.floor(Math.random()*90+10)}`; // AU-style masked
+const vaultKey = "GOLDENVAULT";
+
+if(unlockBtn){
+  unlockBtn.addEventListener("click", () => {
+    if(vaultPassword.value === vaultKey){
+      vaultMsg.style.color = "#d4af37";
+      vaultMsg.textContent = "Vault unlocked!";
+      vaultContent.style.display = "block";
+      updateMemberFeed(); // first transaction
+    } else {
+      vaultMsg.style.color = "red";
+      vaultMsg.textContent = "Incorrect Vault Key";
+    }
+  });
+}
+
+/* =========================================
+   FAKE VIP TRANSACTIONS
+========================================= */
+function generateTransaction(){
+  const phone = `04******${Math.floor(Math.random()*90+10)}`; 
   const isDeposit = Math.random() > 0.5;
+  let amount, action;
 
-  let amount;
-  let action;
-
-  if (isDeposit) {
-    amount = (Math.random() * (1000 - 10) + 10).toFixed(2); // $10-$1000
+  if(isDeposit){
+    amount = (Math.random()*(1000-10)+10).toFixed(2);
     action = `deposited $${amount}`;
   } else {
-    amount = (Math.random() * (50000 - 500) + 500).toFixed(2); // $500-$50,000
+    amount = (Math.random()*(50000-500)+500).toFixed(2);
     action = `withdrew $${amount}`;
   }
 
-  const games = ["Baccarat", "Roulette", "Blackjack", "Private Table"];
+  const games = ["Baccarat","Roulette","Blackjack","Private Table"];
   const game = games[Math.floor(Math.random()*games.length)];
-
   return `${phone} ${action} · ${game}`;
 }
 
-// Only show feed when vault unlocked
-function updateMemberFeed() {
-  if(vaultContent.style.display === "block") {
-    const transaction = generateTransaction();
-
-    feedText.style.opacity = 0;
-
-    setTimeout(() => {
-      feedText.textContent = transaction;
-      feedText.style.opacity = 1;
-
-      // Reset classes
-      feedText.classList.remove("gold-shimmer", "vip-spark");
-
-      const amountMatch = transaction.match(/\$([\d,\.]+)/);
-      if(amountMatch){
-        const amountNum = parseFloat(amountMatch[1].replace(/,/g,''));
-
-        // High withdrawals shimmer (> $10,000)
-        if(transaction.includes("withdrew") && amountNum > 10000){
-          feedText.classList.add("gold-shimmer");
-        }
-
-        // VIP transactions (ultra withdrawals/deposits)
-        if(amountNum >= 25000){
-          feedText.classList.add("vip-spark");
-          playChime(); // subtle sound
-        }
-
-        // VIP deposits highlight ($800+)
-        if(transaction.includes("deposited") && amountNum >= 800){
-          feedText.classList.add("gold-shimmer");
-        }
-      }
-
-    }, 600);
-  }
-}
-
-// -----------------------------
-// SOUND EFFECT
-// -----------------------------
 function playChime(){
   const audio = new Audio('https://freesound.org/data/previews/66/66717_634166-lq.mp3');
   audio.volume = 0.15;
   audio.play();
 }
 
-// Update every 5 minutes (300000ms)
-setInterval(updateMemberFeed, 300000);
+function updateMemberFeed(){
+  if(vaultContent && vaultContent.style.display==="block" && feedText){
+    const transaction = generateTransaction();
+    feedText.style.opacity = 0;
 
-// First run after unlock
-unlockBtn.addEventListener("click", () => {
-  if(vaultPassword.value === vaultKey){
-    updateMemberFeed(); // Initial transaction when unlocked
+    setTimeout(() => {
+      feedText.textContent = transaction;
+      feedText.style.opacity = 1;
+
+      feedText.classList.remove("gold-shimmer","vip-spark");
+      const amountMatch = transaction.match(/\$([\d,\.]+)/);
+      if(amountMatch){
+        const amountNum = parseFloat(amountMatch[1].replace(/,/g,''));
+
+        // Gold shimmer high withdrawals (>10k)
+        if(transaction.includes("withdrew") && amountNum>10000){ feedText.classList.add("gold-shimmer"); }
+
+        // VIP sparkle mega moves >=25k
+        if(amountNum >= 25000){
+          feedText.classList.add("vip-spark"); playChime();
+        }
+
+        // VIP deposits >=800
+        if(transaction.includes("deposited") && amountNum >=800){ feedText.classList.add("gold-shimmer"); }
+      }
+    },600);
   }
-});
-
-setInterval(updateFeed, 7500);
-updateFeed();
-
-<script>
-// GOLD DUST PARTICLES
-const loginSection = document.querySelector('.login-section');
-
-for(let i=0; i<40; i++){
-  const particle = document.createElement('div');
-  particle.classList.add('particle');
-  particle.style.left = Math.random()*100 + 'vw';
-  particle.style.animationDuration = (Math.random()*8 + 5) + 's';
-  particle.style.width = particle.style.height = (Math.random()*3 + 2) + 'px';
-  loginSection.appendChild(particle);
 }
 
-// VAULT DOOR ANIMATION
-const leftDoor = document.querySelector('.vault-door-left');
-const rightDoor = document.querySelector('.vault-door-right');
-const loginContainer = document.querySelector('.login-container');
-
-window.addEventListener('load', () => {
-  // Open doors
-  leftDoor.classList.add('open');
-  rightDoor.classList.add('open');
-
-  // Fade in boxes after doors start opening
-  setTimeout(() => {
-    loginContainer.classList.add('visible');
-  }, 1200); // adjust delay for cinematic timing
-
-  // Remove doors after animation
-  setTimeout(() => {
-    leftDoor.style.display = 'none';
-    rightDoor.style.display = 'none';
-  }, 2200);
-});
-</script>
+// Update every 5 minutes (demo can reduce to e.g., 10s)
+setInterval(updateMemberFeed, 300000);
