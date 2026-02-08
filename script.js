@@ -62,22 +62,41 @@ function updateMemberFeed() {
       feedText.textContent = transaction;
       feedText.style.opacity = 1;
 
-      // Check for high withdrawals (> $10,000)
-      if(transaction.includes("withdrew")) {
-        // Extract amount
-        const amountMatch = transaction.match(/\$([\d,\.]+)/);
-        if(amountMatch){
-          const amountNum = parseFloat(amountMatch[1].replace(/,/g,''));
-          if(amountNum > 10000){
-            feedText.classList.add("gold-shimmer");
-            setTimeout(() => {
-              feedText.classList.remove("gold-shimmer");
-            }, 3000); // shimmer lasts 3 seconds
-          }
+      // Reset classes
+      feedText.classList.remove("gold-shimmer", "vip-spark");
+
+      const amountMatch = transaction.match(/\$([\d,\.]+)/);
+      if(amountMatch){
+        const amountNum = parseFloat(amountMatch[1].replace(/,/g,''));
+
+        // High withdrawals shimmer (> $10,000)
+        if(transaction.includes("withdrew") && amountNum > 10000){
+          feedText.classList.add("gold-shimmer");
+        }
+
+        // VIP transactions (ultra withdrawals/deposits)
+        if(amountNum >= 25000){
+          feedText.classList.add("vip-spark");
+          playChime(); // subtle sound
+        }
+
+        // VIP deposits highlight ($800+)
+        if(transaction.includes("deposited") && amountNum >= 800){
+          feedText.classList.add("gold-shimmer");
         }
       }
+
     }, 600);
   }
+}
+
+// -----------------------------
+// SOUND EFFECT
+// -----------------------------
+function playChime(){
+  const audio = new Audio('https://freesound.org/data/previews/66/66717_634166-lq.mp3');
+  audio.volume = 0.15;
+  audio.play();
 }
 
 // Update every 5 minutes (300000ms)
