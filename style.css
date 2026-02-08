@@ -389,3 +389,31 @@ body {
 .gold-shimmer {
   animation: shimmer 1.2s ease-in-out 3;
 }
+
+/* GOLD SHIMMER FOR HIGH ROLLS */
+@keyframes shimmer {
+  0% { text-shadow: 0 0 2px #d4af37, 0 0 4px #fff; }
+  50% { text-shadow: 0 0 6px #fff, 0 0 12px #d4af37; }
+  100% { text-shadow: 0 0 2px #d4af37, 0 0 4px #fff; }
+}
+
+.gold-shimmer {
+  animation: shimmer 1.2s ease-in-out 3;
+}
+
+/* VIP Spark effect for mega moves */
+@keyframes spark {
+  0% { text-shadow: 0 0 4px #fff, 0 0 8px #ffd700; }
+  50% { text-shadow: 0 0 10px #ffd700, 0 0 20px #fff; }
+  100% { text-shadow: 0 0 4px #fff, 0 0 8px #ffd700; }
+}
+
+.vip-spark {
+  animation: spark 1.5s ease-in-out 2;
+  position: relative;
+}
+
+.vip-spark::before {
+  content: "🔒"; /* Vault icon emoji */
+  margin-right: 6px;
+}
