@@ -105,17 +105,33 @@ a { color: var(--gold); text-decoration: none; }
 .legacy-block h2 { font-family: 'Cinzel', serif; font-size: 1.4rem; margin-bottom: 14px; color: var(--gold); }
 .legacy-block p { font-size: 0.95rem; line-height: 1.9; opacity: 0.85; max-width: 720px; }
 
-/.login-section {
+/* LOGIN SECTION */
+.login-section {
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
-  background: url('images/bull-gold.jpg') center/cover no-repeat; /* or vault background */
+  background: url('images/bull-gold.jpg') center/cover no-repeat; /* vault or bull background */
   overflow: hidden;
 }
 
-/* LOGIN + SIGN-UP BOX STYLING */
+/* PARTICLES */
+#loginParticles .particle {
+  position: absolute;
+  background: rgba(212,175,55,0.8);
+  border-radius: 50%;
+  opacity: 0.7;
+  animation: floatUp 8s linear infinite;
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(100vh) scale(0.5); opacity: 0.2; }
+  50% { opacity: 0.8; }
+  100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+}
+
+/* LOGIN + SIGN-UP CONTAINER */
 .login-container {
   display: flex;
   gap: 60px;
@@ -123,12 +139,13 @@ a { color: var(--gold); text-decoration: none; }
   position: relative;
 }
 
+/* BOXES */
 .login-box, .signup-box {
-  background: rgba(0,0,0,0.7); /* semi-transparent black so boxes stand out */
+  background: rgba(0,0,0,0.7);
   padding: 40px 30px;
   border-radius: 10px;
   width: 300px;
-  color: #f5e8b0; /* gold text */
+  color: #f5e8b0;
   box-shadow: 0 0 20px rgba(212,175,55,0.5);
 }
 
@@ -139,6 +156,7 @@ a { color: var(--gold); text-decoration: none; }
   text-shadow: 0 0 8px rgba(0,0,0,0.8);
 }
 
+/* INPUTS */
 .login-box input, .signup-box input {
   width: 100%;
   padding: 10px;
@@ -148,6 +166,7 @@ a { color: var(--gold); text-decoration: none; }
   outline: none;
 }
 
+/* BUTTONS */
 .login-box button, .signup-box button {
   width: 100%;
   padding: 12px;
@@ -161,6 +180,22 @@ a { color: var(--gold); text-decoration: none; }
 
 .login-box button:hover, .signup-box button:hover {
   background: #e5c55a;
+}
+
+/* SIGNUP STORY */
+.signup-story {
+  font-style: italic;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+  color: #f5e8b0;
+  text-shadow: 0 0 6px rgba(0,0,0,0.6);
+}
+
+/* MESSAGES */
+.login-msg, .signup-msg {
+  margin-top: 12px;
+  font-weight: 600;
+  text-align: center;
 }
 
 /* VAULT DOORS */
