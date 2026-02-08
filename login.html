@@ -3,55 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login / Sign-Up — Grand Golden Vault</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Grand Golden Vault Login</title>
+  <link rel="stylesheet" href="style.css"> <!-- correct path -->
 </head>
 <body class="vault-page">
 
-  <header class="topbar">
-    <div class="logo">GRAND GOLDEN VAULT</div>
-    <nav class="vault-nav">
-      <a href="index.html">Home</a>
-      <a href="casino.html">Casino</a>
-      <a href="about.html">Legacy</a>
-      <a href="login.html">Login</a>
-    </nav>
-  </header>
+  <section class="login-section">
+    <div class="login-container">
 
-  <!-- VAULT DOORS -->
-  <div class="vault-door-left"></div>
-  <div class="vault-door-right"></div>
+      <!-- LOGIN BOX -->
+      <div class="login-box">
+        <h2>Member Login</h2>
+        <input type="text" id="loginName" placeholder="Name" />
+        <input type="password" id="loginPassword" placeholder="Vault Key" />
+        <button id="loginBtn">Login</button>
+        <p class="login-msg" id="loginMsg"></p>
+      </div>
 
-<section class="login-section">
-  <div class="login-container">
+      <!-- SIGN-UP BOX -->
+      <div class="signup-box">
+        <h2>Sign-Up</h2>
+        <p class="signup-story">
+          Join the vault and claim your place alongside the legendary bull. Begin your journey from nothing to greatness.
+        </p>
+        <input type="text" id="signName" placeholder="Name" />
+        <input type="text" id="signEmail" placeholder="Email or Phone" />
+        <input type="password" id="signPassword" placeholder="Vault Key" />
+        <input type="password" id="signConfirm" placeholder="Confirm Vault Key" />
+        <button id="signBtn">Register</button>
+        <p class="signup-msg" id="signMsg"></p>
+      </div>
 
-    <!-- LOGIN BOX -->
-    <div class="login-box">
-      <h2>Member Login</h2>
-      <input type="text" id="loginName" placeholder="Name" />
-      <input type="password" id="loginPassword" placeholder="Vault Key" />
-      <button id="loginBtn">Login</button>
-      <p class="login-msg" id="loginMsg"></p>
     </div>
+  </section>
 
-    <!-- SIGN-UP BOX -->
-    <div class="signup-box">
-      <h2>Sign-Up</h2>
-      <p class="signup-story">
-        Join the vault and claim your place alongside the legendary bull. Begin your journey from nothing to greatness.
-      </p>
-      <input type="text" id="signName" placeholder="Name" />
-      <input type="text" id="signEmail" placeholder="Email or Phone" />
-      <input type="password" id="signPassword" placeholder="Vault Key" />
-      <input type="password" id="signConfirm" placeholder="Confirm Vault Key" />
-      <button id="signBtn">Register</button>
-      <p class="signup-msg" id="signMsg"></p>
-    </div>
-
-  </div>
-</section>
-
-  <script src="script.js"></script>
-
+  <script src="script.js"></script> <!-- correct path -->
 </body>
 </html>
