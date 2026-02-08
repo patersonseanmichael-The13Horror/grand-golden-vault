@@ -223,3 +223,11 @@ a { color: var(--gold); text-decoration: none; }
   50% { opacity: 0.8; }
   100% { transform: translateY(-10vh) scale(1); opacity: 0; }
 }
+
+.signup-story {
+  font-style: italic;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+  color: #f5e8b0;
+  text-shadow: 0 0 6px rgba(0,0,0,0.6);
+}
