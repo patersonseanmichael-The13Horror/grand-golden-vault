@@ -1,43 +1,50 @@
 /* =========================================
    LOGIN / SIGN-UP
 ========================================= */
-const loginBtn = document.getElementById("loginBtn");
-const loginMsg = document.getElementById("loginMsg");
-const loginName = document.getElementById("loginName");
-const loginPassword = document.getElementById("loginPassword");
-
 const signBtn = document.getElementById("signBtn");
 const signMsg = document.getElementById("signMsg");
 const signName = document.getElementById("signName");
 const signEmail = document.getElementById("signEmail");
 const signPassword = document.getElementById("signPassword");
+const signConfirm = document.getElementById("signConfirm");
 
-const demoVaultKey = "GOLDENVAULT";
+signBtn.addEventListener("click", () => {
+  if(!signName.value || !signEmail.value || !signPassword.value || !signConfirm.value){
+    signMsg.style.color = "red";
+    signMsg.textContent = "Please fill all fields";
+    return;
+  }
 
-if(loginBtn){
-  loginBtn.addEventListener("click", () => {
-    if(loginPassword.value === demoVaultKey && loginName.value !== ""){
-      loginMsg.style.color = "#d4af37";
-      loginMsg.textContent = "Login successful! Redirecting...";
-      setTimeout(() => { window.location.href = "members.html"; }, 1200);
-    } else {
-      loginMsg.style.color = "red";
-      loginMsg.textContent = "Invalid credentials";
-    }
-  });
-}
+  if(signPassword.value !== signConfirm.value){
+    signMsg.style.color = "red";
+    signMsg.textContent = "Vault Keys do not match";
+    return;
+  }
 
-if(signBtn){
-  signBtn.addEventListener("click", () => {
-    if(signName.value && signEmail.value && signPassword.value){
-      signMsg.style.color = "#d4af37";
-      signMsg.textContent = "Registration successful! Redirecting...";
-      setTimeout(() => { window.location.href = "members.html"; }, 1200);
-    } else {
-      signMsg.style.color = "red";
-      signMsg.textContent = "Please fill all fields";
-    }
-  });
+  // SUCCESS ANIMATION
+  signMsg.style.color = "#d4af37";
+  signMsg.style.opacity = 0;
+  signMsg.textContent = "Registration successful! Vault unlocked...";
+
+  // Fade-in gold shimmer
+  signMsg.style.transition = "opacity 1.2s ease";
+  setTimeout(() => { signMsg.style.opacity = 1; }, 50);
+
+  // Tiny particle spark animation
+  const signupBox = document.querySelector(".signup-box");
+  for(let i=0;i<15;i++){
+    const spark = document.createElement("div");
+    spark.classList.add("gold-spark");
+    spark.style.left = Math.random()*100 + "%";
+    spark.style.top = Math.random()*100 + "%";
+    spark.style.width = spark.style.height = Math.random()*4+2 + "px";
+    signupBox.appendChild(spark);
+    setTimeout(()=>{ spark.remove(); }, 1500);
+  }
+
+  // Redirect to members page
+  setTimeout(() => { window.location.href = "members.html"; }, 2000);
+});
 }
 
 /* =========================================
