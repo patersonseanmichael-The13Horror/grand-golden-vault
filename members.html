@@ -66,7 +66,10 @@
       if(vaultPassword.value === vaultKey){
         vaultLock.style.display = "none";
         vaultContent.style.display = "block";
-      } else {
+      } else
+      <div class="member-feed" id="memberFeed">
+  <span class="feed-text">Initializing Vault Transactions...</span>
+</div> {
         vaultMsg.textContent = "Invalid key. Try again.";
         vaultMsg.style.color = "#d4af37";
       }
