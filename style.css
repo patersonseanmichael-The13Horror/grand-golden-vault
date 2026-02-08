@@ -521,3 +521,42 @@ body {
   box-shadow: 0 0 10px 2px #d4af37;
   border-color: #d4af37;
 }
+
+/* VAULT DOOR ANIMATION */
+.vault-door-left, .vault-door-right {
+  position: fixed;
+  top: 0;
+  width: 50%;
+  height: 100vh;
+  background: #120c08; /* dark vault door color */
+  z-index: 1000;
+  transform-origin: center;
+}
+
+.vault-door-left { left: 0; }
+.vault-door-right { right: 0; }
+
+.vault-door-left.open { animation: leftDoorOpen 2s forwards ease-in-out; }
+.vault-door-right.open { animation: rightDoorOpen 2s forwards ease-in-out; }
+
+@keyframes leftDoorOpen {
+  0% { transform: rotateY(0deg); }
+  100% { transform: rotateY(-90deg); }
+}
+
+@keyframes rightDoorOpen {
+  0% { transform: rotateY(0deg); }
+  100% { transform: rotateY(90deg); }
+}
+
+/* LOGIN BOXES FADE-IN */
+.login-container {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1.8s ease, transform 1.8s ease;
+}
+
+.login-container.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
