@@ -45,7 +45,6 @@ signBtn.addEventListener("click", () => {
   // Redirect to members page
   setTimeout(() => { window.location.href = "members.html"; }, 2000);
 });
-}
 
 /* =========================================
    CINEMATIC VAULT DOORS + GOLD DUST
