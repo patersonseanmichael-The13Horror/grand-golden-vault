@@ -1,14 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login / Sign-Up — Grand Golden Vault</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="vault-page">
@@ -22,6 +17,10 @@
       <a href="login.html">Login</a>
     </nav>
   </header>
+
+  <!-- VAULT DOORS -->
+  <div class="vault-door-left"></div>
+  <div class="vault-door-right"></div>
 
   <section class="login-section">
     <div class="login-container">
@@ -46,63 +45,7 @@
     </div>
   </section>
 
-  <script>
-    // -----------------------------
-    // FAKE LOGIN
-    // -----------------------------
-    const loginBtn = document.getElementById("loginBtn");
-    const loginMsg = document.getElementById("loginMsg");
-    const loginName = document.getElementById("loginName");
-    const loginPassword = document.getElementById("loginPassword");
+  <script src="script.js"></script>
 
-    const signBtn = document.getElementById("signBtn");
-    const signMsg = document.getElementById("signMsg");
-    const signName = document.getElementById("signName");
-    const signEmail = document.getElementById("signEmail");
-    const signPassword = document.getElementById("signPassword");
-
-    const demoVaultKey = "GOLDENVAULT";
-
-    loginBtn.addEventListener("click", () => {
-      if(loginPassword.value === demoVaultKey && loginName.value !== ""){
-        loginMsg.style.color = "#d4af37";
-        loginMsg.textContent = "Login successful! Redirecting...";
-        setTimeout(() => {
-          window.location.href = "members.html";
-        }, 1200);
-      } else {
-        loginMsg.style.color = "red";
-        loginMsg.textContent = "Invalid credentials";
-      }
-    });
-
-    signBtn.addEventListener("click", () => {
-      if(signName.value && signEmail.value && signPassword.value){
-        signMsg.style.color = "#d4af37";
-        signMsg.textContent = "Registration successful! Redirecting...";
-        setTimeout(() => {
-          window.location.href = "members.html";
-        }, 1200);
-      } else {
-        signMsg.style.color = "red";
-        signMsg.textContent = "Please fill all fields";
-      }
-    });
-    <!-- VAULT DOORS -->
-<div class="vault-door-left"></div>
-<div class="vault-door-right"></div>
-// CREATE GOLD PARTICLES
-const loginSection = document.querySelector('.login-section');
-
-for(let i=0; i<40; i++){
-  const particle = document.createElement('div');
-  particle.classList.add('particle');
-  particle.style.left = Math.random()*100 + 'vw';
-  particle.style.animationDuration = (Math.random()*8 + 5) + 's';
-  particle.style.width = particle.style.height = (Math.random()*3 + 2) + 'px';
-  loginSection.appendChild(particle);
-}
-</script>
-  
 </body>
 </html>
