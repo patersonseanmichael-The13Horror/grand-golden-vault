@@ -162,3 +162,38 @@ body {
     background-position: 300px 300px;
   }
 }
+
+/* VAULT NAVIGATION */
+.vault-nav {
+  display: flex;
+  gap: 28px;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+}
+
+.vault-nav a {
+  text-decoration: none;
+  color: rgba(234,230,220,0.6);
+  position: relative;
+  padding-bottom: 4px;
+  transition: color 0.3s ease;
+}
+
+.vault-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0%;
+  height: 1px;
+  background: var(--gold);
+  transition: width 0.3s ease;
+}
+
+.vault-nav a:hover {
+  color: var(--gold);
+}
+
+.vault-nav a:hover::after {
+  width: 100%;
+}
