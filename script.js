@@ -54,11 +54,28 @@ function generateTransaction() {
 // Only show feed when vault unlocked
 function updateMemberFeed() {
   if(vaultContent.style.display === "block") {
+    const transaction = generateTransaction();
+
     feedText.style.opacity = 0;
 
     setTimeout(() => {
-      feedText.textContent = generateTransaction();
+      feedText.textContent = transaction;
       feedText.style.opacity = 1;
+
+      // Check for high withdrawals (> $10,000)
+      if(transaction.includes("withdrew")) {
+        // Extract amount
+        const amountMatch = transaction.match(/\$([\d,\.]+)/);
+        if(amountMatch){
+          const amountNum = parseFloat(amountMatch[1].replace(/,/g,''));
+          if(amountNum > 10000){
+            feedText.classList.add("gold-shimmer");
+            setTimeout(() => {
+              feedText.classList.remove("gold-shimmer");
+            }, 3000); // shimmer lasts 3 seconds
+          }
+        }
+      }
     }, 600);
   }
 }
