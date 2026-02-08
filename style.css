@@ -1,0 +1,125 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ROOT THEME */
+:root {
+  --gold: #d4af37;
+  --soft-gold: rgba(212, 175, 55, 0.7);
+  --dark: #0b0b0d;
+  --charcoal: #121214;
+  --text-light: #eae6dc;
+}
+
+/* BODY */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--dark);
+  color: var(--text-light);
+}
+
+/* HERO */
+.hero {
+  position: relative;
+  height: 100vh;
+  background: url("images/bull-gold.jpg") center/cover no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* OVERLAY */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top, rgba(0,0,0,0.35), rgba(0,0,0,0.85));
+  z-index: 1;
+}
+
+/* TOP BAR */
+.topbar {
+  position: relative;
+  z-index: 2;
+  padding: 24px 48px;
+}
+
+.logo {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  letter-spacing: 4px;
+  color: var(--gold);
+}
+
+/* HERO CONTENT */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 0 48px 120px;
+  max-width: 720px;
+}
+
+.hero-content h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 3.2rem;
+  line-height: 1.2;
+  margin-bottom: 24px;
+}
+
+.hero-content h1 span {
+  color: var(--gold);
+}
+
+.hero-content p {
+  font-size: 1rem;
+  max-width: 520px;
+  line-height: 1.8;
+  opacity: 0.85;
+  margin-bottom: 40px;
+}
+
+/* CTA BUTTONS */
+.cta-group {
+  display: flex;
+  gap: 20px;
+}
+
+.btn {
+  text-decoration: none;
+  padding: 14px 34px;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  border-radius: 2px;
+  transition: all 0.35s ease;
+}
+
+.btn.primary {
+  background: var(--gold);
+  color: #000;
+}
+
+.btn.primary:hover {
+  background: #e5c55a;
+  transform: translateY(-2px);
+}
+
+.btn.secondary {
+  border: 1px solid var(--soft-gold);
+  color: var(--gold);
+}
+
+.btn.secondary:hover {
+  background: rgba(212,175,55,0.1);
+  transform: translateY(-2px);
+}
+
+/* FOOTER NOTE */
+.footer-note {
+  position: relative;
+  z-index: 2;
+  padding: 20px 48px;
+  font-size: 0.75rem;
+  opacity: 0.4;
+}
