@@ -134,3 +134,14 @@ a { color: var(--gold); text-decoration: none; }
   opacity: 0.7;
   animation: floatUp linear infinite;
 }
+
+.landing-hero p {
+  font-size: 1.1rem;
+  max-width: 700px;
+  margin: 16px auto 32px;
+  opacity: 0.85;
+  line-height: 1.9;
+  font-style: italic;
+  color: #f5e8b0; /* soft golden hue */
+  text-shadow: 0 0 8px rgba(0,0,0,0.7);
+}
