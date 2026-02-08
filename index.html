@@ -24,17 +24,59 @@
     <a href="login.html" class="cta-btn">Enter the Vault</a>
   </section>
 
-  <!-- GOLD DUST PARTICLES -->
+  <!-- GOLD DUST PARTICLES + CINEMATIC ENTRANCE -->
   <script>
     const landingHero = document.querySelector('.landing-hero');
+    const heroHeading = landingHero.querySelector('h1');
+    const heroText = landingHero.querySelector('p');
+    const heroCTA = landingHero.querySelector('.cta-btn');
+
+    // Create gold dust particles
     for(let i=0; i<40; i++){
       const particle = document.createElement('div');
       particle.classList.add('particle');
       particle.style.left = Math.random()*100 + 'vw';
       particle.style.animationDuration = (Math.random()*8 + 5) + 's';
       particle.style.width = particle.style.height = (Math.random()*3 + 2) + 'px';
+      particle.style.opacity = 0;
       landingHero.appendChild(particle);
     }
+
+    window.addEventListener('load', () => {
+      // Fade in particles sequentially
+      const particles = landingHero.querySelectorAll('.particle');
+      particles.forEach((p,i) => {
+        setTimeout(() => { p.style.opacity = 0.7; }, i*80);
+      });
+
+      // Fade in heading, text, and CTA button
+      heroHeading.style.opacity = 0; heroHeading.style.transform = 'translateY(20px)';
+      heroText.style.opacity = 0; heroText.style.transform = 'translateY(20px)';
+      heroCTA.style.opacity = 0; heroCTA.style.transform = 'translateY(20px)';
+
+      setTimeout(() => {
+        heroHeading.style.transition = 'opacity 1.2s ease, transform 1.2s ease';
+        heroHeading.style.opacity = 1;
+        heroHeading.style.transform = 'translateY(0)';
+      }, 600);
+
+      setTimeout(() => {
+        heroText.style.transition = 'opacity 1.2s ease, transform 1.2s ease';
+        heroText.style.opacity = 1;
+        heroText.style.transform = 'translateY(0)';
+      }, 1200);
+
+      setTimeout(() => {
+        heroCTA.style.transition = 'opacity 1.2s ease, transform 1.2s ease';
+        heroCTA.style.opacity = 1;
+        heroCTA.style.transform = 'translateY(0)';
+      }, 1800);
+
+      // Optional cinematic zoom on background (vault door opening feel)
+      landingHero.style.transform = 'scale(1.05)';
+      landingHero.style.transition = 'transform 2.5s ease-out';
+      setTimeout(() => { landingHero.style.transform = 'scale(1)'; }, 100);
+    });
   </script>
 
 </body>
