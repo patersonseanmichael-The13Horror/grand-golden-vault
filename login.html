@@ -3,18 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Grand Golden Vault Login</title>
+  <title>Grand Golden Vault</title>
   <link rel="stylesheet" href="style.css">
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyAyWGltBo7tZgZydGkaZwmKW2WzkOpwWn4",
+      authDomain: "goldenvault-65fe2.firebaseapp.com",
+      projectId: "goldenvault-65fe2",
+      storageBucket: "goldenvault-65fe2.appspot.com",
+      messagingSenderId: "825820839145",
+      appId: "1:825820839145:web:7a04520086290010510478"
+    };
+    const app = initializeApp(firebaseConfig);
+    window.auth = getAuth(app); // expose globally for JS files
+  </script>
 </head>
 <body class="vault-page">
 
-<!-- LOGIN SECTION -->
 <section class="login-section">
-
   <!-- GOLD DUST PARTICLES -->
   <div id="loginParticles"></div>
 
-  <!-- LOGIN + SIGN-UP CONTAINER -->
+  <!-- LOGIN + SIGN-UP BOXES -->
   <div class="login-container">
 
     <!-- LOGIN BOX -->
@@ -38,7 +52,7 @@
       <form id="signupForm">
         <input type="text" id="signupName" placeholder="Full Name" required>
         <input type="tel" id="signupPhone" placeholder="Mobile Number" required>
-        <input type="date" id="signupDOB" required>
+        <input type="date" id="signupDob" required>
         <input type="password" id="signupPassword" placeholder="Vault Key" required>
         <input type="password" id="signupConfirmPassword" placeholder="Confirm Vault Key" required>
         <button type="submit">Submit Request</button>
@@ -49,111 +63,14 @@
   </div>
 </section>
 
-<!-- VAULT DOORS -->
-<div class="vault-door-left"></div>
-<div class="vault-door-right"></div>
+<!-- Scripts -->
+<script src="signup.js" type="module"></script>
+<script src="login.js" type="module"></script>
 
-<!-- Firebase + Logic -->
-<script type="module">
-  // Firebase Imports
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-  import { getFirestore, collection, query, where, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
-
-  // Firebase config
-  const firebaseConfig = {
-    apiKey: "AIzaSyAyWGltBo7tZgZydGkaZwmKW2WzkOpwWn4",
-    authDomain: "goldenvault-65fe2.firebaseapp.com",
-    projectId: "goldenvault-65fe2",
-    storageBucket: "goldenvault-65fe2.appspot.com",
-    messagingSenderId: "825820839145",
-    appId: "1:825820839145:web:7a04520086290010510478",
-    measurementId: "G-Z2VCVP4CKH"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-
-  const loginForm = document.getElementById('loginForm');
-  const signupForm = document.getElementById('signupForm');
-  const loginMessage = document.getElementById('loginMessage');
-  const signupMessage = document.getElementById('signupMessage');
-
-  // LOGIN FORM
-  loginForm.addEventListener('submit', async e => {
-    e.preventDefault();
-    loginMessage.textContent = "Verifying...";
-
-    const phone = document.getElementById('loginPhone').value.trim();
-    const password = document.getElementById('loginPassword').value.trim();
-
-    try {
-      // Firebase Auth uses email, so we simulate email as phone@vault.com
-      const email = phone + "@vault.com";
-      await signInWithEmailAndPassword(auth, email, password);
-      loginMessage.textContent = "Login successful! Opening vault...";
-      openVaultDoors();
-      setTimeout(() => { window.location.href = "members.html"; }, 2200);
-    } catch(err) {
-      console.error(err);
-      loginMessage.textContent = "Invalid credentials or unapproved account.";
-    }
-  });
-
-  // SIGNUP FORM
-  signupForm.addEventListener('submit', async e => {
-    e.preventDefault();
-    signupMessage.textContent = "Processing request...";
-
-    const name = document.getElementById('signupName').value.trim();
-    const phone = document.getElementById('signupPhone').value.trim();
-    const dob = document.getElementById('signupDOB').value;
-    const password = document.getElementById('signupPassword').value.trim();
-    const confirmPassword = document.getElementById('signupConfirmPassword').value.trim();
-
-    if(password !== confirmPassword){
-      signupMessage.textContent = "Vault keys do not match!";
-      return;
-    }
-
-    const email = phone + "@vault.com"; // simulate email
-
-    try {
-      // Check for duplicates in Firestore
-      const usersRef = collection(db, "users");
-      const q = query(usersRef, where("phone", "==", phone));
-      const querySnapshot = await getDocs(q);
-
-      if(querySnapshot.empty){
-        // New user → auto-login
-        await createUserWithEmailAndPassword(auth, email, password);
-        await addDoc(usersRef, { name, phone, dob, approved: true, timestamp: serverTimestamp() });
-        signupMessage.textContent = "Account created! Logging in...";
-        openVaultDoors();
-        setTimeout(() => { window.location.href = "members.html"; }, 2200);
-      } else {
-        // Duplicate → manual approval
-        await addDoc(usersRef, { name, phone, dob, approved: false, timestamp: serverTimestamp() });
-        signupMessage.textContent = "Request submitted. Vault master will approve your access.";
-      }
-    } catch(err){
-      console.error(err);
-      signupMessage.textContent = "Error processing request. Try again later.";
-    }
-  });
-
-  // VAULT DOOR ANIMATION
-  const leftDoor = document.querySelector('.vault-door-left');
-  const rightDoor = document.querySelector('.vault-door-right');
-  function openVaultDoors(){
-    leftDoor.classList.add('open');
-    rightDoor.classList.add('open');
-  }
-
+<script>
   // GOLD DUST PARTICLES
   const particleContainer = document.getElementById('loginParticles');
-  for(let i=0; i<40; i++){
+  for(let i=0;i<40;i++){
     const p = document.createElement('div');
     p.classList.add('particle');
     p.style.left = Math.random()*100 + 'vw';
@@ -162,10 +79,10 @@
     particleContainer.appendChild(p);
   }
 
-  // Scroll to signup
-  window.scrollToSignup = () => {
+  // Scroll helper
+  function scrollToSignup(){
     document.getElementById('signupBox').scrollIntoView({behavior:"smooth"});
-  };
+  }
 </script>
 
 </body>
