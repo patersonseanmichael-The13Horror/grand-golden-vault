@@ -17,19 +17,7 @@
   </nav>
 </header>
 
-  <div class="vault-wallet">
-  <div>Vault ID: <span id="vaultId"></span></div>
-  <div>Name: <span id="vaultName"></span></div>
-  <div>Balance: <span id="vaultBalance"></span></div>
-  <div>Tier: <span id="vaultTier"></span></div>
-</div>
-
-<div class="vault-ledger">
-  <h3>Ledger History</h3>
-  <div id="ledger"></div>
-</div>
-
-<!-- MEMBERS VAULT -->
+<!-- MEMBERS VAULT HERO -->
 <section class="landing-hero" style="background:url('images/bull-gold.jpg') center/cover no-repeat;">
   <h1>Members Vault</h1>
   <p>
@@ -38,22 +26,37 @@
   </p>
 </section>
 
-<!-- VAULT LOCK AREA -->
-<section class="vault-lock">
-  <h2>Vault Access Granted</h2>
-  <p class="vault-msg">Your presence has been logged in the ledger.</p>
+<!-- WALLET INFO -->
+<section class="vault-wallet">
+  <div>Vault ID: <span id="vaultId"></span></div>
+  <div>Name: <span id="vaultName"></span></div>
+  <div>Balance: <span id="vaultBalance"></span></div>
+  <div>Tier: <span id="vaultTier"></span></div>
 </section>
 
-<!-- LIVE FEED -->
+<!-- DEPOSIT BUTTONS -->
+<section class="vault-deposit">
+  <h3>Deposit GOLD</h3>
+  <button onclick="deposit(50)">Deposit 50 GOLD</button>
+  <button onclick="deposit(100)">Deposit 100 GOLD</button>
+</section>
+
+<!-- LEDGER HISTORY -->
+<section class="vault-ledger">
+  <h3>Ledger History</h3>
+  <div id="ledger"></div>
+</section>
+
+<!-- LIVE FAKE FEED -->
 <div class="member-feed" id="feedBox"></div>
 
-<!-- Firebase -->
+<!-- FIREBASE -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
   const firebaseConfig = {
-    apiKey: "REVOKED",
+    apiKey: "REDACTED_FOR_SAFETY",
     authDomain: "goldenvault-65fe2.firebaseapp.com",
     projectId: "goldenvault-65fe2",
     storageBucket: "goldenvault-65fe2.appspot.com",
@@ -65,56 +68,19 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
-  // 🔐 Protect page
+  // Protect page
   onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      window.location.href = "login.html";
-    }
+    if (!user) window.location.href = "login.html";
   });
 
-  // 🚪 Logout
+  // Logout
   document.getElementById("logoutBtn").addEventListener("click", () => {
-    signOut(auth).then(() => {
-      window.location.href = "login.html";
-    });
+    signOut(auth).then(() => window.location.href = "login.html");
   });
 </script>
 
-<!-- LIVE FAKE FEED SCRIPT -->
-<script>
-  const feedBox = document.getElementById("feedBox");
+<!-- MEMBERS JS -->
+<script src="members.js"></script>
 
-  const actions = ["Deposit", "Withdrawal"];
-  const amounts = ["$250", "$500", "$1,200", "$5,000", "$12,000"];
-  
-  function randomPhone() {
-    return "04******" + Math.floor(10 + Math.random() * 89);
-  }
-
-  function addFeedItem() {
-    const action = actions[Math.floor(Math.random() * actions.length)];
-    const amount = amounts[Math.floor(Math.random() * amounts.length)];
-    const time = new Date().toLocaleTimeString();
-
-    const div = document.createElement("div");
-    div.textContent = `${action} | ${amount} | ${randomPhone()} | ${time}`;
-    div.style.marginBottom = "6px";
-    div.style.color = action === "Deposit" ? "#d4af37" : "#e5c55a";
-
-    feedBox.prepend(div);
-
-    if (feedBox.children.length > 6) {
-      feedBox.removeChild(feedBox.lastChild);
-    }
-  }
-
-  setInterval(addFeedItem, 3500);
-
-  <div class="vault-deposit">
-  <button onclick="deposit(50)">Deposit 50 GOLD</button>
-  <button onclick="deposit(100)">Deposit 100 GOLD</button>
-</div>
-  
-  <script src="members.js"></script>
 </body>
 </html>
