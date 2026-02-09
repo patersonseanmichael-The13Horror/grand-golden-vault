@@ -41,7 +41,7 @@
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
   const firebaseConfig = {
-    apiKey: "AIzaSyAyWGltBo7tZgZydGkaZwmKW2WzkOpwWn4",
+    apiKey: "REVOKED",
     authDomain: "goldenvault-65fe2.firebaseapp.com",
     projectId: "goldenvault-65fe2",
     storageBucket: "goldenvault-65fe2.appspot.com",
@@ -97,6 +97,12 @@
   }
 
   setInterval(addFeedItem, 3500);
-<script src="members.js"></script>
+
+  <div class="vault-deposit">
+  <button onclick="deposit(50)">Deposit 50 GOLD</button>
+  <button onclick="deposit(100)">Deposit 100 GOLD</button>
+</div>
+  
+  <script src="members.js"></script>
 </body>
 </html>
