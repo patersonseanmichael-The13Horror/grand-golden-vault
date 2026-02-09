@@ -190,6 +190,19 @@ a { color: var(--gold); text-decoration: none; }
   text-align: center;
 }
 
+.signup-box input,
+.signup-box select,
+.signup-box textarea {
+  width: 100%;
+  padding: 12px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.signup-box input::placeholder {
+  text-align: center;
+}
+
 /* BUTTONS */
 .login-box button, .signup-box button {
   width: 100%;
