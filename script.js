@@ -1,166 +1,108 @@
-/* =========================================
-   LOGIN / SIGN-UP
-========================================= */
-const signBtn = document.getElementById("signBtn");
-const signMsg = document.getElementById("signMsg");
-const signName = document.getElementById("signName");
-const signEmail = document.getElementById("signEmail");
-const signPassword = document.getElementById("signPassword");
-const signConfirm = document.getElementById("signConfirm");
+// -------------------- FIREBASE SETUP --------------------
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-signBtn.addEventListener("click", () => {
-  if(!signName.value || !signEmail.value || !signPassword.value || !signConfirm.value){
-    signMsg.style.color = "red";
-    signMsg.textContent = "Please fill all fields";
-    return;
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyAyWGltBo7tZgZydGkaZwmKW2WzkOpwWn4",
+  authDomain: "goldenvault-65fe2.firebaseapp.com",
+  projectId: "goldenvault-65fe2",
+  storageBucket: "goldenvault-65fe2.firebasestorage.app",
+  messagingSenderId: "825820839145",
+  appId: "1:825820839145:web:7a04520086290010510478",
+  measurementId: "G-Z2VCVP4CKH"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// -------------------- LOGIN --------------------
+const loginForm = document.getElementById('loginForm');
+loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const phone = document.getElementById('loginPhone').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const email = phone + "@vault.com";
+
+  try {
+    // Attempt login
+    await signInWithEmailAndPassword(auth, email, password);
+    document.getElementById('loginMessage').textContent = "Login successful!";
+    document.getElementById('loginMessage').style.color = "#d4af37";
+
+    // Redirect to members vault or show members area
+    setTimeout(() => { window.location.href = "members.html"; }, 800);
+
+  } catch (error) {
+    // If user not found, try auto-register
+    if (error.code === "auth/user-not-found") {
+      document.getElementById('loginMessage').textContent = "User not found. Please request access.";
+      document.getElementById('loginMessage').style.color = "#f55";
+    } else if (error.code === "auth/wrong-password") {
+      document.getElementById('loginMessage').textContent = "Vault key incorrect!";
+      document.getElementById('loginMessage').style.color = "#f55";
+    } else {
+      document.getElementById('loginMessage').textContent = error.message;
+      document.getElementById('loginMessage').style.color = "#f55";
+    }
   }
-
-  if(signPassword.value !== signConfirm.value){
-    signMsg.style.color = "red";
-    signMsg.textContent = "Vault Keys do not match";
-    return;
-  }
-
-  // SUCCESS ANIMATION
-  signMsg.style.color = "#d4af37";
-  signMsg.style.opacity = 0;
-  signMsg.textContent = "Registration successful! Vault unlocked...";
-
-  // Fade-in gold shimmer
-  signMsg.style.transition = "opacity 1.2s ease";
-  setTimeout(() => { signMsg.style.opacity = 1; }, 50);
-
-  // Tiny particle spark animation
-  const signupBox = document.querySelector(".signup-box");
-  for(let i=0;i<15;i++){
-    const spark = document.createElement("div");
-    spark.classList.add("gold-spark");
-    spark.style.left = Math.random()*100 + "%";
-    spark.style.top = Math.random()*100 + "%";
-    spark.style.width = spark.style.height = Math.random()*4+2 + "px";
-    signupBox.appendChild(spark);
-    setTimeout(()=>{ spark.remove(); }, 1500);
-  }
-
-  // Redirect to members page
-  setTimeout(() => { window.location.href = "members.html"; }, 2000);
 });
 
-/* =========================================
-   CINEMATIC VAULT DOORS + GOLD DUST
-========================================= */
-const leftDoor = document.querySelector('.vault-door-left');
-const rightDoor = document.querySelector('.vault-door-right');
-const loginContainer = document.querySelector('.login-container');
-const loginSection = document.querySelector('.login-section');
+// -------------------- SIGNUP --------------------
+const signupForm = document.getElementById('signupForm');
+signupForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
 
-if(loginSection){
-  // Create gold particles
-  for(let i=0; i<40; i++){
-    const particle = document.createElement('div');
-    particle.classList.add('particle');
-    particle.style.left = Math.random()*100 + 'vw';
-    particle.style.animationDuration = (Math.random()*8 + 5) + 's';
-    particle.style.width = particle.style.height = (Math.random()*3 + 2) + 'px';
-    loginSection.appendChild(particle);
+  const name = document.getElementById('signupName').value.trim();
+  const phone = document.getElementById('signupPhone').value.trim();
+  const dob = document.getElementById('signupDob').value;
+  const password = document.getElementById('signupPassword').value;
+  const confirmPassword = document.getElementById('signupConfirmPassword').value;
+
+  const messageEl = document.getElementById('message');
+
+  if (password !== confirmPassword) {
+    messageEl.textContent = "Vault keys do not match!";
+    messageEl.style.color = "#f55";
+    return;
   }
 
-  window.addEventListener('load', () => {
-    if(leftDoor && rightDoor && loginContainer){
-      leftDoor.classList.add('open');
-      rightDoor.classList.add('open');
+  const email = phone + "@vault.com";
 
-      setTimeout(() => { loginContainer.classList.add('visible'); }, 1200);
-      setTimeout(() => {
-        leftDoor.style.display='none';
-        rightDoor.style.display='none';
-      }, 2200);
+  try {
+    // Check if user already exists in Firestore
+    const docRef = doc(db, "members", phone);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      messageEl.textContent = "Phone number already registered. Please login.";
+      messageEl.style.color = "#f55";
+      return;
     }
-  });
-}
 
-/* =========================================
-   MEMBERS VAULT UNLOCK + LIVE VIP FEED
-========================================= */
-const unlockBtn = document.getElementById("unlockBtn");
-const vaultPassword = document.getElementById("vaultPassword");
-const vaultMsg = document.getElementById("vaultMsg");
-const vaultContent = document.getElementById("vaultContent");
+    // Create user in Firebase Auth
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
-const memberFeed = document.getElementById("memberFeed");
-const feedText = memberFeed ? memberFeed.querySelector(".feed-text") : null;
+    // Add user info to Firestore
+    await setDoc(doc(db, "members", phone), {
+      name,
+      phone,
+      dob,
+      createdAt: new Date().toISOString()
+    });
 
-const vaultKey = "GOLDENVAULT";
+    messageEl.textContent = "Access granted! Redirecting to vault...";
+    messageEl.style.color = "#d4af37";
 
-if(unlockBtn){
-  unlockBtn.addEventListener("click", () => {
-    if(vaultPassword.value === vaultKey){
-      vaultMsg.style.color = "#d4af37";
-      vaultMsg.textContent = "Vault unlocked!";
-      vaultContent.style.display = "block";
-      updateMemberFeed(); // first transaction
-    } else {
-      vaultMsg.style.color = "red";
-      vaultMsg.textContent = "Incorrect Vault Key";
-    }
-  });
-}
+    setTimeout(() => { window.location.href = "members.html"; }, 1000);
 
-/* =========================================
-   FAKE VIP TRANSACTIONS
-========================================= */
-function generateTransaction(){
-  const phone = `04******${Math.floor(Math.random()*90+10)}`; 
-  const isDeposit = Math.random() > 0.5;
-  let amount, action;
-
-  if(isDeposit){
-    amount = (Math.random()*(1000-10)+10).toFixed(2);
-    action = `deposited $${amount}`;
-  } else {
-    amount = (Math.random()*(50000-500)+500).toFixed(2);
-    action = `withdrew $${amount}`;
+  } catch (error) {
+    console.error(error);
+    messageEl.textContent = error.message;
+    messageEl.style.color = "#f55";
   }
-
-  const games = ["Baccarat","Roulette","Blackjack","Private Table"];
-  const game = games[Math.floor(Math.random()*games.length)];
-  return `${phone} ${action} · ${game}`;
-}
-
-function playChime(){
-  const audio = new Audio('https://freesound.org/data/previews/66/66717_634166-lq.mp3');
-  audio.volume = 0.15;
-  audio.play();
-}
-
-function updateMemberFeed(){
-  if(vaultContent && vaultContent.style.display==="block" && feedText){
-    const transaction = generateTransaction();
-    feedText.style.opacity = 0;
-
-    setTimeout(() => {
-      feedText.textContent = transaction;
-      feedText.style.opacity = 1;
-
-      feedText.classList.remove("gold-shimmer","vip-spark");
-      const amountMatch = transaction.match(/\$([\d,\.]+)/);
-      if(amountMatch){
-        const amountNum = parseFloat(amountMatch[1].replace(/,/g,''));
-
-        // Gold shimmer high withdrawals (>10k)
-        if(transaction.includes("withdrew") && amountNum>10000){ feedText.classList.add("gold-shimmer"); }
-
-        // VIP sparkle mega moves >=25k
-        if(amountNum >= 25000){
-          feedText.classList.add("vip-spark"); playChime();
-        }
-
-        // VIP deposits >=800
-        if(transaction.includes("deposited") && amountNum >=800){ feedText.classList.add("gold-shimmer"); }
-      }
-    },600);
-  }
-}
-
-// Update every 5 minutes (demo can reduce to e.g., 10s)
-setInterval(updateMemberFeed, 300000);
+});
