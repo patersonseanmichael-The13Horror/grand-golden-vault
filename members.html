@@ -1,116 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Members Vault — Grand Golden Vault</title>
+  <meta charset="UTF-8">
+  <title>Members Vault — GOLDENVAULT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body class="vault-page">
 
-  <header class="topbar">
-    <div class="logo">GRAND GOLDEN VAULT</div>
-    <nav class="vault-nav">
-      <a href="index.html">Home</a>
-      <a href="casino.html">Casino</a>
-      <a href="about.html">Legacy</a>
-      <a href="members.html">Members</a>
-    </nav>
-  </header>
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="logo">GOLDENVAULT</div>
+  <nav class="vault-nav">
+    <a href="#" id="logoutBtn">Logout</a>
+  </nav>
+</header>
 
-  <!-- Members Vault -->
-  <div class="vault-lock" id="vaultLock">
-    <h2>Welcome to the Vault</h2>
-    <p id="welcomeMsg"></p>
-    <button id="logoutBtn">Logout</button>
-  </div>
+<!-- MEMBERS VAULT -->
+<section class="landing-hero" style="background:url('images/bull-gold.jpg') center/cover no-repeat;">
+  <h1>Members Vault</h1>
+  <p>
+    Beyond these doors lies wealth, discipline, and legacy.  
+    The Bull watches. The Vault remembers.
+  </p>
+</section>
 
-  <div class="vault-content" id="vaultContent">
-    <section class="legacy-hero">
-      <h1>Welcome, <span id="memberName"></span></h1>
-      <p>You now have access to the inner sanctum of the Grand Golden Vault.</p>
-    </section>
+<!-- VAULT LOCK AREA -->
+<section class="vault-lock">
+  <h2>Vault Access Granted</h2>
+  <p class="vault-msg">Your presence has been logged in the ledger.</p>
+</section>
 
-    <section class="tables">
-      <div class="table-card">
-        <h3>Private Baccarat Room</h3>
-        <span>High Stakes · Invitation Only</span>
-      </div>
-      <div class="table-card">
-        <h3>Vault Roulette</h3>
-        <span>Single Zero · Elite Table</span>
-      </div>
-      <div class="table-card">
-        <h3>Exclusive Blackjack</h3>
-        <span>Hand-Shuffled · Private Deck</span>
-      </div>
-    </section>
+<!-- LIVE FEED -->
+<div class="member-feed" id="feedBox"></div>
 
-    <div class="member-feed" id="memberFeed">
-      <h3>Live Deposits / Withdrawals</h3>
-      <ul id="feedList"></ul>
-    </div>
-  </div>
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
-  <script>
-    // Check login
-    const user = JSON.parse(localStorage.getItem("goldenvault_logged_in"));
-    if(!user){
+  const firebaseConfig = {
+    apiKey: "AIzaSyAyWGltBo7tZgZydGkaZwmKW2WzkOpwWn4",
+    authDomain: "goldenvault-65fe2.firebaseapp.com",
+    projectId: "goldenvault-65fe2",
+    storageBucket: "goldenvault-65fe2.appspot.com",
+    messagingSenderId: "825820839145",
+    appId: "1:825820839145:web:7a04520086290010510478",
+    measurementId: "G-Z2VCVP4CKH"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  // 🔐 Protect page
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
       window.location.href = "login.html";
     }
+  });
 
-    // Show welcome
-    const welcomeMsg = document.getElementById("welcomeMsg");
-    welcomeMsg.textContent = `Hello, ${user.name}. Enjoy your Vault privileges.`;
-
-    // Display member name in legacy-hero section
-    document.getElementById("memberName").textContent = user.name;
-
-    // Logout button
-    document.getElementById("logoutBtn").addEventListener("click", ()=>{
-      localStorage.removeItem("goldenvault_logged_in");
+  // 🚪 Logout
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+    signOut(auth).then(() => {
       window.location.href = "login.html";
     });
+  });
+</script>
 
-    // Show vault content
-    const vaultLock = document.getElementById("vaultLock");
-    const vaultContent = document.getElementById("vaultContent");
-    vaultLock.style.display = "none";
-    vaultContent.style.display = "block";
+<!-- LIVE FAKE FEED SCRIPT -->
+<script>
+  const feedBox = document.getElementById("feedBox");
 
-    // Fake live feed generator
-    const feedList = document.getElementById("feedList");
+  const actions = ["Deposit", "Withdrawal"];
+  const amounts = ["$250", "$500", "$1,200", "$5,000", "$12,000"];
+  
+  function randomPhone() {
+    return "04******" + Math.floor(10 + Math.random() * 89);
+  }
 
-    function randomPhone(){
-      return `04******${Math.floor(10 + Math.random()*89)}`;
+  function addFeedItem() {
+    const action = actions[Math.floor(Math.random() * actions.length)];
+    const amount = amounts[Math.floor(Math.random() * amounts.length)];
+    const time = new Date().toLocaleTimeString();
+
+    const div = document.createElement("div");
+    div.textContent = `${action} | ${amount} | ${randomPhone()} | ${time}`;
+    div.style.marginBottom = "6px";
+    div.style.color = action === "Deposit" ? "#d4af37" : "#e5c55a";
+
+    feedBox.prepend(div);
+
+    if (feedBox.children.length > 6) {
+      feedBox.removeChild(feedBox.lastChild);
     }
+  }
 
-    function randomAmount(){
-      return (Math.floor(Math.random()*5000)+50).toLocaleString();
-    }
-
-    function randomDepositOrWithdraw(){
-      return Math.random() < 0.5 ? "Deposit" : "Withdrawal";
-    }
-
-    function randomTime(){
-      const now = new Date();
-      return now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-    }
-
-    function addFeedEntry(){
-      const li = document.createElement("li");
-      li.textContent = `${randomTime()} - ${randomPhone()} - ${randomDepositOrWithdraw()}: $${randomAmount()}`;
-      feedList.prepend(li);
-
-      if(feedList.children.length > 10) feedList.removeChild(feedList.lastChild);
-    }
-
-    // Add new feed entry every 2.5s
-    setInterval(addFeedEntry, 2500);
-    for(let i=0;i<5;i++) addFeedEntry();
-
-  </script>
+  setInterval(addFeedItem, 3500);
+</script>
 
 </body>
 </html>
