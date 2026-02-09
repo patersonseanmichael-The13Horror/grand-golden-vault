@@ -18,16 +18,16 @@
     </nav>
   </header>
 
+  <!-- Members Vault -->
   <div class="vault-lock" id="vaultLock">
-    <h2>Enter the Vault</h2>
-    <input type="password" id="vaultPassword" placeholder="Vault Key" />
-    <button id="unlockBtn">Unlock</button>
-    <p class="vault-msg" id="vaultMsg"></p>
+    <h2>Welcome to the Vault</h2>
+    <p id="welcomeMsg"></p>
+    <button id="logoutBtn">Logout</button>
   </div>
 
-  <div class="vault-content" id="vaultContent" style="display:none;">
+  <div class="vault-content" id="vaultContent">
     <section class="legacy-hero">
-      <h1>Welcome, Member</h1>
+      <h1>Welcome, <span id="memberName"></span></h1>
       <p>You now have access to the inner sanctum of the Grand Golden Vault.</p>
     </section>
 
@@ -47,11 +47,70 @@
     </section>
 
     <div class="member-feed" id="memberFeed">
-      <span class="feed-text">Initializing Vault Transactions...</span>
+      <h3>Live Deposits / Withdrawals</h3>
+      <ul id="feedList"></ul>
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    // Check login
+    const user = JSON.parse(localStorage.getItem("goldenvault_logged_in"));
+    if(!user){
+      window.location.href = "login.html";
+    }
+
+    // Show welcome
+    const welcomeMsg = document.getElementById("welcomeMsg");
+    welcomeMsg.textContent = `Hello, ${user.name}. Enjoy your Vault privileges.`;
+
+    // Display member name in legacy-hero section
+    document.getElementById("memberName").textContent = user.name;
+
+    // Logout button
+    document.getElementById("logoutBtn").addEventListener("click", ()=>{
+      localStorage.removeItem("goldenvault_logged_in");
+      window.location.href = "login.html";
+    });
+
+    // Show vault content
+    const vaultLock = document.getElementById("vaultLock");
+    const vaultContent = document.getElementById("vaultContent");
+    vaultLock.style.display = "none";
+    vaultContent.style.display = "block";
+
+    // Fake live feed generator
+    const feedList = document.getElementById("feedList");
+
+    function randomPhone(){
+      return `04******${Math.floor(10 + Math.random()*89)}`;
+    }
+
+    function randomAmount(){
+      return (Math.floor(Math.random()*5000)+50).toLocaleString();
+    }
+
+    function randomDepositOrWithdraw(){
+      return Math.random() < 0.5 ? "Deposit" : "Withdrawal";
+    }
+
+    function randomTime(){
+      const now = new Date();
+      return now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    }
+
+    function addFeedEntry(){
+      const li = document.createElement("li");
+      li.textContent = `${randomTime()} - ${randomPhone()} - ${randomDepositOrWithdraw()}: $${randomAmount()}`;
+      feedList.prepend(li);
+
+      if(feedList.children.length > 10) feedList.removeChild(feedList.lastChild);
+    }
+
+    // Add new feed entry every 2.5s
+    setInterval(addFeedEntry, 2500);
+    for(let i=0;i<5;i++) addFeedEntry();
+
+  </script>
 
 </body>
 </html>
