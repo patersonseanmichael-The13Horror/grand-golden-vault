@@ -1,4 +1,4 @@
-// --- Load or initialize user ---
+// --- Initialize / Load user ---
 let user = JSON.parse(localStorage.getItem("gv_user")) || {
   id: "GV-" + Math.floor(100000 + Math.random() * 900000),
   name: "Vault Member",
@@ -7,7 +7,7 @@ let user = JSON.parse(localStorage.getItem("gv_user")) || {
   ledger: []
 };
 
-// --- Display wallet info ---
+// --- Wallet display ---
 function updateWalletDisplay() {
   document.getElementById("vaultId").innerText = user.id;
   document.getElementById("vaultName").innerText = user.name;
@@ -39,14 +39,37 @@ function deposit(amount) {
   user.balance += amount;
   user.ledger.unshift(tx);
 
-  // --- Vault tier unlock logic ---
+  // Vault tier unlock
   if (user.balance >= 500 && user.tier === 1) {
     user.tier = 2;
     alert("🔓 Vault Tier II Unlocked: The Emerald Descent");
   }
 
-  // --- Save & refresh UI ---
   localStorage.setItem("gv_user", JSON.stringify(user));
   updateWalletDisplay();
   updateLedger();
 }
+
+// --- Fake live feed ---
+const feedBox = document.getElementById("feedBox");
+const actions = ["Deposit", "Withdrawal"];
+const amounts = ["$250", "$500", "$1,200", "$5,000", "$12,000"];
+
+function randomPhone() {
+  return "04******" + Math.floor(10 + Math.random() * 89);
+}
+
+function addFeedItem() {
+  const action = actions[Math.floor(Math.random() * actions.length)];
+  const amount = amounts[Math.floor(Math.random() * amounts.length)];
+  const time = new Date().toLocaleTimeString();
+
+  const div = document.createElement("div");
+  div.textContent = `${action} | ${amount} | ${randomPhone()} | ${time}`;
+  div.style.marginBottom = "6px";
+  div.style.color = action === "Deposit" ? "#d4af37" : "#e5c55a";
+
+  feedBox.prepend(div);
+  if (feedBox.children.length > 6) feedBox.removeChild(feedBox.lastChild);
+}
+setInterval(addFeedItem, 3500);
