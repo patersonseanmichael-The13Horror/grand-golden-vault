@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GoldenVault — Request Access</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="signup-box">
+  <h2>Request Vault Access</h2>
+
+  <form id="signupForm">
+    <input type="text" id="name" placeholder="Full Name" required>
+
+    <input type="tel" id="phone" placeholder="Mobile Number" required>
+
+    <input type="date" id="dob" required>
+
+    <input type="password" id="password" placeholder="Vault Key" required>
+
+    <input type="password" id="confirmPassword" placeholder="Confirm Vault Key" required>
+
+    <button type="submit">Submit Request</button>
+  </form>
+
+  <p id="message"></p>
+</div>
+
+<script src="signup.js"></script>
+</body>
+</html>
