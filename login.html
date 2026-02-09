@@ -3,32 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Grand Golden Vault</title>
+  <title>Grand Golden Vault Login</title>
   <link rel="stylesheet" href="style.css">
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-    import { getAuth } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
-    
-    const firebaseConfig = {
-      apiKey: "AIzaSyAyWGltBo7tZgZydGkaZwmKW2WzkOpwWn4",
-      authDomain: "goldenvault-65fe2.firebaseapp.com",
-      projectId: "goldenvault-65fe2",
-      storageBucket: "goldenvault-65fe2.appspot.com",
-      messagingSenderId: "825820839145",
-      appId: "1:825820839145:web:7a04520086290010510478"
-    };
-    const app = initializeApp(firebaseConfig);
-    window.auth = getAuth(app); // expose globally for JS files
-  </script>
 </head>
 <body class="vault-page">
 
 <section class="login-section">
+
   <!-- GOLD DUST PARTICLES -->
   <div id="loginParticles"></div>
 
-  <!-- LOGIN + SIGN-UP BOXES -->
+  <!-- LOGIN + SIGN-UP CONTAINER -->
   <div class="login-container">
 
     <!-- LOGIN BOX -->
@@ -54,7 +39,7 @@
         <input type="tel" id="signupPhone" placeholder="Mobile Number" required>
         <input type="date" id="signupDob" required>
         <input type="password" id="signupPassword" placeholder="Vault Key" required>
-        <input type="password" id="signupConfirmPassword" placeholder="Confirm Vault Key" required>
+        <input type="password" id="signupConfirm" placeholder="Confirm Vault Key" required>
         <button type="submit">Submit Request</button>
       </form>
       <p id="signupMessage"></p>
@@ -63,14 +48,90 @@
   </div>
 </section>
 
-<!-- Scripts -->
-<script src="signup.js" type="module"></script>
-<script src="login.js" type="module"></script>
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAyWGltBo7tZgZydGkaZwmKW2WzkOpwWn4",
+    authDomain: "goldenvault-65fe2.firebaseapp.com",
+    projectId: "goldenvault-65fe2",
+    storageBucket: "goldenvault-65fe2.appspot.com",
+    messagingSenderId: "825820839145",
+    appId: "1:825820839145:web:7a04520086290010510478",
+    measurementId: "G-Z2VCVP4CKH"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  // ---------------- LOGIN ----------------
+  const loginForm = document.getElementById('loginForm');
+  const loginMessage = document.getElementById('loginMessage');
+
+  loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const phone = document.getElementById('loginPhone').value;
+    const password = document.getElementById('loginPassword').value;
+
+    // Using phone as email surrogate for Firebase Auth
+    const email = phone + "@vault.com";
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        loginMessage.textContent = "Login successful! Redirecting...";
+        loginMessage.style.color = "#d4af37";
+        setTimeout(() => { window.location.href = "members.html"; }, 1500);
+      })
+      .catch((error) => {
+        loginMessage.textContent = "Login failed. Check number or vault key.";
+        loginMessage.style.color = "#ff5555";
+      });
+  });
+
+  // ---------------- SIGN-UP ----------------
+  const signupForm = document.getElementById('signupForm');
+  const signupMessage = document.getElementById('signupMessage');
+
+  signupForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('signupName').value;
+    const phone = document.getElementById('signupPhone').value;
+    const dob = document.getElementById('signupDob').value;
+    const password = document.getElementById('signupPassword').value;
+    const confirm = document.getElementById('signupConfirm').value;
+
+    if (password !== confirm) {
+      signupMessage.textContent = "Vault Keys do not match.";
+      signupMessage.style.color = "#ff5555";
+      return;
+    }
+
+    const email = phone + "@vault.com"; // Using phone as email surrogate
+
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        signupMessage.textContent = "Signup successful! Logging in...";
+        signupMessage.style.color = "#d4af37";
+        setTimeout(() => { window.location.href = "members.html"; }, 1500);
+      })
+      .catch((error) => {
+        if(error.code === "auth/email-already-in-use") {
+          signupMessage.textContent = "Number already registered. Please login.";
+        } else {
+          signupMessage.textContent = "Signup failed. Try again.";
+        }
+        signupMessage.style.color = "#ff5555";
+      });
+  });
+
+</script>
 
 <script>
   // GOLD DUST PARTICLES
   const particleContainer = document.getElementById('loginParticles');
-  for(let i=0;i<40;i++){
+  for(let i=0; i<40; i++){
     const p = document.createElement('div');
     p.classList.add('particle');
     p.style.left = Math.random()*100 + 'vw';
@@ -80,8 +141,8 @@
   }
 
   // Scroll helper
-  function scrollToSignup(){
-    document.getElementById('signupBox').scrollIntoView({behavior:"smooth"});
+  function scrollToSignup() {
+    document.getElementById('signupBox').scrollIntoView({behavior: "smooth"});
   }
 </script>
 
