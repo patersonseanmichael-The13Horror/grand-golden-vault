@@ -1,32 +1,23 @@
-import { auth } from './login.html'; // already exposed globally in index
+// login.js
+import { auth } from "./firebase.js";
+import {
+  signInWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+const form = document.getElementById("loginForm");
+const msg = document.getElementById("loginMessage");
 
-const signupForm = document.getElementById('signupForm');
-const signupMessage = document.getElementById('signupMessage');
-
-signupForm.addEventListener('submit', async (e) => {
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const name = document.getElementById('signupName').value;
-  const phone = document.getElementById('signupPhone').value;
-  const dob = document.getElementById('signupDob').value;
-  const password = document.getElementById('signupPassword').value;
-  const confirmPassword = document.getElementById('signupConfirmPassword').value;
 
-  if(password !== confirmPassword){
-    signupMessage.textContent = "Vault keys do not match!";
-    return;
-  }
+  const phone = document.getElementById("loginPhone").value;
+  const password = document.getElementById("loginPassword").value;
+  const email = `${phone}@goldenvault.com`;
 
-  try{
-    const email = phone + "@goldenvault.com"; // fake email for Firebase auth
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    signupMessage.textContent = "Welcome to the Vault!";
-    signupForm.reset();
-    // automatic login
+  try {
     await signInWithEmailAndPassword(auth, email, password);
-    window.location.href = "members.html"; // redirect to members page
-  }catch(error){
-    signupMessage.textContent = error.message;
+    window.location.href = "members.html";
+  } catch {
+    msg.textContent = "Invalid vault credentials";
   }
 });
