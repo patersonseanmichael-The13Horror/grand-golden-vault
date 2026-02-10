@@ -1,168 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Members Vault</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<title>Golden Vault — Members Lobby</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+:root {
+  --gold: #d4af37;
+  --text-light: #eae6dc;
+  --bg-dark: #080503;
+  --panel: #140e09;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;}
+body{
+  background: radial-gradient(circle at top,#1c130a,#080503 70%);
+  color: var(--text-light);
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
 
-  <style>
-    :root {
-      --gold: #d4af37;
-      --text-light: #eae6dc;
-      --bg-dark: #080503;
-      --panel: #140e09;
-    }
+/* Vault Doors */
+.doors{position:fixed;inset:0;z-index:10;display:flex;pointer-events:none;}
+.door{width:50%;height:100%;
+background:linear-gradient(180deg,#1a120a,#090603);
+border-right:1px solid rgba(212,175,55,0.4);
+box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
+transform:translateX(0);transition: transform 2.6s cubic-bezier(.77,0,.18,1);}
+.door.right{border-right:none;border-left:1px solid rgba(212,175,55,0.4);}
+.doors.open .door.left{transform:translateX(-100%);}
+.doors.open .door.right{transform:translateX(100%);}
 
-    * { box-sizing: border-box; }
+/* Vault Lobby */
+.vault{width:92%;max-width:500px;
+background:linear-gradient(180deg,#160f09,#0b0704);
+border:1px solid rgba(212,175,55,0.5);
+border-radius:18px;padding:30px;
+box-shadow:0 0 60px rgba(212,175,55,0.18),inset 0 0 30px rgba(0,0,0,0.6);
+text-align:center;
+opacity:0;transform:scale(0.96);transition:opacity 1.2s ease, transform 1.2s ease;}
+.vault.visible{opacity:1;transform:scale(1);}
 
-    body {
-      margin: 0;
-      font-family: 'Inter', system-ui, sans-serif;
-      background: radial-gradient(circle at top, #1c130a, #080503 70%);
-      color: var(--text-light);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
+h1{color:var(--gold);margin-bottom:20px;}
 
-    /* === VAULT DOORS === */
-    .doors {
-      position: fixed;
-      inset: 0;
-      z-index: 10;
-      display: flex;
-      pointer-events: none;
-    }
-
-    .door {
-      width: 50%;
-      height: 100%;
-      background:
-        linear-gradient(180deg, #1a120a, #090603);
-      border-right: 1px solid rgba(212,175,55,0.4);
-      box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
-      transform: translateX(0);
-      transition: transform 2.6s cubic-bezier(.77,0,.18,1);
-    }
-
-    .door.right {
-      border-right: none;
-      border-left: 1px solid rgba(212,175,55,0.4);
-    }
-
-    .doors.open .door.left {
-      transform: translateX(-100%);
-    }
-
-    .doors.open .door.right {
-      transform: translateX(100%);
-    }
-
-    /* === VAULT CONTENT === */
-    .vault {
-      width: 92%;
-      max-width: 440px;
-      background: linear-gradient(180deg, #160f09, #0b0704);
-      border: 1px solid rgba(212, 175, 55, 0.5);
-      border-radius: 18px;
-      padding: 40px 32px;
-      box-shadow:
-        0 0 60px rgba(212, 175, 55, 0.18),
-        inset 0 0 30px rgba(0, 0, 0, 0.6);
-      text-align: center;
-      opacity: 0;
-      transform: scale(0.96);
-      transition: opacity 1.2s ease, transform 1.2s ease;
-    }
-
-    .vault.visible {
-      opacity: 1;
-      transform: scale(1);
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 1.6rem;
-      letter-spacing: 1px;
-      color: var(--gold);
-    }
-
-    .subtitle {
-      margin-top: 6px;
-      font-size: 0.85rem;
-      opacity: 0.7;
-    }
-
-    .divider {
-      height: 1px;
-      margin: 26px 0;
-      background: linear-gradient(to right, transparent, var(--gold), transparent);
-    }
-
-    .label {
-      font-size: 0.75rem;
-      letter-spacing: 1px;
-      opacity: 0.6;
-      margin-top: 18px;
-    }
-
-    .value {
-      font-size: 1.15rem;
-      margin-top: 6px;
-    }
-
-    .balance {
-      font-size: 2.2rem;
-      font-weight: 600;
-      color: var(--gold);
-      margin-top: 10px;
-    }
-
-    .seal {
-      margin-top: 30px;
-      font-size: 0.7rem;
-      opacity: 0.35;
-      letter-spacing: 2px;
-    }
-  </style>
+.game-buttons{display:flex;flex-direction:column;gap:15px;}
+button{padding:14px 24px;border-radius:12px;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;transition:0.3s;font-size:1rem;}
+button:hover{background:rgba(212,175,55,0.1);box-shadow:0 0 12px rgba(212,175,55,0.3);}
+.exit-btn{margin-top:20px;}
+</style>
 </head>
 <body>
 
-  <!-- Vault Doors -->
-  <div class="doors" id="doors">
-    <div class="door left"></div>
-    <div class="door right"></div>
-    <button class="exit-btn" onclick="exitVault()">Exit Vault</button>
-  </div>
+<!-- Vault Doors -->
+<div class="doors" id="doors">
+  <div class="door left"></div>
+  <div class="door right"></div>
+</div>
 
-  <!-- Vault Content -->
-  <div class="vault" id="vault">
-    <h1>Members Vault</h1>
-    <div class="subtitle">Private Reserve</div>
+<!-- Vault Lobby -->
+<div class="vault" id="vault">
+<h1>Golden Vault — Casino Lobby</h1>
 
-    <div class="divider"></div>
+<div class="game-buttons">
+  <button onclick="goToGame('blackjack.html')">🂡 Blackjack</button>
+  <button onclick="goToGame('roulette.html')">🎰 Roulette</button>
+  <button onclick="goToGame('poker.html')">🃏 Poker</button>
+</div>
 
-    <div class="label">VAULT ID</div>
-    <div class="value">VAULT-A7F3C9</div>
+<button class="exit-btn" onclick="exitVault()">Exit Vault</button>
+</div>
 
-    <div class="label">VAULT BALANCE</div>
-    <div class="balance">$0.00</div>
+<script>
+const doors=document.getElementById('doors');
+const vault=document.getElementById('vault');
 
-    <div class="seal">THE IVORY LEDGER</div>
-  </div>
+// Open vault doors on load
+setTimeout(()=>doors.classList.add('open'),600);
+setTimeout(()=>vault.classList.add('visible'),2000);
 
-  <script>
-    // Dramatic vault entrance timing
-    setTimeout(() => {
-      document.getElementById('doors').classList.add('open');
-    }, 600);
+// Exit vault
+function exitVault(){
+  vault.classList.remove('visible');
+  setTimeout(()=>doors.classList.remove('open'),400);
+  setTimeout(()=>window.location.href="index.html",2600);
+}
 
-    setTimeout(() => {
-      document.getElementById('vault').classList.add('visible');
-    }, 2000);
-  </script>
-
+// Navigate to game with doors animation
+function goToGame(url){
+  vault.classList.remove('visible');
+  setTimeout(()=>doors.classList.remove('open'),400);
+  setTimeout(()=>window.location.href=url,2600);
+}
+</script>
 </body>
 </html>
