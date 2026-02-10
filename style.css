@@ -558,3 +558,22 @@ a { color: var(--gold); text-decoration: none; }
   color: #ff6b6b;
   text-align: center;
 }
+
+/* ===== FORCE VAULT BACKGROUND ===== */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+body.vault-bg {
+  min-height: 100vh;
+  background-image: url("./background.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
