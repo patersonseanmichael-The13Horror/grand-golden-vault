@@ -1,71 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Members Vault — GOLDENVAULT</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
-</head>
+  <meta charset="UTF-8" />
+  <title>Members Vault</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-<body class="vault-page">
-
-<!-- TOP BAR -->
-<header class="topbar">
-  <div class="logo">GOLDENVAULT</div>
-  <nav class="vault-nav">
-    <a href="#" id="logoutBtn">Logout</a>
-  </nav>
-</header>
-
-<!-- MEMBERS VAULT HERO -->
-<section class="landing-hero" style="background:url('images/bull-gold.jpg') center/cover no-repeat;">
-  <h1>Members Vault</h1>
-  <p>
-    Beyond these doors lies wealth, discipline, and legacy.  
-    The Bull watches. The Vault remembers.
-  </p>
-</section>
-
-<!-- WALLET INFO -->
-<section class="vault-wallet">
-  <div>Vault ID: <span id="vaultId"></span></div>
-  <div>Name: <span id="vaultName"></span></div>
-  <div>Balance: <span id="vaultBalance"></span></div>
-  <div>Tier: <span id="vaultTier"></span></div>
-</section>
-
-<!-- DEPOSIT BUTTONS -->
-<section class="vault-deposit">
-  <h3>Deposit GOLD</h3>
-  <button onclick="deposit(50)">Deposit 50 GOLD</button>
-  <button onclick="deposit(100)">Deposit 100 GOLD</button>
-</section>
-
-<!-- LEDGER HISTORY -->
-<section class="vault-ledger">
-  <h3>Ledger History</h3>
-  <div id="ledger"></div>
-</section>
-
-<!-- LIVE FAKE FEED -->
-<div class="member-feed" id="feedBox"></div>
-
-<!-- FIREBASE -->
-<script type="module">
-  import { auth } from "./firebase.js";
-  import {
-    onAuthStateChanged
-  } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      window.location.href = "login.html";
+  <style>
+    :root {
+      --gold: #d4af37;
+      --text-light: #eae6dc;
+      --bg-dark: #0b0704;
+      --panel: #140e09;
     }
-  });
-</script>
 
-<!-- MEMBERS JS -->
-<script src="members.js"></script>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, sans-serif;
+      background:
+        radial-gradient(circle at top, #1c130a, #080503 70%);
+      color: var(--text-light);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .vault {
+      width: 92%;
+      max-width: 440px;
+      background: linear-gradient(180deg, #160f09, #0b0704);
+      border: 1px solid rgba(212, 175, 55, 0.5);
+      border-radius: 18px;
+      padding: 40px 32px;
+      box-shadow:
+        0 0 60px rgba(212, 175, 55, 0.18),
+        inset 0 0 30px rgba(0, 0, 0, 0.6);
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.6rem;
+      letter-spacing: 1px;
+      color: var(--gold);
+    }
+
+    .subtitle {
+      margin-top: 6px;
+      font-size: 0.85rem;
+      opacity: 0.7;
+    }
+
+    .divider {
+      height: 1px;
+      margin: 26px 0;
+      background: linear-gradient(
+        to right,
+        transparent,
+        rgba(212, 175, 55, 0.8),
+        transparent
+      );
+    }
+
+    .label {
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+      opacity: 0.6;
+      margin-top: 18px;
+    }
+
+    .value {
+      font-size: 1.15rem;
+      margin-top: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .balance {
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: var(--gold);
+      margin-top: 10px;
+    }
+
+    .seal {
+      margin-top: 30px;
+      font-size: 0.7rem;
+      opacity: 0.35;
+      letter-spacing: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="vault">
+    <h1>Members Vault</h1>
+    <div class="subtitle">Private Reserve</div>
+
+    <div class="divider"></div>
+
+    <div class="label">VAULT ID</div>
+    <div class="value">VAULT-A7F3C9</div>
+
+    <div class="label">VAULT BALANCE</div>
+    <div class="balance">$0.00</div>
+
+    <div class="seal">THE IVORY LEDGER</div>
+  </div>
 
 </body>
 </html>
