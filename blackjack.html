@@ -105,7 +105,7 @@
   <script>
     const doors = document.getElementById('doors');
     const vault = document.getElementById('vault');
-    let balanceEl = document.getElementById('balance');
+    let balance = parseInt(localStorage.getItem('goldenVaultBalance')) || 1000;
     let playerCardsEl = document.getElementById('player-cards');
     let dealerCardsEl = document.getElementById('dealer-cards');
     let messageEl = document.getElementById('message');
