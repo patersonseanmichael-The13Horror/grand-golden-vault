@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Wallet — Golden Vault</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+:root {
+  --gold: #d4af37;
+  --text-light: #eae6dc;
+  --bg-dark: #080503;
+  --panel: #140e09;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;}
+body{
+  background: radial-gradient(circle at top,#1c130a,#080503 70%);
+  color: var(--text-light);
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+
+/* Vault Doors */
+.doors{position:fixed;inset:0;z-index:10;display:flex;pointer-events:none;}
+.door{width:50%;height:100%;background:linear-gradient(180deg,#1a120a,#090603);
+border-right:1px solid rgba(212,175,55,0.4);
+box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
+transform:translateX(0);transition: transform 2.6s cubic-bezier(.77,0,.18,1);}
+.door.right{border-right:none;border-left:1px solid rgba(212,175,55,0.4);}
+.doors.open .door.left{transform:translateX(-100%);}
+.doors.open .door.right{transform:translateX(100%);}
+
+/* Vault Content */
+.vault{
+  width:92%;max-width:400px;
+  background:linear-gradient(180deg,#160f09,#0b0704);
+  border:1px solid rgba(212,175,55,0.5);
+  border-radius:18px;padding:30px;
+  box-shadow:0 0 60px rgba(212,175,55,0.18),inset 0 0 30px rgba(0,0,0,0.6);
+  text-align:center;
+  opacity:0;transform:scale(0.96);transition:opacity 1.2s ease, transform 1.2s ease;
+}
+.vault.visible{opacity:1;transform:scale(1);}
+
+h1{color:var(--gold);margin-bottom:20px;}
+.balance{font-size:1.5rem;color:var(--gold);margin-bottom:15px;}
+input{padding:10px 14px;border-radius:8px;border:1px solid var(--gold);background:transparent;color:var(--text-light);width:80%;margin-bottom:12px;}
+button{padding:10px 20px;border-radius:8px;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;transition:0.3s;}
+button:hover{background:rgba(212,175,55,0.1);box-shadow:0 0 12px rgba(212,175,55,0.3);}
+.exit-btn{margin-top:20px;}
+.message{margin-top:12px;height:24px;font-size:1rem;}
+</style>
+</head>
+<body>
+
+<!-- Vault Doors -->
+<div class="doors" id="doors">
+  <div class="door left"></div>
+  <div class="door right"></div>
+</div>
+
+<!-- Vault Content -->
+<div class="vault" id="vault">
+<h1>Wallet — Golden Vault</h1>
+<div class="balance" id="balance">$1000</div>
+
+<input type="number" id="deposit-amount" placeholder="Deposit amount" />
+<br/>
+<button onclick="deposit()">Deposit</button>
+
+<div class="message" id="message"></div>
+
+<button class="exit-btn" onclick="exitVault()">Exit Vault</button>
+</div>
+
+<script>
+const doors=document.getElementById('doors');
+const vault=document.getElementById('vault');
+const balanceEl=document.getElementById('balance');
+const messageEl=document.getElementById('message');
+
+let balance=1000;
+
+// Vault open animation
+setTimeout(()=>doors.classList.add('open'),600);
+setTimeout(()=>vault.classList.add('visible'),2000);
+
+// Exit vault
+function exitVault(){
+  vault.classList.remove('visible');
+  setTimeout(()=>doors.classList.remove('open'),400);
+  setTimeout(()=>window.location.href="members.html",2600);
+}
+
+// Deposit function
+function deposit(){
+  let amount=parseInt(document.getElementById('deposit-amount').value);
+  if(isNaN(amount) || amount<=0){
+    messageEl.textContent="Enter a valid amount";
+    return;
+  }
+  balance+=amount;
+  balanceEl.textContent="$"+balance;
+  messageEl.textContent="Deposited $"+amount;
+  document.getElementById('deposit-amount').value="";
+}
+</script>
+</body>
+</html>
