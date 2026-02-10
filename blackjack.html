@@ -207,7 +207,9 @@
       // Adjust balance
       if(result.includes("win")) balance+=bet;
       else if(result.includes("lose")) balance-=bet;
-      balanceEl.textContent="$"+balance;
+      balance += payout; // or -= loss
+localStorage.setItem('goldenVaultBalance', balance);
+balanceEl.textContent = "$" + balance;
 
       messageEl.textContent=result;
       gameOver=true;
