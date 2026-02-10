@@ -505,7 +505,6 @@ a { color: var(--gold); text-decoration: none; }
 /* VAULT BACKGROUND */
 .vault-bg {
   min-height: 100vh;
-  background: url("background.jpg") center / cover no-repeat;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -569,7 +568,6 @@ html, body {
 
 body.vault-bg {
   min-height: 100vh;
-  background-image: url("./background.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -585,8 +583,22 @@ html, body {
 }
 
 body.vault-bg {
-  background-image: url("./images/background.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+}
+
+/* ===== LOGIN PAGE BACKGROUND (FINAL) ===== */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body.vault-bg {
+  min-height: 100vh;
+  background: url("./images/background.jpg") center / cover no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
