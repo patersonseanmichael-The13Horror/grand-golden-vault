@@ -577,3 +577,16 @@ body.vault-bg {
   justify-content: center;
   align-items: center;
 }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body.vault-bg {
+  background-image: url("./images/background.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
