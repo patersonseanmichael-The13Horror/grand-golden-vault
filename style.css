@@ -588,6 +588,24 @@ body.vault-bg {
   background-repeat: no-repeat;
 }
 
+.exit-btn {
+  margin-top: 26px;
+  background: transparent;
+  border: 1px solid rgba(212,175,55,0.6);
+  color: var(--gold);
+  padding: 10px 22px;
+  border-radius: 30px;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.exit-btn:hover {
+  background: rgba(212,175,55,0.1);
+  box-shadow: 0 0 12px rgba(212,175,55,0.3);
+}
+
 /* ===== LOGIN PAGE BACKGROUND (FINAL) ===== */
 html, body {
   margin: 0;
