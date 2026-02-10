@@ -1,1 +1,33 @@
+<h1>Welcome to Your Vault</h1>
+<p id="vaultTier">Tier: Initiate</p>
 
+<a href="upgrade.html" class="upgrade-btn">Upgrade Vault</a>
+
+<h2>Vault Upgrades</h2>
+
+<div class="tier">
+  <h3>Bronze Vault</h3>
+  <button>Upgrade</button>
+</div>
+
+<div class="tier">
+  <h3>Silver Vault</h3>
+  <button>Upgrade</button>
+</div>
+
+<div class="tier">
+  <h3>Gold Vault</h3>
+  <button>Upgrade</button>
+</div>
+
+<script type="module">
+  import { auth } from "./firebase.js";
+  import { onAuthStateChanged } from
+    "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      window.location.href = "login.html";
+    }
+  });
+</script>
