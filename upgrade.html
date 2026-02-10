@@ -1,3 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vault Upgrade</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="vault-page">
+
 <h1>Welcome to Your Vault</h1>
 <p id="vaultTier">Tier: Initiate</p>
 
@@ -24,10 +34,13 @@
   import { auth } from "./firebase.js";
   import { onAuthStateChanged } from
     "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-
+  
   onAuthStateChanged(auth, (user) => {
     if (!user) {
       window.location.href = "login.html";
     }
   });
 </script>
+
+</body>
+</html>
