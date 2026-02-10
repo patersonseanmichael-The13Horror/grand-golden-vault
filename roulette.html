@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Roulette — Golden Vault</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    :root {
+      --gold: #d4af37;
+      --text-light: #eae6dc;
+      --bg-dark: #0b0704;
+      --panel: #140e09;
+      --wheel-size: 250px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;}
+    body{
+      background: radial-gradient(circle at top,#1c130a,#080503 70%);
+      color: var(--text-light);
+      min-height:100vh;
+      display:flex;align-items:center;justify-content:center;
+      overflow:hidden;
+    }
+
+    /* Vault Doors */
+    .doors{
+      position:fixed;inset:0;z-index:10;display:flex;pointer-events:none;
+    }
+    .door{
+      width:50%;height:100%;
+      background:linear-gradient(180deg,#1a120a,#090603);
+      border-right:1px solid rgba(212,175,55,0.4);
+      box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
+      transform:translateX(0);
+      transition: transform 2.6s cubic-bezier(.77,0,.18,1);
+    }
+    .door.right{border-right:none;border-left:1px solid rgba(212,175,55,0.4);}
+    .doors.open .door.left{transform:translateX(-100%);}
+    .doors.open .door.right{transform:translateX(100%);}
+
+    /* Vault Content */
+    .vault{
+      width:92%;max-width:500px;
+      background:linear-gradient(180deg,#160f09,#0b0704);
+      border:1px solid rgba(212,175,55,0.5);
+      border-radius:18px;
+      padding:30px;
+      box-shadow:0 0 60px rgba(212,175,55,0.18),inset 0 0 30px rgba(0,0,0,0.6);
+      text-align:center;
+      opacity:0;transform:scale(0.96);transition:opacity 1.2s ease, transform 1.2s ease;
+    }
+    .vault.visible{opacity:1;transform:scale(1);}
+
+    h1{color:var(--gold);margin-bottom:10px;}
+    .balance{font-size:1.5rem;color:var(--gold);margin-bottom:15px;}
+    .wheel-container{position:relative;width:var(--wheel-size);height:var(--wheel-size);margin:0 auto;}
+    .wheel{
+      width:100%;height:100%;border-radius:50%;border:4px solid var(--gold);
+      display:flex;align-items:center;justify-content:center;
+      position:relative;
+      transition: transform 3s cubic-bezier(.77,0,.18,1);
+    }
+    .wheel div{position:absolute;width:100%;height:50%;display:flex;align-items:flex-start;justify-content:center;font-size:0.65rem;color:#fff;}
+    .wheel div span{transform:translateY(-50%) rotate(0deg);}
+    .bets{margin-top:15px;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;}
+    button{padding:8px 14px;border-radius:6px;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;transition:0.3s;}
+    button:hover{background:rgba(212,175,55,0.1);box-shadow:0 0 12px rgba(212,175,55,0.3);}
+    .message{margin-top:12px;height:24px;}
+    .exit-btn{margin-top:20px;}
+  </style>
+</head>
+<body>
+
+  <!-- Vault Doors -->
+  <div class="doors" id="doors">
+    <div class="door left"></div>
+    <div class="door right"></div>
+  </div>
+
+  <!-- Vault Content -->
+  <div class="vault" id="vault">
+    <h1>Roulette — Golden Vault</h1>
+    <div class="balance" id="balance">$1000</div>
+
+    <div class="wheel-container">
+      <div class="wheel" id="wheel"></div>
+    </div>
+
+    <div class="bets">
+      <button onclick="placeBet('red')">Red</button>
+      <button onclick="placeBet('black')">Black</button>
+      <button onclick="placeBet('green')">0</button>
+    </div>
+
+    <div class="message" id="message"></div>
+
+    <button class="exit-btn" onclick="exitVault()">Exit Vault</button>
+  </div>
+
+  <script>
+    const doors = document.getElementById('doors');
+    const vault = document.getElementById('vault');
+    const wheel = document.getElementById('wheel');
+    const balanceEl = document.getElementById('balance');
+    const messageEl = document.getElementById('message');
+
+    let balance = 1000;
+    let spinning=false;
+
+    // Vault open
+    setTimeout(()=>doors.classList.add('open'),600);
+    setTimeout(()=>vault.classList.add('visible'),2000);
+
+    // Exit
+    function exitVault(){
+      vault.classList.remove('visible');
+      setTimeout(()=>doors.classList.remove('open'),400);
+      setTimeout(()=>window.location.href="members.html",2600);
+    }
+
+    // Build wheel numbers (0-36)
+    const wheelNumbers = [];
+    for(let i=0;i<=36;i++) wheelNumbers.push(i);
+    const redNumbers = [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
+    wheel.innerHTML='';
+    wheelNumbers.forEach(n=>{
+      let div=document.createElement('div');
+      div.style.transform=`rotate(${(n/37)*360}deg)`;
+      div.innerHTML=`<span>${n}</span>`;
+      wheel.appendChild(div);
+    });
+
+    function getColor(n){
+      if(n===0) return 'green';
+      return redNumbers.includes(n)?'red':'black';
+    }
+
+    function placeBet(choice){
+      if(spinning){messageEl.textContent="Wait for spin to finish"; return;}
+      let betAmount = 50;
+      if(balance<betAmount){messageEl.textContent="Not enough balance"; return;}
+      balance-=betAmount;
+      balanceEl.textContent="$"+balance;
+      spinning=true;
+      messageEl.textContent="Spinning...";
+
+      // Spin
+      let spins = Math.floor(Math.random()*360)+720;
+      wheel.style.transition='transform 3s cubic-bezier(.77,0,.18,1)';
+      wheel.style.transform=`rotate(${spins}deg)`;
+
+      setTimeout(()=>{
+        let finalAngle = spins%360;
+        let winningIndex = Math.floor(finalAngle/360*37);
+        let winningNumber = 36 - winningIndex; // reverse
+        let color = getColor(winningNumber);
+        let win=false;
+        if(choice==='red' && color==='red') win=true;
+        else if(choice==='black' && color==='black') win=true;
+        else if(choice==='green' && color==='green') win=true;
+        let payout = (choice==='green')?17*betAmount:2*betAmount;
+        if(win){
+          balance+=payout;
+          messageEl.textContent=`${winningNumber} ${color}! You win $${payout}`;
+        } else {
+          messageEl.textContent=`${winningNumber} ${color}! You lose`;
+        }
+        balanceEl.textContent="$"+balance;
+        spinning=false;
+      },3100);
+    }
+  </script>
+
+</body>
+</html>
