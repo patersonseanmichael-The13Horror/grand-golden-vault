@@ -74,35 +74,43 @@ button:hover{background:rgba(212,175,55,0.1);box-shadow:0 0 12px rgba(212,175,55
 </div>
 
 <script>
-const doors=document.getElementById('doors');
-const vault=document.getElementById('vault');
-const balanceEl=document.getElementById('balance');
-const messageEl=document.getElementById('message');
+const doors = document.getElementById('doors');
+const vault = document.getElementById('vault');
+const balanceEl = document.getElementById('balance');
+const messageEl = document.getElementById('message');
 
-let balance=1000;
-
-// Vault open animation
-setTimeout(()=>doors.classList.add('open'),600);
-setTimeout(()=>vault.classList.add('visible'),2000);
-
-// Exit vault
-function exitVault(){
-  vault.classList.remove('visible');
-  setTimeout(()=>doors.classList.remove('open'),400);
-  setTimeout(()=>window.location.href="members.html",2600);
+if (!localStorage.getItem('goldenVaultBalance')) {
+  localStorage.setItem('goldenVaultBalance', '1000');
 }
 
-// Deposit function
-function deposit(){
-  let amount=parseInt(document.getElementById('deposit-amount').value);
-  if(isNaN(amount) || amount<=0){
-    messageEl.textContent="Enter a valid amount";
+function updateBalanceDisplay() {
+  balanceEl.textContent = "$" + localStorage.getItem('goldenVaultBalance');
+}
+
+updateBalanceDisplay();
+
+// Vault animation
+setTimeout(() => doors.classList.add('open'), 600);
+setTimeout(() => vault.classList.add('visible'), 2000);
+
+function exitVault() {
+  vault.classList.remove('visible');
+  setTimeout(() => doors.classList.remove('open'), 400);
+  setTimeout(() => window.location.href="members.html", 2600);
+}
+
+function deposit() {
+  let amount = parseInt(document.getElementById('deposit-amount').value);
+  if (isNaN(amount) || amount <= 0) {
+    messageEl.textContent = "Enter a valid amount";
     return;
   }
-  balance+=amount;
-  balanceEl.textContent="$"+balance;
-  messageEl.textContent="Deposited $"+amount;
-  document.getElementById('deposit-amount').value="";
+  let balance = parseInt(localStorage.getItem('goldenVaultBalance'));
+  balance += amount;
+  localStorage.setItem('goldenVaultBalance', balance);
+  updateBalanceDisplay();
+  messageEl.textContent = "Deposited $" + amount;
+  document.getElementById('deposit-amount').value = "";
 }
 </script>
 </body>
