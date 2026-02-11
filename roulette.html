@@ -15,11 +15,22 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;}
 body{
-  background: radial-gradient(circle at top,#1c130a,#080503 70%);
-  color: var(--text-light);
-  min-height:100vh;
-  display:flex;align-items:center;justify-content:center;
+  background: url('https://i.ibb.co/6b7f0fL/vegas-casino.jpg') no-repeat center center fixed;
+  background-size: cover;
   overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  min-height:100vh;
+  position:relative;
+}
+
+/* Vignette overlay to highlight the wheel */
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  background: radial-gradient(circle at center, rgba(0,0,0,0.0) 55%, rgba(0,0,0,0.75) 100%);
+  pointer-events:none;
+  z-index:1;
 }
 
 /* Vault Doors */
@@ -33,6 +44,7 @@ body{
   box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
   transform:translateX(0);
   transition: transform 2.6s cubic-bezier(.77,0,.18,1);
+  z-index:11;
 }
 .door.right{border-right:none;border-left:1px solid rgba(212,175,55,0.4);}
 .doors.open .door.left{transform:translateX(-100%);}
@@ -43,14 +55,16 @@ body{
   width:95%; max-width:1200px;
   max-height:90vh;
   overflow-y:auto;
-  background:linear-gradient(180deg,#160f09,#0b0704);
+  background:linear-gradient(180deg,rgba(22,15,9,0.9),rgba(11,7,4,0.9));
   border:2px solid rgba(212,175,55,0.6);
   border-radius:20px;
   padding:30px;
-  box-shadow:0 0 100px rgba(212,175,55,0.4), inset 0 0 40px rgba(0,0,0,0.6);
+  box-shadow:0 0 120px rgba(212,175,55,0.4), inset 0 0 40px rgba(0,0,0,0.6);
   text-align:center;
   opacity:0; transform:scale(0.96);
   transition:opacity 1.2s ease, transform 1.2s ease;
+  position:relative;
+  z-index:2;
 }
 .vault.visible{opacity:1;transform:scale(1);}
 h1{color:var(--gold);margin-bottom:10px;}
@@ -63,6 +77,8 @@ h1{color:var(--gold);margin-bottom:10px;}
   border-radius:50%;
   box-shadow:0 0 30px rgba(212,175,55,0.5) inset,0 0 60px rgba(212,175,55,0.3);
   background: radial-gradient(circle at center, #222 0%, #111 70%);
+  position:relative;
+  z-index:2;
 }
 
 /* Table layout */
@@ -70,6 +86,8 @@ h1{color:var(--gold);margin-bottom:10px;}
   margin:20px auto;
   display:flex;flex-wrap:wrap;justify-content:center;gap:4px;
   max-width:600px;
+  position:relative;
+  z-index:2;
 }
 .cell{
   width:50px;height:50px;display:flex;align-items:center;justify-content:center;
@@ -89,13 +107,15 @@ button{
   cursor:pointer;
   transition:0.3s;
   margin:5px;
+  position:relative;
+  z-index:2;
 }
 button:hover{
   background:rgba(212,175,55,0.1);
   box-shadow:0 0 12px rgba(212,175,55,0.3);
 }
 .exit-btn{margin-top:20px;}
-.message{margin-top:12px;height:24px;font-size:1.1rem;}
+.message{margin-top:12px;height:24px;font-size:1.1rem;position:relative;z-index:2;}
 </style>
 </head>
 <body>
@@ -152,13 +172,8 @@ segments.forEach((num,i)=>{
 function drawWheel(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    // Dark felt background
-    ctx.fillStyle = "#0c0b0a";
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-
     const segAngle = (2*Math.PI)/segments.length;
 
-    // Draw wheel segments with metallic gradient & reflection
     for(let i=0;i<segments.length;i++){
         ctx.beginPath();
         ctx.moveTo(centerX,centerY);
@@ -174,20 +189,18 @@ function drawWheel(){
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        // Draw glowing numbers
         ctx.save();
         ctx.translate(centerX,centerY);
         ctx.rotate(angle+(i+0.5)*segAngle);
         ctx.textAlign = "right";
         ctx.fillStyle = "#fff";
         ctx.shadowColor = "#ffd700";
-        ctx.shadowBlur = 10;
+        ctx.shadowBlur = 12;
         ctx.font = "20px Arial Black";
         ctx.fillText(segments[i], radius-20,10);
         ctx.restore();
     }
 
-    // Center knob
     ctx.beginPath();
     ctx.arc(centerX,centerY,20,0,2*Math.PI);
     ctx.fillStyle = "#555";
@@ -195,7 +208,6 @@ function drawWheel(){
     ctx.strokeStyle = "#222";
     ctx.stroke();
 
-    // Pointer
     ctx.beginPath();
     ctx.moveTo(centerX, centerY-radius-10);
     ctx.lineTo(centerX-15, centerY-radius+20);
@@ -204,7 +216,6 @@ function drawWheel(){
     ctx.fillStyle = "red";
     ctx.fill();
 
-    // Ball
     const ballX = centerX + Math.cos(ballAngle)*(radius-25);
     const ballY = centerY + Math.sin(ballAngle)*(radius-25);
     ctx.beginPath();
@@ -220,21 +231,18 @@ function spinWheel(){
     if(spinning) return;
     spinning = true;
 
-    let spinVelocity = Math.random()*0.35 + 0.25; // wheel speed
+    let spinVelocity = Math.random()*0.35 + 0.25;
     let spinDecay = 0.993;
-
-    // Ball opposite direction with bounce effect
     ballSpeed = -spinVelocity*1.7;
     ballAngle = angle;
 
-    let bounceAmplitude = Math.random()*0.04 + 0.03; // ball bouncing effect
+    let bounceAmplitude = Math.random()*0.04 + 0.03;
     let bounceDirection = 1;
 
     function animate(){
         spinVelocity *= spinDecay;
         angle += spinVelocity;
 
-        // Ball bounce simulation
         ballSpeed *= 0.995;
         ballAngle += ballSpeed + Math.sin(Date.now()*0.005)*bounceAmplitude*bounceDirection;
 
@@ -244,7 +252,6 @@ function spinWheel(){
             requestAnimationFrame(animate);
         } else {
             spinning = false;
-            // Determine final segment
             const segAngle = (2*Math.PI)/segments.length;
             const index = Math.floor(((2*Math.PI - angle%(2*Math.PI))/segAngle))%segments.length;
             document.getElementById('message').innerText = "The ball landed on: " + segments[index];
@@ -257,7 +264,6 @@ function spinWheel(){
 drawWheel();
 document.getElementById('spinBtn').addEventListener('click', spinWheel);
 
-// Vault door animation
 window.addEventListener('load',()=>{
     document.getElementById('doors').classList.add('open');
     document.getElementById('vault').classList.add('visible');
