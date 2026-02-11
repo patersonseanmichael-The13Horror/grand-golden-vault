@@ -1,235 +1,183 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Ultra Vegas Roulette — Golden Vault</title>
+<meta charset="UTF-8" />
+<title>Roulette — Golden Vault</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <style>
 :root {
   --gold: #d4af37;
   --text-light: #eae6dc;
   --bg-dark: #0b0704;
-  --table-green: #0a3b0a;
-  --wheel-size: 300px;
-  --chip-size: 24px;
-  --ball-size: 14px;
+  --felt: #0a3d1b;
+  --wheel-size: 280px;
+  --chip-size: 20px;
 }
-*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;}
-body{
+* {box-sizing:border-box; margin:0; padding:0; font-family:'Inter',sans-serif;}
+body {
   background: radial-gradient(circle at top,#1c130a,#080503 70%);
   color: var(--text-light);
   min-height:100vh;
-  display:flex;align-items:center;justify-content:center;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
   overflow:hidden;
 }
-
-/* Vault Doors */
 .doors{
-  position:fixed;inset:0;z-index:10;display:flex;pointer-events:none;
+  position:fixed; inset:0; z-index:10; display:flex; pointer-events:none;
 }
 .door{
-  width:50%;height:100%;
-  background:linear-gradient(180deg,#1a120a,#090603);
+  width:50%; height:100%; background:linear-gradient(180deg,#1a120a,#090603);
   border-right:1px solid rgba(212,175,55,0.4);
   box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
-  transform:translateX(0);
-  transition: transform 2.6s cubic-bezier(.77,0,.18,1);
+  transform:translateX(0); transition: transform 2.6s cubic-bezier(.77,0,.18,1);
 }
-.door.right{border-right:none;border-left:1px solid rgba(212,175,55,0.4);}
+.door.right{border-right:none; border-left:1px solid rgba(212,175,55,0.4);}
 .doors.open .door.left{transform:translateX(-100%);}
 .doors.open .door.right{transform:translateX(100%);}
-
-/* Vault Content */
 .vault{
-  width:95%;max-width:600px;
-  background:linear-gradient(180deg,#160f09,#0b0704);
-  border:1px solid rgba(212,175,55,0.5);
-  border-radius:18px;
-  padding:20px 30px;
-  box-shadow:0 0 60px rgba(212,175,55,0.18),inset 0 0 30px rgba(0,0,0,0.6);
-  text-align:center;
-  opacity:0;transform:scale(0.96);transition:opacity 1.2s ease, transform 1.2s ease;
+  width:95%; max-width:800px;
+  background: linear-gradient(180deg,#160f09,#0b0704);
+  border:1px solid rgba(212,175,55,0.5); border-radius:18px;
+  padding:20px; box-shadow:0 0 60px rgba(212,175,55,0.18),inset 0 0 30px rgba(0,0,0,0.6);
+  text-align:center; opacity:0; transform:scale(0.96); transition: opacity 1.2s ease, transform 1.2s ease;
 }
-.vault.visible{opacity:1;transform:scale(1);}
-h1{color:var(--gold);margin-bottom:10px;}
-.balance{font-size:1.5rem;color:var(--gold);margin-bottom:15px;}
-
-.table-container{
-  position:relative;
-  width:100%;
-  height: var(--wheel-size);
-  margin:20px auto;
-}
+.vault.visible{opacity:1; transform:scale(1);}
+h1{color:var(--gold); margin-bottom:10px;}
+.balance{font-size:1.5rem;color:var(--gold); margin-bottom:15px;}
+.table-container{display:flex; justify-content:center; gap:20px; flex-wrap:wrap;}
+.wheel-container{position:relative; width:var(--wheel-size); height:var(--wheel-size); margin-bottom:15px;}
 .wheel{
-  width:var(--wheel-size);
-  height:var(--wheel-size);
-  border-radius:50%;
-  border:6px solid var(--gold);
-  position:relative;
-  transform: rotate(0deg);
-  transition: transform 3s cubic-bezier(.77,0,.18,1);
-  box-shadow: 0 0 30px rgba(212,175,55,0.5) inset;
+  width:100%; height:100%; border-radius:50%; border:5px solid var(--gold);
+  position:relative; display:flex; align-items:center; justify-content:center;
+  background: radial-gradient(circle at center, #222 40%, #111 100%);
+  transition: transform 4s cubic-bezier(.77,0,.18,1);
 }
-.wheel-number{
-  position:absolute;
-  width:50%;
-  height:50%;
-  top:50%;
-  left:50%;
-  display:flex;
-  justify-content:flex-start;
-  align-items:center;
-  font-size:0.75rem;
-  font-weight:bold;
-  color:#fff;
-  transform-origin:0 0;
+.wheel div{position:absolute; width:50%; height:50%; display:flex; align-items:flex-start; justify-content:center; font-size:0.65rem; color:#fff; font-weight:bold;}
+.wheel div span{transform:translateY(-50%) rotate(0deg);}
+.table{
+  background: var(--felt); padding:15px; border-radius:12px; min-width:250px;
+  display:flex; flex-wrap:wrap; justify-content:center; gap:3px;
 }
-.wheel-number.red{color:#ff4c4c;}
-.wheel-number.black{color:#000;}
-.wheel-number.green{color:#00ff00;}
-
-.ball{
-  width: var(--ball-size);
-  height: var(--ball-size);
-  background: #fff;
-  border-radius:50%;
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform: translate(-50%,-50%);
-  box-shadow:0 0 8px #fff;
+.table div{width:40px; height:40px; display:flex; align-items:center; justify-content:center;
+  border-radius:4px; cursor:pointer; font-weight:bold; font-size:0.9rem; color:#fff;
+  transition: transform 0.2s;
 }
-
-.bets{margin-top:15px;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;}
-button{padding:8px 14px;border-radius:6px;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;transition:0.3s;}
-button:hover{background:rgba(212,175,55,0.1);box-shadow:0 0 12px rgba(212,175,55,0.3);}
-.message{margin-top:12px;height:24px;}
-.exit-btn{margin-top:20px;}
-
+.table div.red{background:#d32f2f;}
+.table div.black{background:#000;}
+.table div.green{background:#2ecc71;}
+.table div:hover{transform: scale(1.2);}
+.bets{margin-top:10px; display:flex; flex-wrap:wrap; justify-content:center; gap:6px;}
+button{padding:8px 14px; border-radius:6px; border:1px solid var(--gold); background:transparent; color:var(--gold); cursor:pointer; transition:0.3s;}
+button:hover{background:rgba(212,175,55,0.1); box-shadow:0 0 12px rgba(212,175,55,0.3);}
+.message{margin-top:12px;height:24px; font-weight:bold;}
+.exit-btn{margin-top:15px;}
 .chip{
-  width: var(--chip-size);
-  height: var(--chip-size);
-  border-radius:50%;
-  position:absolute;
-  border:2px solid #fff;
-  display:flex;align-items:center;justify-content:center;
-  font-size:0.7rem;
-  color:#fff;
-  pointer-events:none;
-  box-shadow:0 0 4px #000;
+  width:var(--chip-size); height:var(--chip-size); border-radius:50%;
+  position:absolute; background: radial-gradient(circle at top, #f00 60%, #900 100%);
+  border:2px solid #fff; display:flex; align-items:center; justify-content:center;
+  font-size:0.6rem; color:#fff; pointer-events:none;
 }
 </style>
 </head>
-<body>
-
-<div class="doors" id="doors">
+<body><div class="doors" id="doors">
   <div class="door left"></div>
   <div class="door right"></div>
-</div>
-
-<div class="vault" id="vault">
-  <h1>Ultra Vegas Roulette — Golden Vault</h1>
-  <div class="balance" id="balance">$1000</div>
-
-  <div class="table-container">
+</div><div class="vault" id="vault">
+<h1>Roulette — Golden Vault</h1>
+<div class="balance" id="balance">$1000</div>
+<div class="table-container">
+  <div class="wheel-container">
     <div class="wheel" id="wheel"></div>
-    <div class="ball" id="ball"></div>
   </div>
-
-  <div class="bets">
-    <button onclick="placeBet('red')">Red</button>
-    <button onclick="placeBet('black')">Black</button>
-    <button onclick="placeBet('green')">0</button>
-  </div>
-
-  <div class="message" id="message"></div>
-
-  <button class="exit-btn" onclick="exitVault()">Exit Vault</button>
+  <div class="table" id="table"></div>
+</div><div class="bets">
+  <button onclick="placeBet('red')">Red</button>
+  <button onclick="placeBet('black')">Black</button>
+  <button onclick="placeBet('green')">0</button>
+  <button onclick="spinWheel()">Spin</button>
 </div>
-
-<script>
-// Elements
+<div class="message" id="message"></div>
+<button class="exit-btn" onclick="exitVault()">Exit Vault</button>
+</div><script>
 const doors = document.getElementById('doors');
 const vault = document.getElementById('vault');
 const wheel = document.getElementById('wheel');
-const ball = document.getElementById('ball');
 const balanceEl = document.getElementById('balance');
+const tableEl = document.getElementById('table');
 const messageEl = document.getElementById('message');
 
 let balance = 1000;
-balanceEl.textContent = "$"+balance;
-let spinning=false;
+balanceEl.textContent = "$" + balance;
+let bets = [];
+let spinning = false;
 
-// Vault open
 setTimeout(()=>doors.classList.add('open'),600);
 setTimeout(()=>vault.classList.add('visible'),2000);
 
-// Exit
 function exitVault(){
   vault.classList.remove('visible');
   setTimeout(()=>doors.classList.remove('open'),400);
-  setTimeout(()=>window.location.href="members.html",2600);
+  setTimeout(()=>window.location.href='members.html',2600);
 }
 
-// Wheel numbers and colors
-const wheelNumbers = Array.from({length:37},(_,i)=>i);
+const numbers = Array.from({length:37},(_,i)=>i);
 const redNumbers = [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
-wheelNumbers.forEach((n,i)=>{
-  const div=document.createElement('div');
-  div.className='wheel-number '+(n===0?'green':redNumbers.includes(n)?'red':'black');
+
+numbers.forEach(n=>{
+  const div = document.createElement('div');
   div.textContent=n;
-  const angle = (i/37)*360;
-  div.style.transform = `rotate(${angle}deg) translateX(50%) rotate(-${angle}deg)`;
-  wheel.appendChild(div);
+  div.className = n===0?'green':(redNumbers.includes(n)?'red':'black');
+  div.onclick=()=>addBet(n);
+  tableEl.appendChild(div);
 });
 
-// Sounds
-const soundChip=new Audio('https://cdn.jsdelivr.net/gh/seanpaterson/goldenvault-assets/chip_place.mp3');
-const soundSpin=new Audio('https://cdn.jsdelivr.net/gh/seanpaterson/goldenvault-assets/wheel_spin.mp3');
-const soundWin=new Audio('https://cdn.jsdelivr.net/gh/seanpaterson/goldenvault-assets/win_ping.mp3');
-
-function placeBet(color){
-  if(spinning){messageEl.textContent="Wait for spin"; return;}
-  let betAmount=50;
-  if(balance<betAmount){messageEl.textContent="Not enough balance"; return;}
-  balance -= betAmount;
+function addBet(n){
+  if(spinning){messageEl.textContent='Wait for spin'; return;}
+  let amount = 50;
+  if(balance<amount){messageEl.textContent='Not enough balance'; return;}
+  balance -= amount;
   balanceEl.textContent="$"+balance;
-  messageEl.textContent="Spinning...";
-  spinning=true;
+  bets.push({number:n,amount});
+  messageEl.textContent=`Bet placed on ${n}`;
+}
 
-  soundSpin.currentTime=0; soundSpin.play();
+function placeBet(choice){
+  if(spinning){messageEl.textContent='Wait for spin'; return;}
+  let amount = 50;
+  if(balance<amount){messageEl.textContent='Not enough balance'; return;}
+  balance -= amount;
+  balanceEl.textContent="$"+balance;
+  bets.push({choice,amount});
+  messageEl.textContent=`Bet placed on ${choice}`;
+}
 
-  const spins = Math.floor(Math.random()*360)+720;
+function spinWheel(){
+  if(spinning || bets.length===0){messageEl.textContent='Place a bet first'; return;}
+  spinning = true;
+  messageEl.textContent='Spinning...';
+
+  let spins = Math.floor(Math.random()*360)+720;
   wheel.style.transition='transform 4s cubic-bezier(.77,0,.18,1)';
   wheel.style.transform=`rotate(${spins}deg)`;
 
-  let finalIndex = Math.floor(Math.random()*37);
-  const winningNumber = finalIndex;
-  const winningColor = winningNumber===0?'green':redNumbers.includes(winningNumber)?'red':'black';
+  setTimeout(()=>{
+    let finalAngle = spins%360;
+    let winningIndex = Math.floor(finalAngle/360*37);
+    let winningNumber = 36 - winningIndex;
+    let color = winningNumber===0?'green':(redNumbers.includes(winningNumber)?'red':'black');
 
-  // Ball animation
-  const spinDuration = 4000;
-  const startTime = performance.now();
-  function animateBall(time){
-    const t=(time-startTime)/spinDuration;
-    if(t>1){
-      soundSpin.pause();
-      soundWin.currentTime=0; soundWin.play();
-      let payout = color===winningColor? betAmount*2 : 0;
-      if(color===winningColor) balance+=payout;
-      balanceEl.textContent="$"+balance;
-      messageEl.textContent=`Winning: ${winningNumber} ${winningColor}! ${payout?`You win $${payout}`:"You lose"}`;
-      spinning=false;
-      ball.style.transform='translate(-50%,-50%)';
-      return;
-    }
-    const angle = t*720 + (winningNumber/37)*360;
-    ball.style.transform = `translate(-50%,-50%) rotate(${angle}deg) translateX(130px) rotate(-${angle}deg)`;
-    requestAnimationFrame(animateBall);
-  }
-  requestAnimationFrame(animateBall);
+    let winnings=0;
+    bets.forEach(b=>{
+      if(typeof b.number!=='undefined' && b.number===winningNumber) winnings+=b.amount*35;
+      if(b.choice==='red' && color==='red') winnings+=b.amount*2;
+      if(b.choice==='black' && color==='black') winnings+=b.amount*2;
+      if(b.choice==='green' && color==='green') winnings+=b.amount*36;
+    });
+
+    balance += winnings;
+    balanceEl.textContent="$"+balance;
+    messageEl.textContent=`Winning: ${winningNumber} ${color}. You won $${winnings}`;
+    bets=[];
+    spinning=false;
+  },4100);
 }
-</script>
-
-</body>
+</script></body>
 </html>
