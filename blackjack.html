@@ -119,6 +119,7 @@ updateBalanceDisplay();
   messageEl.textContent = result;
   gameOver = true;
 }
+    const balanceEl = document.getElementById('balance');
     const doors = document.getElementById('doors');
     const vault = document.getElementById('vault');
     let balance = parseInt(localStorage.getItem('goldenVaultBalance')) || 0;
