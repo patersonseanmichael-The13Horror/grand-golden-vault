@@ -241,3 +241,27 @@ export function initSlots() {
 
   console.log("Platinum Vegas Slots Initialized!");
 }
+
+function createReelTexture(symbols, rows=6) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 128;
+  canvas.height = 128 * rows;
+  const ctx = canvas.getContext('2d');
+
+  ctx.fillStyle = "#080503"; // background dark
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.font = "100px Arial";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  for (let i = 0; i < rows; i++) {
+    const sym = symbols[Math.floor(Math.random()*symbols.length)];
+    ctx.fillStyle = "#FFD700"; // gold color
+    ctx.fillText(sym, canvas.width/2, 64 + i*128);
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  return texture;
+}
