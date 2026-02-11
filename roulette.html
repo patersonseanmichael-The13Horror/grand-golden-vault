@@ -2,15 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Roulette — Golden Vault</title>
+<title>Ultra Vegas Roulette — Golden Vault</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <style>
 :root {
   --gold: #d4af37;
   --text-light: #eae6dc;
   --bg-dark: #0b0704;
+  --table-green: #0a3b0a;
   --wheel-size: 300px;
-  --number-size: 40px;
+  --chip-size: 24px;
+  --ball-size: 14px;
 }
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;}
 body{
@@ -18,8 +20,10 @@ body{
   color: var(--text-light);
   min-height:100vh;
   display:flex;align-items:center;justify-content:center;
-  overflow:auto;padding:20px;
+  overflow:hidden;
 }
+
+/* Vault Doors */
 .doors{
   position:fixed;inset:0;z-index:10;display:flex;pointer-events:none;
 }
@@ -34,12 +38,14 @@ body{
 .door.right{border-right:none;border-left:1px solid rgba(212,175,55,0.4);}
 .doors.open .door.left{transform:translateX(-100%);}
 .doors.open .door.right{transform:translateX(100%);}
+
+/* Vault Content */
 .vault{
-  width:100%;max-width:700px;
+  width:95%;max-width:600px;
   background:linear-gradient(180deg,#160f09,#0b0704);
   border:1px solid rgba(212,175,55,0.5);
-  border-radius:20px;
-  padding:30px;
+  border-radius:18px;
+  padding:20px 30px;
   box-shadow:0 0 60px rgba(212,175,55,0.18),inset 0 0 30px rgba(0,0,0,0.6);
   text-align:center;
   opacity:0;transform:scale(0.96);transition:opacity 1.2s ease, transform 1.2s ease;
@@ -47,223 +53,183 @@ body{
 .vault.visible{opacity:1;transform:scale(1);}
 h1{color:var(--gold);margin-bottom:10px;}
 .balance{font-size:1.5rem;color:var(--gold);margin-bottom:15px;}
-.wheel-container{
-  position:relative;width:var(--wheel-size);height:var(--wheel-size);margin:0 auto;
-  border-radius:50%;border:4px solid var(--gold);overflow:hidden;
-  background:radial-gradient(circle at center,#2c1c0f,#0b0704);
-  box-shadow:0 0 40px rgba(212,175,55,0.8);
+
+.table-container{
+  position:relative;
+  width:100%;
+  height: var(--wheel-size);
+  margin:20px auto;
 }
 .wheel{
-  width:100%;height:100%;border-radius:50%;position:absolute;top:0;left:0;
-  transition: transform 4s cubic-bezier(.33,.1,.35,1);
+  width:var(--wheel-size);
+  height:var(--wheel-size);
+  border-radius:50%;
+  border:6px solid var(--gold);
+  position:relative;
+  transform: rotate(0deg);
+  transition: transform 3s cubic-bezier(.77,0,.18,1);
+  box-shadow: 0 0 30px rgba(212,175,55,0.5) inset;
 }
-.segment{
-  position:absolute;width:50%;height:50%;top:50%;left:50%;
-  transform-origin:0% 0%;
-  display:flex;align-items:flex-start;justify-content:flex-start;
+.wheel-number{
+  position:absolute;
+  width:50%;
+  height:50%;
+  top:50%;
+  left:50%;
+  display:flex;
+  justify-content:flex-start;
+  align-items:center;
+  font-size:0.75rem;
+  font-weight:bold;
+  color:#fff;
+  transform-origin:0 0;
 }
-.segment span{
-  transform: translateX(20%) translateY(-20%) rotate(0deg);
-  font-size:0.65rem;font-weight:bold;color:#fff;
-  text-shadow:0 0 4px rgba(0,0,0,0.7);
-}
+.wheel-number.red{color:#ff4c4c;}
+.wheel-number.black{color:#000;}
+.wheel-number.green{color:#00ff00;}
+
 .ball{
-  position:absolute;width:16px;height:16px;border-radius:50%;background:white;
-  top:50%; left:50%; transform:translate(-50%,-50%);
-  box-shadow:0 0 15px #fff, 0 0 25px #fff;
-  z-index:2;
-  pointer-events:none;
+  width: var(--ball-size);
+  height: var(--ball-size);
+  background: #fff;
+  border-radius:50%;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform: translate(-50%,-50%);
+  box-shadow:0 0 8px #fff;
 }
-.pointer{
-  position:absolute;width:8px;height:20px;background:var(--gold);
-  top:-10px;left:50%;transform:translateX(-50%);
-  border-radius:4px;box-shadow:0 0 15px gold;
-  z-index:3;animation:blink 1s infinite;
-}
-@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
-.table{
-  margin-top:20px;
-  display:grid; grid-template-columns: repeat(12, var(--number-size));
-  justify-content:center; gap:2px;
-  background:repeating-radial-gradient(circle,#003300,#004400 2px,#003300 4px);
-  padding:10px; border-radius:8px; box-shadow:inset 0 0 20px rgba(0,0,0,0.6);
-}
-.number{
-  width:var(--number-size); height:var(--number-size);
-  display:flex;align-items:center;justify-content:center;
-  border-radius:4px; cursor:pointer; font-weight:bold; color:#fff;
-  position:relative; transition: box-shadow 0.3s, transform 0.3s;
-}
-.number.red{background:#d33;}
-.number.black{background:#222;}
-.number.green{background:#0b5;}
-.chip{
-  position:absolute;width:20px;height:20px;border-radius:50%;top:-10px;left:50%;transform:translateX(-50%) scale(0);
-  box-shadow:0 0 12px #ffd700; animation:drop 0.5s forwards;
-  z-index:4;
-}
-.chip.gold{background:radial-gradient(circle,#d4af37,#b58930);}
-.chip.silver{background:radial-gradient(circle,#c0c0c0,#aaa);}
-.chip.red{background:radial-gradient(circle,#f33,#b00);}
-.chip.blue{background:radial-gradient(circle,#33f,#00b);}
-@keyframes drop{0%{transform:translateX(-50%) scale(0);}50%{transform:translateX(-50%) scale(1.2);}100%{transform:translateX(-50%) scale(1);}}
-.number.winner{animation:flash 1s ease-in-out 0s 3;}
-@keyframes flash{0%,100%{box-shadow:0 0 20px gold;}50%{box-shadow:0 0 40px gold;}}
+
+.bets{margin-top:15px;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;}
+button{padding:8px 14px;border-radius:6px;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;transition:0.3s;}
+button:hover{background:rgba(212,175,55,0.1);box-shadow:0 0 12px rgba(212,175,55,0.3);}
 .message{margin-top:12px;height:24px;}
 .exit-btn{margin-top:20px;}
+
+.chip{
+  width: var(--chip-size);
+  height: var(--chip-size);
+  border-radius:50%;
+  position:absolute;
+  border:2px solid #fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.7rem;
+  color:#fff;
+  pointer-events:none;
+  box-shadow:0 0 4px #000;
+}
 </style>
 </head>
 <body>
 
-<div class="doors" id="doors"><div class="door left"></div><div class="door right"></div></div>
+<div class="doors" id="doors">
+  <div class="door left"></div>
+  <div class="door right"></div>
+</div>
 
 <div class="vault" id="vault">
-  <h1>Roulette — Golden Vault</h1>
-  <div class="balance" id="balance">$0</div>
+  <h1>Ultra Vegas Roulette — Golden Vault</h1>
+  <div class="balance" id="balance">$1000</div>
 
-  <div class="wheel-container">
+  <div class="table-container">
     <div class="wheel" id="wheel"></div>
     <div class="ball" id="ball"></div>
-    <div class="pointer"></div>
   </div>
 
-  <div class="bet-container">
-    <button onclick="setBet(10)">$10</button>
-    <button onclick="setBet(25)">$25</button>
-    <button onclick="setBet(50)">$50</button>
-    <button onclick="setBet(100)">$100</button>
-    <button onclick="spinWheel()">Spin</button>
+  <div class="bets">
+    <button onclick="placeBet('red')">Red</button>
+    <button onclick="placeBet('black')">Black</button>
+    <button onclick="placeBet('green')">0</button>
   </div>
-
-  <div class="table" id="table"></div>
 
   <div class="message" id="message"></div>
+
   <button class="exit-btn" onclick="exitVault()">Exit Vault</button>
 </div>
 
 <script>
-// Wallet and elements
-const WALLET_KEY="goldenVaultBalance";
-const doors=document.getElementById('doors');
-const vault=document.getElementById('vault');
-const wheel=document.getElementById('wheel');
-const ball=document.getElementById('ball');
-const tableEl=document.getElementById('table');
-const balanceEl=document.getElementById('balance');
-const messageEl=document.getElementById('message');
+// Elements
+const doors = document.getElementById('doors');
+const vault = document.getElementById('vault');
+const wheel = document.getElementById('wheel');
+const ball = document.getElementById('ball');
+const balanceEl = document.getElementById('balance');
+const messageEl = document.getElementById('message');
 
-let balance=parseInt(localStorage.getItem(WALLET_KEY))||1000;
-balanceEl.textContent="$"+balance;
-let betAmount=10;
-let selectedNumbers={};
+let balance = 1000;
+balanceEl.textContent = "$"+balance;
 let spinning=false;
 
-// Sounds
-const soundChip = new Audio('https://cdn.jsdelivr.net/gh/seanpaterson/goldenvault-assets/chip_place.mp3');
-const soundSpin = new Audio('https://cdn.jsdelivr.net/gh/seanpaterson/goldenvault-assets/wheel_spin.mp3');
-const soundWin = new Audio('https://cdn.jsdelivr.net/gh/seanpaterson/goldenvault-assets/win_ping.mp3');
-
+// Vault open
 setTimeout(()=>doors.classList.add('open'),600);
 setTimeout(()=>vault.classList.add('visible'),2000);
 
+// Exit
 function exitVault(){
   vault.classList.remove('visible');
   setTimeout(()=>doors.classList.remove('open'),400);
   setTimeout(()=>window.location.href="members.html",2600);
 }
 
-// Wheel numbers
-const redNumbers=[1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
-const wheelNumbers=[...Array(37).keys()];
-
-// Build table
-wheelNumbers.forEach(n=>{
-  const nDiv=document.createElement('div');
-  nDiv.className='number '+(n===0?'green':redNumbers.includes(n)?'red':'black');
-  nDiv.textContent=n;
-  nDiv.onclick=()=>toggleNumber(n,nDiv);
-  tableEl.appendChild(nDiv);
+// Wheel numbers and colors
+const wheelNumbers = Array.from({length:37},(_,i)=>i);
+const redNumbers = [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
+wheelNumbers.forEach((n,i)=>{
+  const div=document.createElement('div');
+  div.className='wheel-number '+(n===0?'green':redNumbers.includes(n)?'red':'black');
+  div.textContent=n;
+  const angle = (i/37)*360;
+  div.style.transform = `rotate(${angle}deg) translateX(50%) rotate(-${angle}deg)`;
+  wheel.appendChild(div);
 });
 
-// Set bet
-function setBet(amount){
-  betAmount=amount;
-  messageEl.textContent="Bet: $"+amount;
-}
+// Sounds
+const soundChip=new Audio('https://cdn.jsdelivr.net/gh/seanpaterson/goldenvault-assets/chip_place.mp3');
+const soundSpin=new Audio('https://cdn.jsdelivr.net/gh/seanpaterson/goldenvault-assets/wheel_spin.mp3');
+const soundWin=new Audio('https://cdn.jsdelivr.net/gh/seanpaterson/goldenvault-assets/win_ping.mp3');
 
-// Place / remove chips
-function toggleNumber(n,el){
-  if(selectedNumbers[n]){
-    delete selectedNumbers[n]; 
-    el.querySelectorAll('.chip').forEach(ch=>ch.remove());
-  } else {
-    selectedNumbers[n]={amount:betAmount,count:1};
-    const chip=document.createElement('div');
-    chip.className='chip '+getChipColor(betAmount); 
-    el.appendChild(chip);
-    soundChip.currentTime = 0;
-    soundChip.play();
-  }
-}
-
-// Chip color
-function getChipColor(amount){
-  switch(amount){case 10:return 'gold'; case 25:return 'silver'; case 50:return 'red'; case 100:return 'blue'; default:return 'gold';}
-}
-
-// Spin wheel
-function spinWheel(){
-  if(spinning){messageEl.textContent="Wait"; return;}
-  if(Object.keys(selectedNumbers).length===0){messageEl.textContent="Select numbers first"; return;}
-  let totalBet=Object.values(selectedNumbers).reduce((a,b)=>a+b.amount,0);
-  if(balance<totalBet){messageEl.textContent="Not enough balance"; return;}
-  balance-=totalBet;
+function placeBet(color){
+  if(spinning){messageEl.textContent="Wait for spin"; return;}
+  let betAmount=50;
+  if(balance<betAmount){messageEl.textContent="Not enough balance"; return;}
+  balance -= betAmount;
   balanceEl.textContent="$"+balance;
-  spinning=true;
   messageEl.textContent="Spinning...";
-  soundSpin.currentTime=0;
-  soundSpin.play();
+  spinning=true;
 
-  const spinDuration=4000;
-  const startTime=performance.now();
-  const finalIndex=Math.floor(Math.random()*37);
-  const winningNumber=finalIndex;
-  const winningColor=winningNumber===0?'green':redNumbers.includes(winningNumber)?'red':'black';
+  soundSpin.currentTime=0; soundSpin.play();
 
+  const spins = Math.floor(Math.random()*360)+720;
+  wheel.style.transition='transform 4s cubic-bezier(.77,0,.18,1)';
+  wheel.style.transform=`rotate(${spins}deg)`;
+
+  let finalIndex = Math.floor(Math.random()*37);
+  const winningNumber = finalIndex;
+  const winningColor = winningNumber===0?'green':redNumbers.includes(winningNumber)?'red':'black';
+
+  // Ball animation
+  const spinDuration = 4000;
+  const startTime = performance.now();
   function animateBall(time){
     const t=(time-startTime)/spinDuration;
     if(t>1){
       soundSpin.pause();
-      soundWin.currentTime=0;
-      soundWin.play();
-      messageEl.textContent=`Winning: ${winningNumber} ${winningColor}! ${selectedNumbers[winningNumber]?'You win!':'You lose!'}`;
-      if(selectedNumbers[winningNumber]) balance+=selectedNumbers[winningNumber].amount*36;
+      soundWin.currentTime=0; soundWin.play();
+      let payout = color===winningColor? betAmount*2 : 0;
+      if(color===winningColor) balance+=payout;
       balanceEl.textContent="$"+balance;
-      localStorage.setItem(WALLET_KEY,balance);
+      messageEl.textContent=`Winning: ${winningNumber} ${winningColor}! ${payout?`You win $${payout}`:"You lose"}`;
       spinning=false;
-      document.querySelectorAll('.chip').forEach(ch=>ch.remove());
-      selectedNumbers={};
       ball.style.transform='translate(-50%,-50%)';
-      highlightWinner(winningNumber);
       return;
     }
-    const easeOut=Math.pow(1-t,0.5);
-    const angle=360*t*6 + (winningNumber/37)*360*easeOut;
-    wheel.style.transform=`rotate(${t*360*3}deg)`;
-    ball.style.transform=`translate(-50%,-50%) rotate(${angle}deg) translateX(130px) rotate(-${angle}deg)`;
+    const angle = t*720 + (winningNumber/37)*360;
+    ball.style.transform = `translate(-50%,-50%) rotate(${angle}deg) translateX(130px) rotate(-${angle}deg)`;
     requestAnimationFrame(animateBall);
   }
   requestAnimationFrame(animateBall);
 }
-
-// Highlight winner
-function highlightWinner(num){
-  const numEl=document.querySelectorAll('.number')[num];
-  if(numEl){
-    numEl.classList.add('winner');
-    setTimeout(()=>numEl.classList.remove('winner'),4000);
-  }
-}
 </script>
+
 </body>
 </html>
