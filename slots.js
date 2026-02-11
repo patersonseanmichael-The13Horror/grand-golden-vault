@@ -213,3 +213,24 @@ function animate(){
     renderer.render(scene,camera);
 }
 animate();
+
+// Floor
+const floorGeo = new THREE.PlaneGeometry(50, 30);
+const floorMat = new THREE.MeshPhongMaterial({ color: 0x3b0b0b, shininess: 50 });
+const floor = new THREE.Mesh(floorGeo, floorMat);
+floor.rotation.x = -Math.PI/2;
+floor.position.y = -1;
+scene.add(floor);
+
+// Chandeliers
+function addChandelier(x, y, z) {
+    const sphere = new THREE.Mesh(
+        new THREE.SphereGeometry(1, 32, 32),
+        new THREE.MeshStandardMaterial({ color: 0xffd700, emissive: 0xffaa00, emissiveIntensity: 1.5 })
+    );
+    sphere.position.set(x, y, z);
+    scene.add(sphere);
+}
+addChandelier(-10, 12, -5);
+addChandelier(10, 12, -5);
+addChandelier(0, 12, 5);
