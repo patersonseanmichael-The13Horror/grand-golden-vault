@@ -172,11 +172,21 @@
     renderHands();
     if (handValue(player) === 21) stand();
   }
+    
+    function renderHands(showDealer = gameOver)
+  playerCardsEl.innerHTML = player
+    .map(c => `<div class="card">${c}</div>`)
+    .join("");
 
-  function renderHands() {
-    playerCardsEl.innerHTML = player.map(c => `<div class="card">${c}</div>`).join("");
-    dealerCardsEl.innerHTML = dealer.map(c => `<div class="card">${c}</div>`).join("");
-  }
+  dealerCardsEl.innerHTML = dealer
+    .map((c, i) => {
+      if (!showDealer && i === 0) {
+        return `<div class="card">🂠</div>`;
+      }
+      return `<div class="card">${c}</div>`;
+    })
+    .join("");
+}
 
   function hit() {
     if (gameOver) return;
