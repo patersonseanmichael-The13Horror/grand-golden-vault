@@ -153,6 +153,11 @@ body{
 }
 .exit-btn:hover::after{left:125%;}
 .exit-btn:hover{background:rgba(212,175,55,0.1);box-shadow:0 0 12px rgba(212,175,55,0.3);}
+
+/* SLOTS SECTION */
+#slots-section{
+  width:100%; height:600px; margin-top:30px; position:relative; display:none; border:2px solid var(--gold); border-radius:12px; overflow:hidden;
+}
 </style>
 </head>
 <body>
@@ -176,6 +181,19 @@ body{
     <div class="card" onclick="goToGame('blackjack.html')">🂡<br>Blackjack</div>
     <div class="card" onclick="goToGame('roulette.html')">🎰<br>Roulette</div>
     <div class="card" onclick="goToGame('poker.html')">🃏<br>Poker</div>
+    <div class="card" onclick="openSlots()">🎰<br>Platinum Slots</div>
+  </div>
+
+  <!-- SLOTS SECTION -->
+  <div id="slots-section">
+    <div id="game-container"></div>
+    <div id="ui-panel">
+      <button id="spinBtn">Spin</button>
+      <button id="autoSpinBtn">AutoSpin</button>
+      <button id="doubleUpBtn">Double Up</button>
+      <span>Balance: $<span id="balance">1000</span></span>
+      <button onclick="closeSlots()" style="position:absolute;top:20px;left:20px;padding:10px 15px;">Back to Vault</button>
+    </div>
   </div>
 
   <div class="vip-section">
@@ -190,6 +208,7 @@ body{
   <button class="exit-btn" onclick="exitVault()">Exit Vault</button>
 </div>
 
+<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
@@ -272,6 +291,27 @@ function updateLiveFeed(){
 
 updateLiveFeed();
 setInterval(updateLiveFeed, 30*60*1000);
+
+// ----- SLOTS FUNCTIONS -----
+function openSlots(){
+  document.querySelector('.game-cards').style.display='none';
+  document.getElementById('slots-section').style.display='block';
+  document.getElementById('slots-section').scrollIntoView({behavior:'smooth'});
+  if(typeof initSlots==='function') initSlots();
+}
+
+function closeSlots(){
+  document.getElementById('slots-section').style.display='none';
+  document.querySelector('.game-cards').style.display='grid';
+}
 </script>
+
+<!-- THREE.JS & GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r153/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/gsap.min.js"></script>
+
+<!-- PLATINUM SLOTS JS -->
+<script type="module" src="slots.js"></script>
+
 </body>
 </html>
