@@ -157,7 +157,7 @@
     startGame();
   }
 
-  function startGame() {
+  function startGame() { 
     gameOver = false;
     player = [];
     dealer = [];
@@ -171,6 +171,7 @@
 
     renderHands();
     if (handValue(player) === 21) stand();
+    renderHands(false);
   }
     
     function renderHands(showDealer = gameOver)
