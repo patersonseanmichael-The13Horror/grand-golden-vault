@@ -53,4 +53,30 @@ updateLiveFeed();
 // Cycle new players every 30 minutes
 setInterval(updateLiveFeed, 30 * 60 * 1000);
 
+const liveFeed = document.getElementById('liveFeed');
+const playersCount = 6;
+
+function generatePlayerID() {
+  const first = String(Math.floor(Math.random() * 90 + 10));
+  const last = String(Math.floor(Math.random() * 900 + 100));
+  return `${first}*****${last}`;
+}
+
+function updateLiveFeed() {
+  liveFeed.innerHTML = ''; // clear previous
+  const spacing = 40;      // vertical spacing per entry
+  for (let i = 0; i < playersCount; i++) {
+    const p = document.createElement('p');
+    p.textContent = `${generatePlayerID()} just won ${Math.floor(Math.random() * 5000 + 100)} GOLD!`;
+    p.style.top = `${220 + i * spacing}px`; // stagger start position
+    liveFeed.appendChild(p);
+  }
+}
+
+// Initial load
+updateLiveFeed();
+
+// Cycle new players every 30 minutes
+setInterval(updateLiveFeed, 30*60*1000);
+
 </script>
