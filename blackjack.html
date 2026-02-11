@@ -103,135 +103,112 @@
   </div>
 
   <script>
-// Update balance display
-function updateBalanceDisplay() {
+  const doors = document.getElementById('doors');
+  const vault = document.getElementById('vault');
+  const balanceEl = document.getElementById('balance');
+  const playerCardsEl = document.getElementById('player-cards');
+  const dealerCardsEl = document.getElementById('dealer-cards');
+  const messageEl = document.getElementById('message');
+
+  let balance = parseInt(localStorage.getItem('goldenVaultBalance')) || 1000;
+  let deck = [], player = [], dealer = [], bet = 0, gameOver = true;
+
   balanceEl.textContent = "$" + balance;
-}
-updateBalanceDisplay();
 
-  // Adjust balance
-  if (result.includes("win")) balance += bet;
-  else if (result.includes("lose")) balance -= bet;
+  // Vault animation
+  setTimeout(() => doors.classList.add('open'), 600);
+  setTimeout(() => vault.classList.add('visible'), 2000);
 
-  localStorage.setItem('goldenVaultBalance', balance);
-  updateBalanceDisplay();
+  function exitVault() {
+    vault.classList.remove('visible');
+    setTimeout(() => doors.classList.remove('open'), 400);
+    setTimeout(() => window.location.href = "members.html", 2600);
+  }
 
-  messageEl.textContent = result;
-  gameOver = true;
-}
-    const balanceEl = document.getElementById('balance');
-    const doors = document.getElementById('doors');
-    const vault = document.getElementById('vault');
-    let balance = parseInt(localStorage.getItem('goldenVaultBalance')) || 0;
-let deck=[], player=[], dealer=[], bet=0, gameOver=true;
-    let playerCardsEl = document.getElementById('player-cards');
-    let dealerCardsEl = document.getElementById('dealer-cards');
-    let messageEl = document.getElementById('message');
+  function createDeck() {
+    const suits = ["♠","♥","♦","♣"];
+    const values = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
+    deck = [];
+    for (let s of suits) for (let v of values) deck.push(v+s);
+    deck.sort(() => Math.random() - 0.5);
+  }
 
-    // Vault open on load
-    setTimeout(()=>doors.classList.add('open'),600);
-    setTimeout(()=>vault.classList.add('visible'),2000);
+  function cardValue(card) {
+    const v = card.slice(0, -1);
+    if (v === "A") return 11;
+    if (["J","Q","K"].includes(v)) return 10;
+    return parseInt(v);
+  }
 
-    // Vault exit
-    function exitVault(){
-      vault.classList.remove('visible');
-      setTimeout(()=>doors.classList.remove('open'),400);
-      setTimeout(()=>window.location.href="members.html",2600);
+  function handValue(hand) {
+    let val = 0, aces = 0;
+    for (let c of hand) {
+      val += cardValue(c);
+      if (c.startsWith("A")) aces++;
     }
+    while (val > 21 && aces--) val -= 10;
+    return val;
+  }
 
-    // Blackjack logic
-    let deck=[],player=[],dealer=[],bet=0,balance=1000,gameOver=true;
+  function setBet(amount) {
+    if (!gameOver) return messageEl.textContent = "Finish the round first";
+    if (amount > balance) return messageEl.textContent = "Not enough balance";
+    bet = amount;
+    startGame();
+  }
 
-    function createDeck(){
-      const suits=["♠","♥","♦","♣"];
-      const values=["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
-      deck=[];
-      for(let s of suits) for(let v of values) deck.push(v+s);
-      deck=deck.sort(()=>Math.random()-0.5);
-    }
+  function startGame() {
+    gameOver = false;
+    player = [];
+    dealer = [];
+    messageEl.textContent = "";
+    playerCardsEl.innerHTML = "";
+    dealerCardsEl.innerHTML = "";
 
-    function cardValue(card){
-      let v = card.slice(0,-1);
-      if(v=="A") return 11;
-      if(["J","Q","K"].includes(v)) return 10;
-      return parseInt(v);
-    }
+    createDeck();
+    player.push(deck.pop(), deck.pop());
+    dealer.push(deck.pop(), deck.pop());
 
-    function handValue(hand){
-      let val=0, aces=0;
-      for(let c of hand){
-        val+=cardValue(c);
-        if(c.slice(0,-1)=="A") aces++;
-      }
-      while(val>21 && aces>0){val-=10;aces--;}
-      return val;
-    }
+    renderHands();
+    if (handValue(player) === 21) stand();
+  }
 
-    function setBet(amount){
-      if(!gameOver){messageEl.textContent="Finish the round first"; return;}
-      if(amount>balance){messageEl.textContent="Not enough balance"; return;}
-      bet=amount;
-      messageEl.textContent="Bet set: $"+bet;
-      startGame();
-    }
+  function renderHands() {
+    playerCardsEl.innerHTML = player.map(c => `<div class="card">${c}</div>`).join("");
+    dealerCardsEl.innerHTML = dealer.map(c => `<div class="card">${c}</div>`).join("");
+  }
 
-    function startGame(){
-      gameOver=false;
-      player=[]; dealer=[];
-      playerCardsEl.innerHTML="";
-      dealerCardsEl.innerHTML="";
-      createDeck();
-      player.push(deck.pop()); dealer.push(deck.pop());
-      player.push(deck.pop()); dealer.push(deck.pop());
-      renderHands();
-      checkBlackjack();
-    }
+  function hit() {
+    if (gameOver) return;
+    player.push(deck.pop());
+    renderHands();
+    if (handValue(player) > 21) endGame();
+  }
 
-    function renderHands(){
-      playerCardsEl.innerHTML=""; dealerCardsEl.innerHTML="";
-      for(let c of dealer) dealerCardsEl.innerHTML+=`<div class="card">${c}</div>`;
-      for(let c of player) playerCardsEl.innerHTML+=`<div class="card">${c}</div>`;
-    }
+  function stand() {
+    if (gameOver) return;
+    while (handValue(dealer) < 17) dealer.push(deck.pop());
+    renderHands();
+    endGame();
+  }
 
-    function hit(){
-      if(gameOver){messageEl.textContent="Set a bet first"; return;}
-      player.push(deck.pop());
-      renderHands();
-      if(handValue(player)>21) endGame();
-    }
+  function endGame() {
+    const p = handValue(player);
+    const d = handValue(dealer);
+    let result = "Push";
 
-    function stand(){
-      if(gameOver){messageEl.textContent="Set a bet first"; return;}
-      // Dealer logic
-      while(handValue(dealer)<17) dealer.push(deck.pop());
-      renderHands();
-      endGame();
-    }
+    if (p > 21) result = "BUST! You lose";
+    else if (d > 21 || p > d) result = "You win!";
+    else if (p < d) result = "You lose!";
 
-    function checkBlackjack(){
-      if(handValue(player)==21){stand();}
-    }
+    if (result.includes("win")) balance += bet;
+    if (result.includes("lose")) balance -= bet;
 
-    function endGame(){
-      let playerVal=handValue(player);
-      let dealerVal=handValue(dealer);
-      let result="";
-      if(playerVal>21) result="BUST! You lose";
-      else if(dealerVal>21) result="Dealer busts! You win";
-      else if(playerVal>dealerVal) result="You win!";
-      else if(playerVal<dealerVal) result="You lose!";
-      else result="Push";
-
-      // Adjust balance
-      if(result.includes("win")) balance+=bet;
-      else if(result.includes("lose")) balance-=bet;
-      balance += payout; // or -= loss
-localStorage.setItem('goldenVaultBalance', balance);
-balanceEl.textContent = "$" + balance;
-
-      messageEl.textContent=result;
-      gameOver=true;
-    }
-  </script>
+    localStorage.setItem("goldenVaultBalance", balance);
+    balanceEl.textContent = "$" + balance;
+    messageEl.textContent = result;
+    gameOver = true;
+  }
+</script>
 </body>
 </html>
