@@ -234,3 +234,80 @@ function addChandelier(x, y, z) {
 addChandelier(-10, 12, -5);
 addChandelier(10, 12, -5);
 addChandelier(0, 12, 5);
+
+const holdMeshes = [];
+for(let i=0;i<6;i++){
+    const geo = new THREE.BoxGeometry(1.5,1.5,0.5);
+    const mat = new THREE.MeshStandardMaterial({ color: 0x222222, emissive: 0x444444, metalness:0.8, roughness:0.2 });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set(-7+i*3,6,0);
+    scene.add(mesh);
+    holdMeshes.push(mesh);
+}
+
+function updateHoldDisplay() {
+    holdMeshes.forEach((mesh, idx) => {
+        if(holdPositions[idx]===featureSymbol){
+            mesh.material.emissive.setHex(0xffd700);
+        } else {
+            mesh.material.emissive.setHex(0x444444);
+        }
+    });
+}
+
+reels.forEach(reel => {
+    reel.children.forEach(sym => {
+        sym.material.metalness = 1;
+        sym.material.roughness = 0.2;
+        sym.material.emissive = new THREE.Color(0xffd700);
+        sym.material.emissiveIntensity = 0.5;
+    });
+});
+
+function bigWinCinematic(){
+    // Camera tilt + zoom
+    gsap.to(camera.position,{x:0,y:15,z:30,duration:0.8,ease:"power2.inOut"});
+    gsap.to(camera.rotation,{x:-0.1,duration:0.8});
+    setTimeout(()=>{
+        gsap.to(camera.position,{x:0,y:10,z:20,duration:1,ease:"power2.inOut"});
+        gsap.to(camera.rotation,{x:0,duration:1});
+    },1500);
+
+    // Intensify aurora lights
+    auroraLights.forEach(light=>{
+        gsap.to(light,{intensity:4,duration:0.5,yoyo:true,repeat:1});
+    });
+}
+
+function luxurySparkle(position,color=0x00ffcc,count=30){
+    for(let i=0;i<count;i++){
+        const p = new THREE.Mesh(new THREE.SphereGeometry(0.1,6,6),
+            new THREE.MeshBasicMaterial({color: color})
+        );
+        p.position.set(position.x,position.y,position.z);
+        scene.add(p);
+        gsap.to(p.position,{
+            x:position.x+(Math.random()-0.5)*3,
+            y:position.y+Math.random()*3,
+            z:position.z+(Math.random()-0.5)*3,
+            duration:1,
+            onComplete:()=>scene.remove(p)
+        });
+    }
+}
+
+if(winningSymbol.name===featureSymbol){
+    const idx = holdPositions.findIndex(p=>p===null);
+    if(idx>=0){
+        holdPositions[idx]=featureSymbol;
+        updateHoldDisplay(); // Show visually
+        luxurySparkle(reels[i].position,0xffd700,40);
+    }
+}
+
+// Spin sound
+function playSpinSound(){ console.log("Spin sound"); }
+// Coin drop sound
+function playCoinSound(){ console.log("Coin drop"); }
+// Big win sound
+function playBigWin(){ console.log("Big win fanfare"); }
