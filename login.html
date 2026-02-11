@@ -32,12 +32,10 @@
 <button onclick="login()">Login</button>
 
 <script type="module">
-  // 1️⃣ Import Firebase modules from CDN
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } 
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut } 
     from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
-  // 2️⃣ Firebase config
   const firebaseConfig = {
     apiKey: "AIzaSyA4bJmDnapnEFlGggYVIoq2lS3QwHHz4hE",
     authDomain: "grand-golden-vault.firebaseapp.com",
@@ -47,41 +45,50 @@
     appId: "1:969306014666:web:228839a8b7f36e9b808533"
   };
 
-  // 3️⃣ Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
-  // 4️⃣ Signup function
+  // SIGNUP WITH EMAIL VERIFICATION
   window.signup = () => {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
 
-    if(!email || !password){
+    if (!email || !password) {
       alert("Enter both email and password");
       return;
     }
 
     createUserWithEmailAndPassword(auth, email, password)
-      .then(() => {
-        alert("Welcome to Golden Vault!");
-        window.location.href = "members.html";
+      .then((userCredential) => {
+        const user = userCredential.user;
+        sendEmailVerification(user)
+          .then(() => {
+            alert(`Verification email sent to ${email}. Please verify before logging in.`);
+            signOut(auth); // log out until verified
+          });
       })
       .catch(e => alert(e.message));
   };
 
-  // 5️⃣ Login function
+  // LOGIN ONLY IF EMAIL VERIFIED
   window.login = () => {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
 
-    if(!email || !password){
+    if (!email || !password) {
       alert("Enter both email and password");
       return;
     }
 
     signInWithEmailAndPassword(auth, email, password)
-      .then(() => {
-        window.location.href = "members.html";
+      .then((userCredential) => {
+        const user = userCredential.user;
+        if (user.emailVerified) {
+          window.location.href = "members.html";
+        } else {
+          alert("Please verify your email before logging in.");
+          signOut(auth);
+        }
       })
       .catch(e => alert(e.message));
   };
