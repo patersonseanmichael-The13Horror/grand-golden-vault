@@ -202,3 +202,128 @@ document.getElementById('doubleUpBtn').addEventListener('click', () => {
     balanceEl.textContent = balance.toFixed(2);
 });
 
+// Aurora lights: animated neon glow
+const auroraColors = [0xffd700, 0x8a2be2, 0x00ffcc];
+const auroraLights = [];
+
+for (let i = 0; i < 3; i++) {
+    const light = new THREE.PointLight(auroraColors[i], 2, 50, 2);
+    light.position.set(-10 + i * 10, 10, -5);
+    scene.add(light);
+    auroraLights.push(light);
+}
+
+// Animate aurora lights
+function animateAurora() {
+    auroraLights.forEach((light, idx) => {
+        light.position.x = Math.sin(Date.now() * 0.001 + idx) * 10;
+        light.position.z = Math.cos(Date.now() * 0.001 + idx) * 5;
+    });
+    requestAnimationFrame(animateAurora);
+}
+animateAurora();
+
+function coinExplosion(position, amount) {
+    const particleCount = Math.min(Math.floor(amount), 50);
+    for (let i = 0; i < particleCount; i++) {
+        const geometry = new THREE.SphereGeometry(0.2, 8, 8);
+        const material = new THREE.MeshPhongMaterial({ color: 0xffd700 });
+        const coin = new THREE.Mesh(geometry, material);
+
+        coin.position.set(position.x, position.y, position.z);
+        scene.add(coin);
+
+        const targetX = position.x + (Math.random() - 0.5) * 5;
+        const targetY = position.y + Math.random() * 5 + 2;
+        const targetZ = position.z + (Math.random() - 0.5) * 5;
+
+        gsap.to(coin.position, {
+            x: targetX,
+            y: targetY,
+            z: targetZ,
+            duration: 1.2,
+            ease: "power2.out",
+            onComplete: () => { scene.remove(coin); }
+        });
+    }
+}
+
+reels.forEach(reel => {
+    reel.children.forEach(symbolMesh => {
+        symbolMesh.material.emissive = new THREE.Color(0xffd700); // gold glow
+        symbolMesh.material.emissiveIntensity = 0.5;
+    });
+});
+
+// Animate shimmer along symbols
+function animateShimmer() {
+    reels.forEach(reel => {
+        reel.children.forEach(symbolMesh => {
+            const intensity = 0.5 + Math.sin(Date.now() * 0.005 + symbolMesh.position.y) * 0.5;
+            symbolMesh.material.emissiveIntensity = intensity;
+        });
+    });
+    requestAnimationFrame(animateShimmer);
+}
+animateShimmer();
+
+function bigWinCamera() {
+    gsap.to(camera.position, {
+        x: 0,
+        y: 15,
+        z: 25,
+        duration: 1,
+        ease: "power2.inOut",
+        onComplete: () => {
+            gsap.to(camera.position, { x: 0, y: 10, z: 20, duration: 1.5, ease: "power2.inOut" });
+        }
+    });
+}
+
+function dropCoin(value, position) {
+    if (value > 50) {
+        coinExplosion(position, value); // big wins = explosion
+        bigWinCamera();
+        return;
+    }
+
+    const geometry = new THREE.SphereGeometry(0.3, 12, 12);
+    const material = new THREE.MeshPhongMaterial({ color: 0xffd700 });
+    const coin = new THREE.Mesh(geometry, material);
+    coin.position.set(position.x, 15, position.z);
+    scene.add(coin);
+
+    gsap.to(coin.position, {
+        y: 0,
+        duration: 1.2,
+        ease: "bounce.out",
+        onComplete: () => { scene.remove(coin); }
+    });
+}
+
+function featureSparkle(position) {
+    for (let i = 0; i < 20; i++) {
+        const particle = new THREE.Mesh(
+            new THREE.SphereGeometry(0.1, 6, 6),
+            new THREE.MeshBasicMaterial({ color: 0x00ffcc })
+        );
+        particle.position.set(position.x, position.y, position.z);
+        scene.add(particle);
+
+        gsap.to(particle.position, {
+            x: position.x + (Math.random() - 0.5) * 2,
+            y: position.y + Math.random() * 3,
+            z: position.z + (Math.random() - 0.5) * 2,
+            duration: 1,
+            onComplete: () => { scene.remove(particle); }
+        });
+    }
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+    animateShimmer();
+    animateAurora();
+    renderer.render(scene, camera);
+}
+animate();
