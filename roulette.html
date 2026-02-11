@@ -9,7 +9,7 @@
   --gold:#d4af37;
   --text-light:#eae6dc;
   --bg-dark:#0b0704;
-  --panel:#140e09;
+  --wheel-size:400px;
 }
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;}
 body{
@@ -20,36 +20,83 @@ body{
   justify-content:center;
   align-items:center;
   overflow:hidden;
-  position:relative;
 }
 .vault{
-  width:95%;max-width:900px;
+  width:95%;max-width:1000px;
   background:linear-gradient(180deg,#160f09,#0b0704);
-  border:2px solid rgba(212,175,55,0.7);
+  border:3px solid rgba(212,175,55,0.9);
   border-radius:18px;
   padding:20px;
-  box-shadow:0 0 80px rgba(212,175,55,0.3), inset 0 0 30px rgba(0,0,0,0.6);
+  box-shadow:0 0 120px rgba(212,175,55,0.5), inset 0 0 50px rgba(0,0,0,0.8);
   text-align:center;
-  position:relative;
-  z-index:5;
 }
-h1{color:var(--gold);margin-bottom:10px;font-size:1.6rem;}
-.balance{font-size:1.5rem;color:var(--gold);margin-bottom:15px;}
-.grid{display:grid;grid-template-columns:repeat(3,50px);gap:2px;margin:15px auto;border:3px solid #d4af37;border-radius:6px;position:relative;}
-.grid button{width:50px;height:50px;border-radius:4px;border:1px solid #d4af37;cursor:pointer;font-size:0.9rem;font-weight:bold;color:#fff;position:relative;}
+h1{color:var(--gold);margin-bottom:10px;font-size:1.8rem;text-shadow:0 0 12px #ffd700;}
+.balance{font-size:1.6rem;color:var(--gold);margin-bottom:15px;text-shadow:0 0 8px #ffd700;}
+.bets{margin:10px 0;}
+.bet{padding:8px 14px;border-radius:6px;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;transition:0.3s;margin:2px;}
+.bet:hover{box-shadow:0 0 18px #ffd700;}
+.message{margin-top:12px;height:28px;font-weight:bold;font-size:1.1rem;text-shadow:0 0 6px #ffd700;}
+.exit-btn{margin-top:15px;padding:8px 14px;border:1px solid var(--gold);border-radius:6px;background:transparent;color:var(--gold);cursor:pointer;transition:0.3s;}
+.exit-btn:hover{box-shadow:0 0 18px #ffd700;}
+.wheel-container{
+  position:relative;margin:20px auto;
+  width:var(--wheel-size);
+  height:var(--wheel-size);
+  border-radius:50%;
+  background:radial-gradient(circle at center,#080503,#1a120a 70%);
+  border:6px solid var(--gold);
+  box-shadow:0 0 40px #ffd700 inset;
+}
+.wheel{
+  width:100%;height:100%;
+  border-radius:50%;
+  position:relative;
+  overflow:hidden;
+}
+.slot{
+  width:50%;height:50%;
+  position:absolute;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  font-size:0.7rem;
+  color:#fff;
+  font-weight:bold;
+  text-shadow:0 0 4px #000;
+}
+.ball{
+  width:18px;height:18px;
+  border-radius:50%;
+  background:#fff;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  box-shadow:0 0 15px #fff,0 0 8px inset #ccc;
+  z-index:10;
+  transition:0.2s;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,60px);
+  gap:4px;
+  margin:15px auto;
+  border:4px solid #d4af37;
+  border-radius:6px;
+  background:linear-gradient(#0b0704,#1a120a);
+}
+.grid button{
+  width:60px;height:60px;border-radius:4px;border:2px solid #d4af37;
+  cursor:pointer;font-size:1rem;font-weight:bold;color:#fff;
+  transition:0.2s;
+}
 .grid button.red{background:#c20a0a;}
 .grid button.black{background:#111;}
 .grid button.green{background:#007700;}
-.grid button:hover{box-shadow:0 0 12px #ffd700;}
-.chip{width:22px;height:22px;border-radius:50%;background:#d4af37;position:absolute;transform:translate(-50%,-50%) scale(0);box-shadow:0 0 12px #fff,0 0 6px inset #ffd700;transition:0.5s;}
-.message{margin-top:12px;height:24px;font-weight:bold;font-size:1.1rem;}
-.exit-btn{margin-top:15px;}
-button.bet{padding:8px 14px;border-radius:6px;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;transition:0.3s;margin:2px;}
-button.bet:hover{background:rgba(212,175,55,0.1);box-shadow:0 0 15px #ffd700;}
-.wheel-container{position:relative;margin:20px auto;width:300px;height:300px;}
-.wheel{width:100%;height:100%;border-radius:50%;border:5px solid var(--gold);position:relative;overflow:hidden;}
-.wheel div{position:absolute;width:50%;height:50%;display:flex;align-items:flex-start;justify-content:center;font-size:0.65rem;color:#fff;}
-.ball{width:14px;height:14px;border-radius:50%;background:#fff;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(0deg);z-index:10;box-shadow:0 0 6px #fff,0 0 3px inset #ccc;}
+.grid button.highlight{
+  box-shadow:0 0 25px #fff,0 0 15px inset #ffd700;
+  transform:scale(1.2);
+}
 </style>
 </head>
 <body>
@@ -85,11 +132,10 @@ const ball=document.getElementById('ball');
 
 let balance=parseInt(localStorage.getItem("goldenVaultBalance"))||1000;
 balanceEl.textContent="$"+balance;
-
 let selectedBets=[];
 let redNumbers=[1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
 
-// Build table numbers
+// Table grid numbers
 for(let n=1;n<=36;n++){
   let btn=document.createElement('button');
   btn.textContent=n;
@@ -103,39 +149,55 @@ zeroBtn.className='green';
 zeroBtn.onclick=()=>selectBet(0);
 grid.insertBefore(zeroBtn, grid.firstChild);
 
+// Wheel numbers in European order
+const wheelNumbers=[0,32,15,19,4,21,2,25,17,34,6,27,13,36,11,30,8,23,10,5,24,16,33,1,20,14,31,9,22,18,29,7,28,12,35,3,26];
+wheel.innerHTML='';
+wheelNumbers.forEach((n,i)=>{
+  let div=document.createElement('div');
+  div.className='slot';
+  div.style.transform=`rotate(${(i/37)*360}deg)`;
+  div.innerHTML=`<span>${n}</span>`;
+  div.style.color=n===0?'#00ff00':redNumbers.includes(n)?'#ff0000':'#000';
+  wheel.appendChild(div);
+});
+
 function selectBet(choice){
   if(balance<50){messageEl.textContent="Not enough balance"; return;}
   balance-=50;
   balanceEl.textContent="$"+balance;
   selectedBets.push(choice);
   messageEl.textContent="Bet placed: "+choice;
-
-  // Add chip visually
-  let chip=document.createElement('div');
-  chip.className='chip';
-  chip.style.left=(typeof choice==='number'?((choice-1)%3)*50+25+'px'):'50%';
-  chip.style.top=(typeof choice==='number'?Math.floor((choice-1)/3)*50+25+'px'):'20px';
-  grid.appendChild(chip);
-  setTimeout(()=>{chip.style.transform='translate(-50%,-50%) scale(1)';},50);
-
   setTimeout(spinWheel,500);
 }
 
 function spinWheel(){
   if(selectedBets.length===0) return;
   messageEl.textContent="Spinning...";
-  
   let winningNumber=Math.floor(Math.random()*37);
   let color=winningNumber===0?'green':redNumbers.includes(winningNumber)?'red':'black';
 
-  // Ball animation
-  let spins=5 + Math.random()*5; // spins
-  let deg=360*spins + (winningNumber/37)*360;
-  ball.style.transition='transform 4s cubic-bezier(.25,.1,.25,1)';
-  ball.style.transform=`translate(-50%,-50%) rotate(${deg}deg)`;
+  let totalRotation=360*12+(wheelNumbers.indexOf(winningNumber)/37)*360;
+  let radius=170;
+  let startTime=Date.now();
+  let duration=5000;
 
-  setTimeout(()=>{
-    // Check bets
+  function animateBall(){
+    let now=Date.now();
+    let elapsed=now-startTime;
+    if(elapsed>duration){finalizeSpin(); return;}
+    let progress=elapsed/duration;
+    let eased=Math.pow(progress,0.5);
+    let angle=totalRotation*eased;
+    let rad=angle*Math.PI/180;
+    let x=200+radius*Math.cos(rad);
+    let y=200+radius*Math.sin(rad);
+    ball.style.left=x+'px';
+    ball.style.top=y+'px';
+    requestAnimationFrame(animateBall);
+  }
+  animateBall();
+
+  function finalizeSpin(){
     let won=false;
     selectedBets.forEach(b=>{
       if(b===winningNumber || b===color) won=true;
@@ -143,18 +205,35 @@ function spinWheel(){
       if(b==='odd' && winningNumber%2===1) won=true;
     });
 
+    // Highlight winning number
+    grid.querySelectorAll('button').forEach(btn=>btn.classList.remove('highlight'));
+    grid.querySelectorAll('button').forEach(btn=>{
+      if(btn.textContent==winningNumber) btn.classList.add('highlight');
+    });
+
+    // Ball bounce
+    let bounceCount=6;
+    let bounceRadius=radius;
+    function bounce(){
+      if(bounceCount<=0){ball.style.left='50%'; ball.style.top='50%'; return;}
+      let rad=totalRotation*Math.PI/180 + Math.random()*0.5;
+      let x=200+bounceRadius*Math.cos(rad);
+      let y=200+bounceRadius*Math.sin(rad);
+      ball.style.left=x+'px';
+      ball.style.top=y+'px';
+      bounceCount--;
+      bounceRadius*=0.7;
+      setTimeout(bounce,150);
+    }
+    bounce();
+
     let payout=won?100:selectedBets.length*50;
     if(won){balance+=payout; messageEl.textContent=`${winningNumber} ${color}! You win $${payout}`;}
     else{messageEl.textContent=`${winningNumber} ${color}! You lose`;}
     balanceEl.textContent="$"+balance;
     localStorage.setItem("goldenVaultBalance",balance);
-
-    // Remove chips
-    document.querySelectorAll('.chip').forEach(c=>c.remove());
     selectedBets=[];
-    ball.style.transition='none';
-    ball.style.transform='translate(-50%,-50%) rotate(0deg)';
-  },4100);
+  }
 }
 
 function exitVault(){window.location.href="members.html";}
