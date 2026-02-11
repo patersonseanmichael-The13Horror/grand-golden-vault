@@ -681,6 +681,29 @@ body{
   animation: scrollUp 30s linear infinite; /* scroll duration */
 }
 
+.live-feed{
+  background: rgba(0,0,0,0.6);
+  border: 1px solid var(--gold);
+  border-radius: 15px;
+  padding: 20px;
+  height: 220px;           /* enough space for 6 items */
+  overflow: hidden;
+  position: relative;
+  font-size: 0.95rem;
+}
+.live-feed p{
+  margin: 8px 0;
+  white-space: nowrap;
+  position: absolute;
+  width: 100%;
+  left: 0;
+  animation: scrollUp 30s linear infinite;
+}
+@keyframes scrollUp{
+  0%{top:100%;}
+  100%{top:-200%;} /* ensures all items scroll completely */
+}
+
 @keyframes scrollUp {
   0%   { top: 100%; }
   100% { top: -120%; }
