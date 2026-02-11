@@ -1,25 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Golden Vault Login</title>
-  <style>
-    body { 
-      font-family: Arial, sans-serif; 
-      background: #120c08; 
-      color: #eae6dc; 
-      display: flex; 
-      flex-direction: column; 
-      align-items: center; 
-      justify-content: center; 
-      height: 100vh; 
-      margin: 0;
-    }
-    input { padding: 10px; margin: 5px; width: 250px; }
-    button { padding: 10px 20px; margin: 5px; background: #d4af37; border: none; color: #120c08; cursor: pointer; font-weight: bold; }
-    button:hover { background: #c49e2d; }
-    h1 { margin-bottom: 20px; }
-  </style>
+<meta charset="UTF-8">
+<title>Golden Vault Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+body { 
+  font-family: Arial, sans-serif; 
+  background: #120c08; 
+  color: #eae6dc; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center; 
+  height: 100vh; 
+  margin: 0;
+}
+input { padding: 10px; margin: 5px; width: 250px; }
+button { padding: 10px 20px; margin: 5px; background: #d4af37; border: none; color: #120c08; cursor: pointer; font-weight: bold; }
+button:hover { background: #c49e2d; }
+h1 { margin-bottom: 20px; }
+</style>
 </head>
 <body>
 
@@ -32,67 +33,61 @@
 <button onclick="login()">Login</button>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut } 
-    from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut } 
+  from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyA4bJmDnapnEFlGggYVIoq2lS3QwHHz4hE",
-    authDomain: "grand-golden-vault.firebaseapp.com",
-    projectId: "grand-golden-vault",
-    storageBucket: "grand-golden-vault.firebasestorage.app",
-    messagingSenderId: "969306014666",
-    appId: "1:969306014666:web:228839a8b7f36e9b808533"
-  };
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyA4bJmDnapnEFlGggYVIoq2lS3QwHHz4hE",
+  authDomain: "grand-golden-vault.firebaseapp.com",
+  projectId: "grand-golden-vault",
+  storageBucket: "grand-golden-vault.firebasestorage.app",
+  messagingSenderId: "969306014666",
+  appId: "1:969306014666:web:228839a8b7f36e9b808533"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-  // SIGNUP WITH EMAIL VERIFICATION
-  window.signup = () => {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+// SIGNUP
+window.signup = () => {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-    if (!email || !password) {
-      alert("Enter both email and password");
-      return;
-    }
+  if (!email || !password) { alert("Enter both email and password"); return; }
 
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        sendEmailVerification(user)
-          .then(() => {
-            alert(`Verification email sent to ${email}. Please verify before logging in.`);
-            signOut(auth); // log out until verified
-          });
-      })
-      .catch(e => alert(e.message));
-  };
-
-  // LOGIN ONLY IF EMAIL VERIFIED
-  window.login = () => {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-
-    if (!email || !password) {
-      alert("Enter both email and password");
-      return;
-    }
-
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        if (user.emailVerified) {
-          window.location.href = "members.html";
-        } else {
-          alert("Please verify your email before logging in.");
+  createUserWithEmailAndPassword(auth, email, password)
+    .then(userCredential => {
+      const user = userCredential.user;
+      sendEmailVerification(user)
+        .then(() => {
+          alert(`Verification email sent to ${email}. Please verify before logging in.`);
           signOut(auth);
-        }
-      })
-      .catch(e => alert(e.message));
-  };
-</script>
+        });
+    })
+    .catch(e => alert(e.message));
+};
 
+// LOGIN
+window.login = () => {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  if (!email || !password) { alert("Enter both email and password"); return; }
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then(userCredential => {
+      const user = userCredential.user;
+      if (user.emailVerified) {
+        window.location.href = "members.html";
+      } else {
+        alert("Please verify your email before logging in.");
+        signOut(auth);
+      }
+    })
+    .catch(e => alert(e.message));
+};
+</script>
 </body>
 </html>
