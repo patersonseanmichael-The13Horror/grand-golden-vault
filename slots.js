@@ -82,3 +82,27 @@ function animate() {
     renderer.render(scene, camera);
 }
 animate();
+
+// Symbols & payouts
+const symbols = [
+    { name: "💎", multiplier: 1 },
+    { name: "🎲", multiplier: 2 },
+    { name: "🍾", multiplier: 5 },
+    { name: "🃏", multiplier: 10 },
+    { name: "💰", multiplier: 25 },
+    { name: "7️⃣", multiplier: 50 }
+];
+
+const scatterSymbol = "🎰"; // Special symbol to trigger free spins
+const featureSymbol = "⭐"; // Hold & Win feature
+
+// Lines configuration (multiway example)
+const linesConfig = [
+    [0,0,0,0,0], // Top row
+    [1,1,1,1,1], // Middle row
+    [2,2,2,2,2], // Bottom row
+];
+
+// Free spin / Hold & Win config
+let freeSpins = 0;
+const holdPositions = [null, null, null, null, null, null]; // 6 positions for Hold & Win
