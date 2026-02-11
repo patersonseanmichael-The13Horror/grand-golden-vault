@@ -103,25 +103,11 @@
   </div>
 
   <script>
-    // Get balance from shared wallet
-let balance = parseInt(localStorage.getItem('goldenVaultBalance')) || 1000;
-
 // Update balance display
 function updateBalanceDisplay() {
   balanceEl.textContent = "$" + balance;
 }
 updateBalanceDisplay();
-
-// At end of round, adjust balance and save
-function endGame() {
-  let playerVal = handValue(player);
-  let dealerVal = handValue(dealer);
-  let result = "";
-  if (playerVal > 21) result = "BUST! You lose";
-  else if (dealerVal > 21) result = "Dealer busts! You win";
-  else if (playerVal > dealerVal) result = "You win!";
-  else if (playerVal < dealerVal) result = "You lose!";
-  else result = "Push";
 
   // Adjust balance
   if (result.includes("win")) balance += bet;
@@ -135,7 +121,8 @@ function endGame() {
 }
     const doors = document.getElementById('doors');
     const vault = document.getElementById('vault');
-    let balance = parseInt(localStorage.getItem('goldenVaultBalance')) || 1000;
+    let balance = parseInt(localStorage.getItem('goldenVaultBalance')) || 0;
+let deck=[], player=[], dealer=[], bet=0, gameOver=true;
     let playerCardsEl = document.getElementById('player-cards');
     let dealerCardsEl = document.getElementById('dealer-cards');
     let messageEl = document.getElementById('message');
