@@ -631,3 +631,12 @@ body.vault-bg {
   font-size:0.75rem;
 }
 }
+
+/* ===== ROULETTE PAGE BACKGROUND ONLY ===== */
+body.vault-bg.roulette-page {
+  min-height: 100vh;
+  background: url('grand-golden-vault/images/roulette.jpg') center / cover no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
