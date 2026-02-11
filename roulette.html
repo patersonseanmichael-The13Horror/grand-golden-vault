@@ -142,6 +142,7 @@ h1{color:var(--gold);margin-bottom:10px;}
 </div>
 
 <script>
+// Wallet and elements
 const WALLET_KEY="goldenVaultBalance";
 const doors=document.getElementById('doors');
 const vault=document.getElementById('vault');
@@ -157,11 +158,21 @@ let betAmount=10;
 let selectedNumbers={};
 let spinning=false;
 
+// Sounds
+const soundChip = new Audio('https://cdn.jsdelivr.net/gh/seanpaterson/goldenvault-assets/chip_place.mp3');
+const soundSpin = new Audio('https://cdn.jsdelivr.net/gh/seanpaterson/goldenvault-assets/wheel_spin.mp3');
+const soundWin = new Audio('https://cdn.jsdelivr.net/gh/seanpaterson/goldenvault-assets/win_ping.mp3');
+
 setTimeout(()=>doors.classList.add('open'),600);
 setTimeout(()=>vault.classList.add('visible'),2000);
 
-function exitVault(){vault.classList.remove('visible'); setTimeout(()=>doors.classList.remove('open'),400); setTimeout(()=>window.location.href="members.html",2600);}
+function exitVault(){
+  vault.classList.remove('visible');
+  setTimeout(()=>doors.classList.remove('open'),400);
+  setTimeout(()=>window.location.href="members.html",2600);
+}
 
+// Wheel numbers
 const redNumbers=[1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
 const wheelNumbers=[...Array(37).keys()];
 
@@ -174,23 +185,33 @@ wheelNumbers.forEach(n=>{
   tableEl.appendChild(nDiv);
 });
 
-function setBet(amount){betAmount=amount; messageEl.textContent="Bet: $"+amount;}
+// Set bet
+function setBet(amount){
+  betAmount=amount;
+  messageEl.textContent="Bet: $"+amount;
+}
 
+// Place / remove chips
 function toggleNumber(n,el){
   if(selectedNumbers[n]){
     delete selectedNumbers[n]; 
     el.querySelectorAll('.chip').forEach(ch=>ch.remove());
   } else {
     selectedNumbers[n]={amount:betAmount,count:1};
-    const chip=document.createElement('div'); chip.className='chip '+getChipColor(betAmount); 
+    const chip=document.createElement('div');
+    chip.className='chip '+getChipColor(betAmount); 
     el.appendChild(chip);
+    soundChip.currentTime = 0;
+    soundChip.play();
   }
 }
 
+// Chip color
 function getChipColor(amount){
   switch(amount){case 10:return 'gold'; case 25:return 'silver'; case 50:return 'red'; case 100:return 'blue'; default:return 'gold';}
 }
 
+// Spin wheel
 function spinWheel(){
   if(spinning){messageEl.textContent="Wait"; return;}
   if(Object.keys(selectedNumbers).length===0){messageEl.textContent="Select numbers first"; return;}
@@ -200,6 +221,8 @@ function spinWheel(){
   balanceEl.textContent="$"+balance;
   spinning=true;
   messageEl.textContent="Spinning...";
+  soundSpin.currentTime=0;
+  soundSpin.play();
 
   const spinDuration=4000;
   const startTime=performance.now();
@@ -210,6 +233,9 @@ function spinWheel(){
   function animateBall(time){
     const t=(time-startTime)/spinDuration;
     if(t>1){
+      soundSpin.pause();
+      soundWin.currentTime=0;
+      soundWin.play();
       messageEl.textContent=`Winning: ${winningNumber} ${winningColor}! ${selectedNumbers[winningNumber]?'You win!':'You lose!'}`;
       if(selectedNumbers[winningNumber]) balance+=selectedNumbers[winningNumber].amount*36;
       balanceEl.textContent="$"+balance;
@@ -230,6 +256,7 @@ function spinWheel(){
   requestAnimationFrame(animateBall);
 }
 
+// Highlight winner
 function highlightWinner(num){
   const numEl=document.querySelectorAll('.number')[num];
   if(numEl){
