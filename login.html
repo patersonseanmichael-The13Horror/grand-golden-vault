@@ -21,9 +21,11 @@
     <div class="login-box">
       <h2>Member Login</h2>
       <form id="loginForm">
-        <input type="tel" id="loginPhone" placeholder="Mobile Number" required>
-        <input type="password" id="loginPassword" placeholder="Vault Key" required>
-        <button type="submit">Login</button>
+      <input type="email" id="email">
+<input type="password" id="password">
+
+<button onclick="signup()">Sign Up</button>
+<button onclick="login()">Login</button>
       </form>
       <p id="loginMessage"></p>
       <p>Don't have access? <a href="#signupBox" onclick="scrollToSignup()">Request Access</a></p>
@@ -113,7 +115,53 @@
   function scrollToSignup() {
     document.getElementById('signupBox').scrollIntoView({behavior: "smooth"});
   }
-</script>
+  
+<!-- Your Firebase Auth Script -->
+ <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } 
+    from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA4bJmDnapnEFlGggYVIoq2lS3QwHHz4hE",
+      authDomain: "grand-golden-vault.firebaseapp.com",
+      projectId: "grand-golden-vault",
+      storageBucket: "grand-golden-vault.firebasestorage.app",
+      messagingSenderId: "969306014666",
+      appId: "1:969306014666:web:228839a8b7f36e9b808533"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.signup = function () {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          alert("Account created. Welcome to Golden Vault.");
+          window.location.href = "members.html";
+        })
+        .catch((error) => {
+          alert(error.message);
+        });
+    };
+
+    window.login = function () {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      signInWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          alert("Welcome back.");
+          window.location.href = "members.html";
+        })
+        .catch((error) => {
+          alert(error.message);
+        });
+    };
+  </script>
 
 </body>
 </html>
