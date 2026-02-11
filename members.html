@@ -8,62 +8,146 @@
 :root {
   --gold: #d4af37;
   --text-light: #eae6dc;
+  --bg-dark: #080503;
+  --dark-shadow: rgba(0,0,0,0.7);
 }
+
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;}
 body{
   background: radial-gradient(circle at top,#1c130a,#080503 70%);
   color: var(--text-light);
   min-height:100vh;
-  display:flex;align-items:center;justify-content:center;
   overflow:hidden;
 }
 
-/* Vault Doors */
+/* PARTICLE BACKGROUND */
+.particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;}
+.particle{
+  position:absolute;
+  width:4px; height:4px;
+  background: var(--gold);
+  border-radius:50%;
+  opacity:0.8;
+  animation:float 8s linear infinite;
+}
+@keyframes float{
+  0%{transform:translateY(0) translateX(0);opacity:0.8;}
+  50%{opacity:1;}
+  100%{transform:translateY(-100vh) translateX(30px);opacity:0;}
+}
+
+/* VAULT DOORS */
 .doors{position:fixed;inset:0;z-index:10;display:flex;pointer-events:none;}
-.door{width:50%;height:100%;
-background:linear-gradient(180deg,#1a120a,#090603);
-border-right:1px solid rgba(212,175,55,0.4);
-box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
-transform:translateX(0);transition: transform 2.6s cubic-bezier(.77,0,.18,1);}
+.door{width:50%;height:100%;background:linear-gradient(180deg,#1a120a,#090603);border-right:1px solid rgba(212,175,55,0.4);box-shadow: inset 0 0 40px rgba(0,0,0,0.8);transform:translateX(0);transition: transform 2.6s cubic-bezier(.77,0,.18,1);}
 .door.right{border-right:none;border-left:1px solid rgba(212,175,55,0.4);}
 .doors.open .door.left{transform:translateX(-100%);}
 .doors.open .door.right{transform:translateX(100%);}
 
-/* Vault Lobby */
-.vault{width:92%;max-width:500px;
-background:linear-gradient(180deg,#160f09,#0b0704);
-border:1px solid rgba(212,175,55,0.5);
-border-radius:18px;padding:30px;
-box-shadow:0 0 60px rgba(212,175,55,0.18),inset 0 0 30px rgba(0,0,0,0.6);
-text-align:center;
-opacity:0;transform:scale(0.96);transition:opacity 1.2s ease, transform 1.2s ease;}
+/* TOPBAR */
+.topbar{
+  position:sticky; top:0; width:100%; padding:15px 30px;
+  display:flex; justify-content:space-between; align-items:center;
+  background: rgba(0,0,0,0.6); backdrop-filter:blur(5px);
+  border-bottom:1px solid var(--gold);
+  z-index:5; box-shadow:0 0 20px var(--dark-shadow);
+}
+.topbar .wallet, .topbar .vip{font-weight:600;}
+.topbar .vip{color:var(--gold);}
+
+/* VAULT LOBBY */
+.vault{
+  position:relative;
+  width:90%; max-width:900px; margin:60px auto;
+  background:linear-gradient(180deg,#160f09,#0b0704);
+  border:1px solid rgba(212,175,55,0.5);
+  border-radius:20px;
+  padding:30px;
+  box-shadow:0 0 60px rgba(212,175,55,0.18),inset 0 0 30px rgba(0,0,0,0.6);
+  text-align:center;
+  opacity:0; transform:scale(0.96);
+  transition:opacity 1.2s ease, transform 1.2s ease;
+  z-index:2;
+}
 .vault.visible{opacity:1;transform:scale(1);}
+.vault h1{color:var(--gold); margin-bottom:20px;}
 
-h1{color:var(--gold);margin-bottom:20px;}
+/* GAME CARDS */
+.game-cards{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:25px; margin:30px 0;
+}
+.card{
+  background:rgba(0,0,0,0.7); border:2px solid var(--gold);
+  border-radius:18px; padding:20px; cursor:pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align:center; position:relative; overflow:hidden;
+}
+.card:hover{
+  transform:translateY(-10px) scale(1.05);
+  box-shadow:0 15px 30px var(--gold);
+}
+.card img{width:80px;margin-bottom:10px;font-size:2rem;}
 
-.game-buttons{display:flex;flex-direction:column;gap:15px;}
-button{padding:14px 24px;border-radius:12px;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;transition:0.3s;font-size:1rem;}
-button:hover{background:rgba(212,175,55,0.1);box-shadow:0 0 12px rgba(212,175,55,0.3);}
-.exit-btn{margin-top:20px;}
+/* VIP PROGRESS */
+.vip-section{margin:30px 0; text-align:left;}
+.vip-section h3{margin-bottom:10px; color:var(--gold);}
+.vip-progress{background: rgba(255,255,255,0.1); border-radius:20px; height:25px; overflow:hidden;}
+.vip-progress-inner{background: var(--gold); width:45%; height:100%; transition:width 0.5s ease;}
+
+/* LIVE FEED */
+.live-feed{background:rgba(0,0,0,0.6); border:1px solid var(--gold); border-radius:15px; padding:20px; height:180px; overflow-y:auto;}
+.live-feed p{margin:8px 0;}
+
+/* EXIT BUTTON */
+.exit-btn{padding:12px 24px;border-radius:12px;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;transition:0.3s;margin-top:20px;font-size:1rem;}
+.exit-btn:hover{background:rgba(212,175,55,0.1);box-shadow:0 0 12px rgba(212,175,55,0.3);}
 </style>
 </head>
 <body>
 
+<!-- PARTICLES -->
+<div class="particles" id="particles"></div>
+
+<!-- VAULT DOORS -->
 <div class="doors" id="doors">
   <div class="door left"></div>
   <div class="door right"></div>
 </div>
 
-<div class="vault" id="vault">
-<h1>Golden Vault — Casino Lobby</h1>
-
-<div class="game-buttons">
-  <button onclick="goToGame('blackjack.html')">🂡 Blackjack</button>
-  <button onclick="goToGame('roulette.html')">🎰 Roulette</button>
-  <button onclick="goToGame('poker.html')">🃏 Poker</button>
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="wallet">Wallet: 0.00 GOLD</div>
+  <div class="vip">VIP: Gold</div>
 </div>
 
-<button class="exit-btn" onclick="exitVault()">Exit Vault</button>
+<!-- VAULT LOBBY -->
+<div class="vault" id="vault">
+  <h1>Golden Vault — Casino Lobby</h1>
+
+  <!-- Game Cards -->
+  <div class="game-cards">
+    <div class="card" onclick="goToGame('blackjack.html')">🂡<br>Blackjack</div>
+    <div class="card" onclick="goToGame('roulette.html')">🎰<br>Roulette</div>
+    <div class="card" onclick="goToGame('poker.html')">🃏<br>Poker</div>
+  </div>
+
+  <!-- VIP Progress -->
+  <div class="vip-section">
+    <h3>VIP Progress</h3>
+    <div class="vip-progress">
+      <div class="vip-progress-inner" id="vipBar"></div>
+    </div>
+  </div>
+
+  <!-- Live Feed -->
+  <div class="live-feed" id="liveFeed">
+    <p>PlayerX won 500 GOLD!</p>
+    <p>PlayerY just leveled up to VIP Platinum!</p>
+    <p>PlayerZ hit 777 on Roulette!</p>
+  </div>
+
+  <!-- Exit -->
+  <button class="exit-btn" onclick="exitVault()">Exit Vault</button>
 </div>
 
 <!-- Firebase Auth Check -->
@@ -92,22 +176,35 @@ onAuthStateChanged(auth, (user) => {
 </script>
 
 <script>
+// VAULT DOORS ANIMATION
 const doors=document.getElementById('doors');
 const vault=document.getElementById('vault');
-
 setTimeout(()=>doors.classList.add('open'),600);
 setTimeout(()=>vault.classList.add('visible'),2000);
 
+// EXIT VAULT
 function exitVault(){
   vault.classList.remove('visible');
   setTimeout(()=>doors.classList.remove('open'),400);
-  setTimeout(()=>signOut(firebase.auth).then(()=>window.location.href="login.html"),2600);
+  setTimeout(()=>signOut(getAuth()).then(()=>window.location.href="login.html"),2600);
 }
 
+// NAVIGATE TO GAME
 function goToGame(url){
   vault.classList.remove('visible');
   setTimeout(()=>doors.classList.remove('open'),400);
   setTimeout(()=>window.location.href=url,2600);
+}
+
+// PARTICLES
+const particlesContainer = document.getElementById('particles');
+for(let i=0;i<50;i++){
+  const p = document.createElement('div');
+  p.classList.add('particle');
+  p.style.left=Math.random()*100+'vw';
+  p.style.top=Math.random()*100+'vh';
+  p.style.animationDuration=(5+Math.random()*5)+'s';
+  particlesContainer.appendChild(p);
 }
 </script>
 </body>
