@@ -10,8 +10,8 @@
   --text-light: #eae6dc;
   --bg-dark: #0b0704;
   --green-felt: #0b3d0b;
-  --wheel-size: 300px;
-  --ball-size: 16px;
+  --wheel-size: 400px;
+  --ball-size: 14px;
 }
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;}
 body{
@@ -40,132 +40,73 @@ body{
 
 /* Vault Content */
 .vault{
-  width:95%; max-width:1100px;
+  width:95%; max-width:1200px;
   max-height:90vh;
   overflow-y:auto;
   background:linear-gradient(180deg,#160f09,#0b0704);
   border:2px solid rgba(212,175,55,0.6);
   border-radius:20px;
   padding:30px;
-  box-shadow:0 0 80px rgba(212,175,55,0.4), inset 0 0 40px rgba(0,0,0,0.6);
+  box-shadow:0 0 100px rgba(212,175,55,0.4), inset 0 0 40px rgba(0,0,0,0.6);
   text-align:center;
   opacity:0; transform:scale(0.96);
   transition:opacity 1.2s ease, transform 1.2s ease;
 }
 .vault.visible{opacity:1;transform:scale(1);}
-
 h1{color:var(--gold);margin-bottom:10px;}
 .balance{font-size:1.5rem;color:var(--gold);margin-bottom:15px;}
 
-/* Wheel */
-.wheel-container{
-  position:relative;
-  width: var(--wheel-size);
-  height: var(--wheel-size);
-  margin:0 auto 20px;
-}
-.wheel{
-  width:100%;
-  height:100%;
+/* Canvas roulette */
+#canvas{
+  display:block;
+  margin:20px auto;
   border-radius:50%;
-  border:4px solid var(--gold);
-  position:relative;
+  box-shadow:0 0 30px rgba(212,175,55,0.5) inset,0 0 60px rgba(212,175,55,0.3);
   background: radial-gradient(circle at center, #222 0%, #111 70%);
-  box-shadow: 0 0 20px rgba(212,175,55,0.5) inset;
-  transition: transform 5s cubic-bezier(.77,0,.18,1);
-}
-.wheel div{
-  position:absolute;
-  width:50%; height:50%;
-  top:50%; left:50%;
-  transform-origin:0 0;
-  display:flex;align-items:flex-start;justify-content:center;
-  font-size:0.75rem; font-weight:bold; color:#fff;
-}
-.wheel div span{
-  transform:translateY(-50%) rotate(0deg);
-  width:40px; height:24px; text-align:center;
-  line-height:24px;
-  border-radius:4px;
-  border:1px solid #222;
-}
-.ball{
-  width: var(--ball-size);
-  height: var(--ball-size);
-  background:white;
-  border-radius:50%;
-  position:absolute;
-  top:10%;
-  left:50%;
-  transform:translate(-50%,0);
-  box-shadow: 0 0 8px #fff;
 }
 
-/* Table */
-.table{
-  background: var(--green-felt);
-  padding:20px;
-  border-radius:12px;
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:4px;
-  max-width:600px;
-  margin:0 auto;
-}
-.cell{
-  width:50px; height:50px;
-  display:flex;align-items:center;justify-content:center;
-  font-weight:bold;
-  border:1px solid #111;
-  border-radius:6px;
+/* Buttons */
+button{
+  padding:10px 25px;
+  border-radius:8px;
+  border:1px solid var(--gold);
+  background:transparent;
+  color:var(--gold);
   cursor:pointer;
   transition:0.3s;
+  margin:5px;
 }
-.cell.red{background:#c40000; color:#fff;}
-.cell.black{background:#000; color:#fff;}
-.cell.green{background:#0f800f; color:#fff;}
-.cell:hover{box-shadow:0 0 12px rgba(255,255,255,0.6);}
-button{padding:10px 20px;border-radius:8px;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;transition:0.3s;margin:5px;}
-button:hover{background:rgba(212,175,55,0.1);box-shadow:0 0 12px rgba(212,175,55,0.3);}
+button:hover{
+  background:rgba(212,175,55,0.1);
+  box-shadow:0 0 12px rgba(212,175,55,0.3);
+}
 .exit-btn{margin-top:20px;}
 .message{margin-top:12px;height:24px;font-size:1.1rem;}
 </style>
 </head>
 <body>
 
-<!-- Vault Doors -->
 <div class="doors" id="doors">
   <div class="door left"></div>
   <div class="door right"></div>
 </div>
 
-<!-- Vault Content -->
 <div class="vault" id="vault">
   <h1>VIP Roulette — Golden Vault</h1>
   <div class="balance" id="balance">$1000</div>
 
-  <div class="wheel-container">
-    <div class="wheel" id="wheel"></div>
-    <div class="ball" id="ball"></div>
-  </div>
-
-  <div class="table" id="table"></div>
+  <canvas id="canvas" width="500" height="500"></canvas>
 
   <div>
-    <button onclick="spinWheel()">Spin</button>
+    <button id="spinBtn">Spin</button>
   </div>
   <div class="message" id="message"></div>
   <button class="exit-btn" onclick="exitVault()">Exit Vault</button>
 </div>
 
-<input type="button" value="Spin" id="spin" style="float:left; margin-bottom:10px;" />
-<canvas id="canvas" width="500" height="500"></canvas>
-
 <script>
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
-
 const centerX = canvas.width/2;
 const centerY = canvas.height/2;
 const radius = 200;
@@ -179,26 +120,26 @@ let spinning = false;
 // Ball properties
 let ballAngle = 0;
 let ballSpeed = 0;
-let ballRadius = 10;
+let ballRadius = 14;
 
-function drawWheel() {
+function drawWheel(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    // Optional: dark felt background
+    // Dark felt background
     ctx.fillStyle = "#0c0b0a";
     ctx.fillRect(0,0,canvas.width,canvas.height);
 
     const segAngle = (2*Math.PI)/segments.length;
 
-    // Draw segments with metallic gradient
+    // Draw wheel segments with metallic gradient
     for(let i=0;i<segments.length;i++){
         ctx.beginPath();
-        ctx.moveTo(centerX, centerY);
-        ctx.arc(centerX, centerY, radius, angle+i*segAngle, angle+(i+1)*segAngle);
+        ctx.moveTo(centerX,centerY);
+        ctx.arc(centerX,centerY,radius, angle+i*segAngle, angle+(i+1)*segAngle);
 
-        const grad = ctx.createRadialGradient(centerX, centerY, radius*0.1, centerX, centerY, radius);
+        const grad = ctx.createRadialGradient(centerX,centerY,radius*0.05, centerX,centerY,radius);
         grad.addColorStop(0,'#fff');
-        grad.addColorStop(0.5,colors[i%colors.length]);
+        grad.addColorStop(0.5, colors[i%colors.length]);
         grad.addColorStop(1,'#000');
         ctx.fillStyle = grad;
         ctx.fill();
@@ -206,13 +147,13 @@ function drawWheel() {
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        // Draw numbers with glow
+        // Draw glowing numbers
         ctx.save();
-        ctx.translate(centerX, centerY);
-        ctx.rotate(angle + (i+0.5)*segAngle);
+        ctx.translate(centerX,centerY);
+        ctx.rotate(angle+(i+0.5)*segAngle);
         ctx.textAlign = "right";
         ctx.fillStyle = "#fff";
-        ctx.shadowColor = "yellow";
+        ctx.shadowColor = "#ffd700";
         ctx.shadowBlur = 8;
         ctx.font = "20px Arial Black";
         ctx.fillText(segments[i], radius-20,10);
@@ -221,7 +162,7 @@ function drawWheel() {
 
     // Center knob
     ctx.beginPath();
-    ctx.arc(centerX, centerY, 20, 0, 2*Math.PI);
+    ctx.arc(centerX,centerY,20,0,2*Math.PI);
     ctx.fillStyle = "#555";
     ctx.fill();
     ctx.strokeStyle = "#222";
@@ -229,36 +170,35 @@ function drawWheel() {
 
     // Pointer
     ctx.beginPath();
-    ctx.moveTo(centerX, centerY - radius - 10);
-    ctx.lineTo(centerX-15, centerY - radius + 20);
-    ctx.lineTo(centerX+15, centerY - radius + 20);
+    ctx.moveTo(centerX, centerY-radius-10);
+    ctx.lineTo(centerX-15, centerY-radius+20);
+    ctx.lineTo(centerX+15, centerY-radius+20);
     ctx.closePath();
     ctx.fillStyle = "red";
     ctx.fill();
 
-    // Draw ball
-    const ballX = centerX + Math.cos(ballAngle) * (radius - 20);
-    const ballY = centerY + Math.sin(ballAngle) * (radius - 20);
+    // Ball
+    const ballX = centerX + Math.cos(ballAngle)*(radius-25);
+    const ballY = centerY + Math.sin(ballAngle)*(radius-25);
     ctx.beginPath();
-    ctx.arc(ballX, ballY, ballRadius, 0, 2*Math.PI);
+    ctx.arc(ballX,ballY,ballRadius,0,2*Math.PI);
     ctx.fillStyle = "#fff";
     ctx.shadowColor = "#fff";
-    ctx.shadowBlur = 10;
+    ctx.shadowBlur = 12;
     ctx.fill();
 }
 
-function spinWheel() {
+function spinWheel(){
     if(spinning) return;
     spinning = true;
 
-    let spinVelocity = Math.random()*0.3 + 0.3; // wheel speed
+    let spinVelocity = Math.random()*0.3 + 0.3;
     let spinDecay = 0.995;
 
-    // Ball initial speed opposite to wheel
-    ballSpeed = -spinVelocity*1.5;
+    ballSpeed = -spinVelocity*1.6;
     ballAngle = angle;
 
-    function animate() {
+    function animate(){
         spinVelocity *= spinDecay;
         angle += spinVelocity;
         ballSpeed *= 0.995;
@@ -270,18 +210,28 @@ function spinWheel() {
             requestAnimationFrame(animate);
         } else {
             spinning = false;
-            // Determine winning segment
             const segAngle = (2*Math.PI)/segments.length;
-            const index = Math.floor(((2*Math.PI - angle % (2*Math.PI)) / segAngle)) % segments.length;
-            alert("The ball landed on: " + segments[index]);
+            const index = Math.floor(((2*Math.PI - angle%(2*Math.PI))/segAngle))%segments.length;
+            document.getElementById('message').innerText = "The ball landed on: " + segments[index];
         }
     }
     animate();
 }
 
 drawWheel();
-document.getElementById('spin').addEventListener('click', spinWheel);
+document.getElementById('spinBtn').addEventListener('click', spinWheel);
+
+// Vault door animation
+window.addEventListener('load',()=>{
+    document.getElementById('doors').classList.add('open');
+    document.getElementById('vault').classList.add('visible');
+});
+
+function exitVault(){
+    document.getElementById('doors').classList.remove('open');
+    document.getElementById('vault').classList.remove('visible');
+    setTimeout(()=>window.close(),1500);
+}
 </script>
-  
 </body>
 </html>
