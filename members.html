@@ -8,8 +8,6 @@
 :root {
   --gold: #d4af37;
   --text-light: #eae6dc;
-  --bg-dark: #080503;
-  --panel: #140e09;
 }
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;}
 body{
@@ -51,13 +49,11 @@ button:hover{background:rgba(212,175,55,0.1);box-shadow:0 0 12px rgba(212,175,55
 </head>
 <body>
 
-<!-- Vault Doors -->
 <div class="doors" id="doors">
   <div class="door left"></div>
   <div class="door right"></div>
 </div>
 
-<!-- Vault Lobby -->
 <div class="vault" id="vault">
 <h1>Golden Vault — Casino Lobby</h1>
 
@@ -70,50 +66,44 @@ button:hover{background:rgba(212,175,55,0.1);box-shadow:0 0 12px rgba(212,175,55
 <button class="exit-btn" onclick="exitVault()">Exit Vault</button>
 </div>
 
-<!-- Firebase Auth Script -->
+<!-- Firebase Auth Check -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyA4bJmDnapnEFlGggYVIoq2lS3QwHHz4hE",
-    authDomain: "grand-golden-vault.firebaseapp.com",
-    projectId: "grand-golden-vault",
-    storageBucket: "grand-golden-vault.firebasestorage.app",
-    messagingSenderId: "969306014666",
-    appId: "1:969306014666:web:228839a8b7f36e9b808533"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyA4bJmDnapnEFlGggYVIoq2lS3QwHHz4hE",
+  authDomain: "grand-golden-vault.firebaseapp.com",
+  projectId: "grand-golden-vault",
+  storageBucket: "grand-golden-vault.firebasestorage.app",
+  messagingSenderId: "969306014666",
+  appId: "1:969306014666:web:228839a8b7f36e9b808533"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-  // 🔐 Protect members area
-  onAuthStateChanged(auth, (user) => {
-    if(!user || !user.emailVerified){
-      // Not logged in or email not verified → redirect to login
-      window.location.href = "login.html";
-    }
-  });
+// Protect members area
+onAuthStateChanged(auth, (user) => {
+  if(!user || !user.emailVerified){
+    window.location.href = "login.html";
+  }
+});
 </script>
 
 <script>
 const doors=document.getElementById('doors');
 const vault=document.getElementById('vault');
 
-// Open vault doors on load
 setTimeout(()=>doors.classList.add('open'),600);
 setTimeout(()=>vault.classList.add('visible'),2000);
 
-// Exit vault
 function exitVault(){
   vault.classList.remove('visible');
   setTimeout(()=>doors.classList.remove('open'),400);
-  setTimeout(()=>{
-    signOut(auth).then(()=>window.location.href="login.html");
-  },2600);
+  setTimeout(()=>signOut(firebase.auth).then(()=>window.location.href="login.html"),2600);
 }
 
-// Navigate to game with doors animation
 function goToGame(url){
   vault.classList.remove('visible');
   setTimeout(()=>doors.classList.remove('open'),400);
