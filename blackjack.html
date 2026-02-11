@@ -91,10 +91,11 @@
         <button onclick="setBet(100)">$100</button>
       </div>
 
-      <div class="buttons">
-        <button onclick="hit()">Hit</button>
-        <button onclick="stand()">Stand</button>
-      </div>
+    <div class="buttons">
+  <button onclick="hit()">Hit</button>
+  <button onclick="stand()">Stand</button>
+  <button onclick="doubleDown()">Double</button>
+</div>
 
       <div class="message" id="message"></div>
     </div>
@@ -197,16 +198,33 @@
   }
 
   function stand() {
+    function doubleDown() {
+  if (gameOver) return;
+
+  if (balance < bet) {
+    messageEl.textContent = "Not enough balance to double";
+    return;
+  }
+
+  bet *= 2;
+  player.push(deck.pop());
+  renderHands(false);
+  stand();
+}
     if (gameOver) return;
     while (handValue(dealer) < 17) dealer.push(deck.pop());
     renderHands();
     endGame();
+    renderHands(true);
   }
+
+    <button onclick="doubleDown()">Double</button>
 
   function endGame() {
     const p = handValue(player);
     const d = handValue(dealer);
     let result = "Push";
+    renderHands(true);
 
     if (p > 21) result = "BUST! You lose";
     else if (d > 21 || p > d) result = "You win!";
