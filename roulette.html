@@ -2,26 +2,24 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>VIP Ultra-Premium Roulette — Golden Vault</title>
+<title>VIP Roulette — Golden Vault</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <style>
 :root {
-  --gold:#d4af37;
-  --red:#c0392b;
-  --black:#2c3e50;
-  --green:#27ae60;
-  --bg-dark:#0b0704;
-  --panel:#140e09;
-  --chip-size:30px;
-  --wheel-size:400px;
+  --gold: #d4af37;
+  --text-light: #eae6dc;
+  --bg-dark: #0b0704;
+  --green-felt: #0b3d0b;
+  --wheel-size: 300px;
+  --ball-size: 16px;
 }
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;}
 body{
   background: radial-gradient(circle at top,#1c130a,#080503 70%);
-  display:flex;align-items:center;justify-content:center;
+  color: var(--text-light);
   min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
   overflow:hidden;
-  color:#eae6dc;
 }
 
 /* Vault Doors */
@@ -42,175 +40,196 @@ body{
 
 /* Vault Content */
 .vault{
-  width:95%;max-width:1100px;
+  width:95%; max-width:1100px;
+  max-height:90vh;
+  overflow-y:auto;
   background:linear-gradient(180deg,#160f09,#0b0704);
   border:2px solid rgba(212,175,55,0.6);
   border-radius:20px;
   padding:30px;
   box-shadow:0 0 80px rgba(212,175,55,0.4), inset 0 0 40px rgba(0,0,0,0.6);
   text-align:center;
-  opacity:0;transform:scale(0.96);transition:opacity 1.2s ease, transform 1.2s ease;
+  opacity:0; transform:scale(0.96);
+  transition:opacity 1.2s ease, transform 1.2s ease;
 }
 .vault.visible{opacity:1;transform:scale(1);}
-h1{color:var(--gold);margin-bottom:20px;}
-.balance{font-size:1.5rem;color:var(--gold);margin-bottom:20px;}
-.message{margin-top:15px;height:30px;font-size:1.1rem;color:var(--gold);}
+
+h1{color:var(--gold);margin-bottom:10px;}
+.balance{font-size:1.5rem;color:var(--gold);margin-bottom:15px;}
+
+/* Wheel */
+.wheel-container{
+  position:relative;
+  width: var(--wheel-size);
+  height: var(--wheel-size);
+  margin:0 auto 20px;
+}
+.wheel{
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  border:4px solid var(--gold);
+  position:relative;
+  background: radial-gradient(circle at center, #222 0%, #111 70%);
+  box-shadow: 0 0 20px rgba(212,175,55,0.5) inset;
+  transition: transform 5s cubic-bezier(.77,0,.18,1);
+}
+.wheel div{
+  position:absolute;
+  width:50%; height:50%;
+  top:50%; left:50%;
+  transform-origin:0 0;
+  display:flex;align-items:flex-start;justify-content:center;
+  font-size:0.75rem; font-weight:bold; color:#fff;
+}
+.wheel div span{
+  transform:translateY(-50%) rotate(0deg);
+  width:40px; height:24px; text-align:center;
+  line-height:24px;
+  border-radius:4px;
+  border:1px solid #222;
+}
+.ball{
+  width: var(--ball-size);
+  height: var(--ball-size);
+  background:white;
+  border-radius:50%;
+  position:absolute;
+  top:10%;
+  left:50%;
+  transform:translate(-50%,0);
+  box-shadow: 0 0 8px #fff;
+}
 
 /* Table */
 .table{
-  display:grid;
-  grid-template-columns: repeat(3, 60px);
-  gap:2px;
+  background: var(--green-felt);
+  padding:20px;
+  border-radius:12px;
+  display:flex;
+  flex-wrap:wrap;
   justify-content:center;
-  margin:0 auto 20px;
-  background: var(--panel);
-  padding:10px;
-  border-radius:8px;
-  box-shadow:0 0 20px rgba(0,0,0,0.5);
+  gap:4px;
+  max-width:600px;
+  margin:0 auto;
 }
 .cell{
-  width:60px;height:60px;
+  width:50px; height:50px;
   display:flex;align-items:center;justify-content:center;
-  border:1px solid #000;
-  cursor:pointer;
   font-weight:bold;
-  font-size:1rem;
+  border:1px solid #111;
+  border-radius:6px;
+  cursor:pointer;
   transition:0.3s;
 }
-.cell.red{background:var(--red);color:#fff;}
-.cell.black{background:var(--black);color:#fff;}
-.cell.green{background:var(--green);color:#fff;}
-.cell:hover{box-shadow:0 0 12px var(--gold);transform:scale(1.1);}
-.winning{box-shadow:0 0 25px #fff,0 0 30px var(--gold);transform:scale(1.3);}
-
-/* Chips */
-.chip{
-  width:var(--chip-size);height:var(--chip-size);
-  border-radius:50%;position:absolute;z-index:20;
-  background:radial-gradient(circle,#f9f9f9,#ccc);
-  border:2px solid #333;
-  animation:chipDrop 0.6s ease forwards;
-}
-@keyframes chipDrop{
-  0%{transform:translateY(-50px) scale(0);}
-  100%{transform:translateY(0) scale(1);}
-}
-.exit-btn{margin-top:20px;padding:10px 20px;border:1px solid var(--gold);border-radius:8px;background:transparent;color:var(--gold);cursor:pointer;}
-.exit-btn:hover{background:rgba(212,175,55,0.2);box-shadow:0 0 12px rgba(212,175,55,0.5);}
-.spin-btn{padding:10px 20px;margin-top:10px;border:1px solid var(--gold);border-radius:8px;background:var(--gold);color:#000;font-weight:bold;cursor:pointer;}
-.spin-btn:hover{background:#ffd700;box-shadow:0 0 15px #ffd700;}
+.cell.red{background:#c40000; color:#fff;}
+.cell.black{background:#000; color:#fff;}
+.cell.green{background:#0f800f; color:#fff;}
+.cell:hover{box-shadow:0 0 12px rgba(255,255,255,0.6);}
+button{padding:10px 20px;border-radius:8px;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;transition:0.3s;margin:5px;}
+button:hover{background:rgba(212,175,55,0.1);box-shadow:0 0 12px rgba(212,175,55,0.3);}
+.exit-btn{margin-top:20px;}
+.message{margin-top:12px;height:24px;font-size:1.1rem;}
 </style>
 </head>
 <body>
 
+<!-- Vault Doors -->
 <div class="doors" id="doors">
   <div class="door left"></div>
   <div class="door right"></div>
 </div>
 
+<!-- Vault Content -->
 <div class="vault" id="vault">
-  <h1>VIP Ultra-Premium Roulette — Golden Vault</h1>
+  <h1>VIP Roulette — Golden Vault</h1>
   <div class="balance" id="balance">$1000</div>
 
+  <div class="wheel-container">
+    <div class="wheel" id="wheel"></div>
+    <div class="ball" id="ball"></div>
+  </div>
+
   <div class="table" id="table"></div>
-  <button class="spin-btn" id="spinBtn">Spin</button>
+
+  <div>
+    <button onclick="spinWheel()">Spin</button>
+  </div>
   <div class="message" id="message"></div>
   <button class="exit-btn" onclick="exitVault()">Exit Vault</button>
 </div>
 
 <script>
-const doors=document.getElementById('doors');
-const vault=document.getElementById('vault');
-const balanceEl=document.getElementById('balance');
-const messageEl=document.getElementById('message');
-const tableEl=document.getElementById('table');
-const spinBtn=document.getElementById('spinBtn');
+const doors = document.getElementById('doors');
+const vault = document.getElementById('vault');
+const balanceEl = document.getElementById('balance');
+const messageEl = document.getElementById('message');
+const wheel = document.getElementById('wheel');
+const ball = document.getElementById('ball');
+const tableEl = document.getElementById('table');
 
-let balance=parseInt(localStorage.getItem("goldenVaultBalance"))||1000;
+let balance = parseInt(localStorage.getItem('goldenVaultBalance')) || 1000;
 balanceEl.textContent="$"+balance;
-let spinning=false;
-let currentBet=null;
 
-// Vault doors open
+let wheelNumbers = [];
+for(let i=0;i<=36;i++) wheelNumbers.push(i);
+const redNumbers = [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
+function getColor(n){ return n===0?'green': redNumbers.includes(n)?'red':'black';}
+
+// Build table
+wheelNumbers.forEach(n=>{
+  const div = document.createElement('div');
+  div.className='cell '+getColor(n);
+  div.textContent=n;
+  div.onclick=()=>placeBet(n);
+  tableEl.appendChild(div);
+});
+
+let bet = null;
+function placeBet(n){
+  if(spinning){messageEl.textContent="Wait for spin";return;}
+  bet = n;
+  messageEl.textContent="Bet placed on "+n;
+}
+
+let spinning=false;
+function spinWheel(){
+  if(spinning){messageEl.textContent="Spinning..."; return;}
+  if(bet===null){messageEl.textContent="Place a bet first"; return;}
+  spinning=true;
+  messageEl.textContent="Spinning...";
+
+  // Spin wheel rotation
+  const spins = Math.floor(Math.random()*3600)+720;
+  wheel.style.transition='transform 5s cubic-bezier(.77,0,.18,1)';
+  wheel.style.transform=`rotate(${spins}deg)`;
+
+  // Ball spin
+  ball.style.transition='transform 5s cubic-bezier(.77,0,.18,1)';
+  ball.style.transform=`rotate(${spins*1.5}deg)`;
+
+  setTimeout(()=>{
+    const finalAngle = spins%360;
+    const index = Math.floor(finalAngle/360*37);
+    const winningNumber = 36 - index;
+    const color = getColor(winningNumber);
+    let payout = (winningNumber===0?36:1)*10;
+    if(bet===winningNumber){ balance+=payout; messageEl.textContent=`${winningNumber} ${color}! You win $${payout}`;}
+    else{ balance-=10; messageEl.textContent=`${winningNumber} ${color}! You lose.`;}
+    balanceEl.textContent="$"+balance;
+    localStorage.setItem('goldenVaultBalance', balance);
+    spinning=false;
+    bet=null;
+  },5200);
+}
+
+// Vault animation & exit
 setTimeout(()=>doors.classList.add('open'),600);
 setTimeout(()=>vault.classList.add('visible'),2000);
-
-// Exit
 function exitVault(){
   vault.classList.remove('visible');
   setTimeout(()=>doors.classList.remove('open'),400);
   setTimeout(()=>window.location.href="members.html",2600);
-}
-
-// Build table numbers
-const redNumbers=[1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
-for(let n=1;n<=36;n++){
-  const cell=document.createElement('div');
-  cell.className='cell '+(redNumbers.includes(n)?'red':'black');
-  cell.textContent=n;
-  cell.onclick=()=>placeBet(n);
-  tableEl.appendChild(cell);
-}
-// Zero
-const zeroCell=document.createElement('div');
-zeroCell.className='cell green';
-zeroCell.textContent='0';
-zeroCell.onclick=()=>placeBet(0);
-tableEl.prepend(zeroCell);
-
-// Extra bets (Even/Odd, Red/Black, 1-18/19-36)
-const extras=[{label:'Even', check:n=>n>0&&n%2===0},{label:'Odd',check:n=>n%2===1},{label:'Red',check:n=>redNumbers.includes(n)},{label:'Black',check:n=>!redNumbers.includes(n)&&n>0},{label:'1-18',check:n=>n>=1&&n<=18},{label:'19-36',check:n=>n>=19&&n<=36}];
-extras.forEach(e=>{
-  const cell=document.createElement('div');
-  cell.className='cell gold';
-  cell.style.background='linear-gradient(to bottom,#ffd700,#b8860b)';
-  cell.textContent=e.label;
-  cell.onclick=()=>placeBet(e);
-  tableEl.appendChild(cell);
-});
-
-function placeBet(choice){
-  if(spinning){messageEl.textContent="Wait for spin to finish"; return;}
-  let betAmount=50;
-  if(balance<betAmount){messageEl.textContent="Not enough balance"; return;}
-  balance-=betAmount;
-  balanceEl.textContent="$"+balance;
-  spinning=true;
-  currentBet=choice;
-  messageEl.textContent="Bet placed on "+(choice.label||choice)+"...";
-}
-
-// Spin wheel
-spinBtn.onclick=function(){
-  if(!currentBet){messageEl.textContent="Place a bet first"; return;}
-  messageEl.textContent="Spinning wheel...";
-  let winningNumber=Math.floor(Math.random()*37);
-  let color=winningNumber===0?'green':redNumbers.includes(winningNumber)?'red':'black';
-  setTimeout(()=>{
-    // Highlight winning
-    tableEl.childNodes.forEach(n=>n.classList.remove('winning'));
-    // Number bets
-    if(typeof currentBet==='number' && currentBet===winningNumber)tableEl.childNodes[winningNumber].classList.add('winning');
-    // Extra bets
-    else if(typeof currentBet==='object' && currentBet.check(winningNumber)){
-      tableEl.childNodes.forEach(n=>{
-        if(n.textContent===currentBet.label)n.classList.add('winning');
-      });
-    }
-    // Determine win
-    let payout=(typeof currentBet==='number')?36*50:2*50;
-    let win=false;
-    if(typeof currentBet==='number' && currentBet===winningNumber) win=true;
-    else if(typeof currentBet==='object' && currentBet.check(winningNumber)) win=true;
-
-    if(win){balance+=payout; messageEl.textContent=`${winningNumber} ${color}! You win $${payout}`;}
-    else messageEl.textContent=`${winningNumber} ${color}! You lose`;
-
-    balanceEl.textContent="$"+balance;
-    localStorage.setItem("goldenVaultBalance",balance);
-    spinning=false;
-    currentBet=null;
-  },1500);
 }
 </script>
 </body>
