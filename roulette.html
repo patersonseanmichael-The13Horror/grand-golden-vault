@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Ultra VIP Roulette — Golden Vault</title>
+<title>Ultimate VIP Roulette — Golden Vault</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <style>
 :root {
@@ -42,7 +42,7 @@ body{
 
 /* Vault Content */
 .vault{
-  width:95%;max-width:700px;
+  width:95%;max-width:750px;
   background:linear-gradient(180deg,#160f09,#0b0704);
   border:2px solid rgba(212,175,55,0.6);
   border-radius:20px;
@@ -55,6 +55,7 @@ body{
 
 h1{color:var(--gold);margin-bottom:15px;}
 .balance{font-size:1.5rem;color:var(--gold);margin-bottom:20px;}
+
 .wheel-container{
   position:relative;
   width:var(--wheel-size);height:var(--wheel-size);
@@ -83,6 +84,7 @@ h1{color:var(--gold);margin-bottom:15px;}
   width:15px;height:15px;background:#fff;
   border-radius:50%;position:absolute;top:10px;left:50%;transform:translateX(-50%);
   box-shadow:0 0 12px #fff,0 0 8px #f0f0f0 inset;
+  z-index:20;
 }
 
 /* Bets */
@@ -108,7 +110,6 @@ h1{color:var(--gold);margin-bottom:15px;}
   0%{transform:translateY(-50px) scale(0);}
   100%{transform:translateY(0) scale(1);}
 }
-
 /* Highlight winning number */
 .winning{
   box-shadow:0 0 15px #fff inset, 0 0 20px var(--gold);
@@ -138,6 +139,10 @@ h1{color:var(--gold);margin-bottom:15px;}
     <button onclick="placeBet('red')">Red</button>
     <button onclick="placeBet('black')">Black</button>
     <button onclick="placeBet('green')">0</button>
+    <button onclick="placeBet('even')">Even</button>
+    <button onclick="placeBet('odd')">Odd</button>
+    <button onclick="placeBet('low')">1-18</button>
+    <button onclick="placeBet('high')">19-36</button>
   </div>
 
   <div class="message" id="message"></div>
@@ -168,16 +173,16 @@ function exitVault(){
   setTimeout(()=>window.location.href="members.html",2600);
 }
 
-// Build wheel numbers 0-36 with colors
-const wheelNumbers = [];
-const redNumbers = [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
+// Wheel numbers & colors
+const wheelNumbers=[];
+const redNumbers=[1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
 for(let i=0;i<=36;i++) wheelNumbers.push(i);
 
 wheel.innerHTML='';
 wheelNumbers.forEach((n,i)=>{
   let div=document.createElement('div');
   div.style.transform=`rotate(${(i/37)*360}deg)`;
-  let color = n===0?'green': redNumbers.includes(n)?'red':'black';
+  let color=n===0?'green': redNumbers.includes(n)?'red':'black';
   div.innerHTML=`<span style="color:${color}">${n}</span>`;
   wheel.appendChild(div);
 });
@@ -187,7 +192,7 @@ function getColor(n){
   return redNumbers.includes(n)?'red':'black';
 }
 
-// Place bet & spin
+// Place bet
 function placeBet(choice){
   if(spinning){messageEl.textContent="Wait for spin to finish"; return;}
   let betAmount=50;
@@ -206,35 +211,36 @@ function placeBet(choice){
   setTimeout(()=>vault.removeChild(chip),800);
 
   // Spin
-  let spins = Math.random()*720+720; // 2-4 rotations
+  let spins=Math.random()*720+720;
   wheel.style.transition='transform 3s cubic-bezier(.77,0,.18,1)';
   wheel.style.transform=`rotate(${spins}deg)`;
-
-  // Ball animation
   ball.style.transition='transform 3s ease-out';
   ball.style.transform=`rotate(${spins*3}deg) translateX(${wheel.offsetWidth/2 - 20}px) rotate(-${spins*3}deg)`;
 
   setTimeout(()=>{
-    let finalAngle = spins%360;
-    let winningIndex = Math.floor(finalAngle/360*37);
-    let winningNumber = 36 - winningIndex;
-    let color = getColor(winningNumber);
+    let finalAngle=spins%360;
+    let winningIndex=Math.floor(finalAngle/360*37);
+    let winningNumber=36-winningIndex;
+    let color=getColor(winningNumber);
 
-    // Highlight winning number
+    // Highlight winning
     wheel.childNodes.forEach(n=>n.classList.remove('winning'));
     wheel.childNodes[winningIndex].classList.add('winning');
 
     let win=false;
-    if(choice===color) win=true;
-    let payout = color==='green'?17*betAmount:2*betAmount;
-    if(win){
-      balance+=payout;
-      messageEl.textContent=`${winningNumber} ${color}! You win $${payout}`;
-    } else {
-      messageEl.textContent=`${winningNumber} ${color}! You lose`;
-    }
+    if(choice==='red' && color==='red') win=true;
+    if(choice==='black' && color==='black') win=true;
+    if(choice==='green' && color==='green') win=true;
+    if(choice==='even' && winningNumber!==0 && winningNumber%2===0) win=true;
+    if(choice==='odd' && winningNumber%2===1) win=true;
+    if(choice==='low' && winningNumber>=1 && winningNumber<=18) win=true;
+    if(choice==='high' && winningNumber>=19 && winningNumber<=36) win=true;
+
+    let payout=(choice==='green')?17*betAmount:2*betAmount;
+    if(win){balance+=payout; messageEl.textContent=`${winningNumber} ${color}! You win $${payout}`;}
+    else messageEl.textContent=`${winningNumber} ${color}! You lose`;
     balanceEl.textContent="$"+balance;
-    localStorage.setItem("goldenVaultBalance", balance);
+    localStorage.setItem("goldenVaultBalance",balance);
     spinning=false;
   },3100);
 }
