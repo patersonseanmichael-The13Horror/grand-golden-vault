@@ -39,9 +39,9 @@ const holdPositions = [null,null,null,null,null,null];
 // ----- REELS SETUP -----
 const reels = [];
 const reelPositions = [-8,-4,0,4,8];
-for (let i=0;i<5;i++){
+for(let i=0;i<5;i++){
     const reel = new THREE.Group();
-    for (let j=0;j<6;j++){ // max rows for feature
+    for(let j=0;j<6;j++){
         const symbolText = symbolStrings[Math.floor(Math.random()*symbolStrings.length)];
         const geometry = new THREE.TextGeometry(symbolText,{size:1.2,height:0.3});
         const material = new THREE.MeshPhongMaterial({ color: 0xd4af37 });
@@ -52,6 +52,49 @@ for (let i=0;i<5;i++){
     reel.position.x = reelPositions[i];
     reels.push(reel);
     scene.add(reel);
+}
+
+// ----- LUXURY ENVIRONMENT -----
+// Floor
+const floorGeo = new THREE.PlaneGeometry(50,30);
+const floorMat = new THREE.MeshPhongMaterial({ color:0x3b0b0b, shininess:50 });
+const floor = new THREE.Mesh(floorGeo,floorMat);
+floor.rotation.x = -Math.PI/2;
+floor.position.y = -1;
+scene.add(floor);
+
+// Chandeliers
+function addChandelier(x,y,z){
+    const sphere = new THREE.Mesh(
+        new THREE.SphereGeometry(1,32,32),
+        new THREE.MeshStandardMaterial({ color:0xffd700, emissive:0xffaa00, emissiveIntensity:1.5 })
+    );
+    sphere.position.set(x,y,z);
+    scene.add(sphere);
+}
+addChandelier(-10,12,-5);
+addChandelier(10,12,-5);
+addChandelier(0,12,5);
+
+// Hold & Win display
+const holdMeshes = [];
+for(let i=0;i<6;i++){
+    const geo = new THREE.BoxGeometry(1.5,1.5,0.5);
+    const mat = new THREE.MeshStandardMaterial({ color:0x222222, emissive:0x444444, metalness:0.8, roughness:0.2 });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set(-7+i*3,6,0);
+    scene.add(mesh);
+    holdMeshes.push(mesh);
+}
+
+function updateHoldDisplay(){
+    holdMeshes.forEach((mesh,idx)=>{
+        if(holdPositions[idx]===featureSymbol){
+            mesh.material.emissive.setHex(0xffd700);
+        } else {
+            mesh.material.emissive.setHex(0x444444);
+        }
+    });
 }
 
 // ----- VIP VISUALS -----
@@ -73,66 +116,67 @@ function animateAurora(){
 }
 animateAurora();
 
-// Shimmer on symbols
 reels.forEach(reel=>{
     reel.children.forEach(sym=>{
+        sym.material.metalness = 1;
+        sym.material.roughness = 0.2;
         sym.material.emissive = new THREE.Color(0xffd700);
         sym.material.emissiveIntensity = 0.5;
     });
 });
+
 function animateShimmer(){
     reels.forEach(reel=>{
         reel.children.forEach(sym=>{
-            sym.material.emissiveIntensity = 0.5+Math.sin(Date.now()*0.005+sym.position.y)*0.5;
+            sym.material.emissiveIntensity = 0.5 + Math.sin(Date.now()*0.005 + sym.position.y)*0.5;
         });
     });
     requestAnimationFrame(animateShimmer);
 }
 animateShimmer();
 
-// ----- COIN EFFECTS -----
-function coinExplosion(position, amount){
+// ----- PARTICLES & COINS -----
+function coinExplosion(position,amount){
     const particleCount = Math.min(Math.floor(amount),50);
     for(let i=0;i<particleCount;i++){
-        const coin = new THREE.Mesh(
-            new THREE.SphereGeometry(0.2,8,8),
-            new THREE.MeshPhongMaterial({color:0xffd700})
-        );
+        const coin = new THREE.Mesh(new THREE.SphereGeometry(0.2,8,8),
+            new THREE.MeshPhongMaterial({color:0xffd700}));
         coin.position.set(position.x,position.y,position.z);
         scene.add(coin);
         gsap.to(coin.position,{
-            x: position.x + (Math.random()-0.5)*5,
-            y: position.y + Math.random()*5+2,
-            z: position.z + (Math.random()-0.5)*5,
-            duration: 1.2,
-            ease: "power2.out",
+            x: position.x+(Math.random()-0.5)*5,
+            y: position.y+Math.random()*5+2,
+            z: position.z+(Math.random()-0.5)*5,
+            duration:1.2,
+            ease:"power2.out",
             onComplete:()=>scene.remove(coin)
         });
     }
 }
 
-function featureSparkle(position){
-    for(let i=0;i<20;i++){
-        const p = new THREE.Mesh(
-            new THREE.SphereGeometry(0.1,6,6),
-            new THREE.MeshBasicMaterial({color:0x00ffcc})
-        );
+function luxurySparkle(position,color=0x00ffcc,count=30){
+    for(let i=0;i<count;i++){
+        const p = new THREE.Mesh(new THREE.SphereGeometry(0.1,6,6),
+            new THREE.MeshBasicMaterial({color: color}));
         p.position.set(position.x,position.y,position.z);
         scene.add(p);
         gsap.to(p.position,{
-            x:position.x+(Math.random()-0.5)*2,
+            x:position.x+(Math.random()-0.5)*3,
             y:position.y+Math.random()*3,
-            z:position.z+(Math.random()-0.5)*2,
+            z:position.z+(Math.random()-0.5)*3,
             duration:1,
             onComplete:()=>scene.remove(p)
         });
     }
 }
 
-function bigWinCamera(){
-    gsap.to(camera.position,{x:0,y:15,z:25,duration:1,ease:"power2.inOut",onComplete:()=>{
-        gsap.to(camera.position,{x:0,y:10,z:20,duration:1.5,ease:"power2.inOut"});
-    }});
+function bigWinCinematic(){
+    gsap.to(camera.position,{x:0,y:15,z:30,duration:0.8,ease:"power2.inOut"});
+    gsap.to(camera.rotation,{x:-0.1,duration:0.8});
+    setTimeout(()=>{
+        gsap.to(camera.position,{x:0,y:10,z:20,duration:1,ease:"power2.inOut"});
+        gsap.to(camera.rotation,{x:0,duration:1});
+    },1500);
 }
 
 // ----- SPIN LOGIC -----
@@ -151,10 +195,11 @@ function calculateRandomCoin(multiplier){
 function dropCoin(value,position){
     if(value>50){
         coinExplosion(position,value);
-        bigWinCamera();
+        bigWinCinematic();
         return;
     }
-    const coin=new THREE.Mesh(new THREE.SphereGeometry(0.3,12,12), new THREE.MeshPhongMaterial({color:0xffd700}));
+    const coin = new THREE.Mesh(new THREE.SphereGeometry(0.3,12,12),
+        new THREE.MeshPhongMaterial({color:0xffd700}));
     coin.position.set(position.x,15,position.z);
     scene.add(coin);
     gsap.to(coin.position,{y:0,duration:1.2,ease:"bounce.out",onComplete:()=>scene.remove(coin)});
@@ -169,15 +214,15 @@ function spinReels(){
             if(winningSymbol.name===scatterSymbol){freeSpins+=6; console.log("Free Spins Triggered! Total:",freeSpins);}
             if(winningSymbol.name===featureSymbol){
                 const idx = holdPositions.findIndex(p=>p===null);
-                if(idx>=0){holdPositions[idx]=featureSymbol; featureSparkle(reel.position);}
+                if(idx>=0){holdPositions[idx]=featureSymbol; updateHoldDisplay(); luxurySparkle(reel.position,0xffd700,40);}
             }
             const winAmount = calculateRandomCoin(winningSymbol.multiplier);
             dropCoin(winAmount,reel.position);
             totalWin += winAmount;
         }});
     });
-    balance+=totalWin;
-    balanceEl.textContent=balance.toFixed(2);
+    balance += totalWin;
+    balanceEl.textContent = balance.toFixed(2);
 }
 
 // ----- FREE SPINS -----
@@ -213,101 +258,3 @@ function animate(){
     renderer.render(scene,camera);
 }
 animate();
-
-// Floor
-const floorGeo = new THREE.PlaneGeometry(50, 30);
-const floorMat = new THREE.MeshPhongMaterial({ color: 0x3b0b0b, shininess: 50 });
-const floor = new THREE.Mesh(floorGeo, floorMat);
-floor.rotation.x = -Math.PI/2;
-floor.position.y = -1;
-scene.add(floor);
-
-// Chandeliers
-function addChandelier(x, y, z) {
-    const sphere = new THREE.Mesh(
-        new THREE.SphereGeometry(1, 32, 32),
-        new THREE.MeshStandardMaterial({ color: 0xffd700, emissive: 0xffaa00, emissiveIntensity: 1.5 })
-    );
-    sphere.position.set(x, y, z);
-    scene.add(sphere);
-}
-addChandelier(-10, 12, -5);
-addChandelier(10, 12, -5);
-addChandelier(0, 12, 5);
-
-const holdMeshes = [];
-for(let i=0;i<6;i++){
-    const geo = new THREE.BoxGeometry(1.5,1.5,0.5);
-    const mat = new THREE.MeshStandardMaterial({ color: 0x222222, emissive: 0x444444, metalness:0.8, roughness:0.2 });
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.position.set(-7+i*3,6,0);
-    scene.add(mesh);
-    holdMeshes.push(mesh);
-}
-
-function updateHoldDisplay() {
-    holdMeshes.forEach((mesh, idx) => {
-        if(holdPositions[idx]===featureSymbol){
-            mesh.material.emissive.setHex(0xffd700);
-        } else {
-            mesh.material.emissive.setHex(0x444444);
-        }
-    });
-}
-
-reels.forEach(reel => {
-    reel.children.forEach(sym => {
-        sym.material.metalness = 1;
-        sym.material.roughness = 0.2;
-        sym.material.emissive = new THREE.Color(0xffd700);
-        sym.material.emissiveIntensity = 0.5;
-    });
-});
-
-function bigWinCinematic(){
-    // Camera tilt + zoom
-    gsap.to(camera.position,{x:0,y:15,z:30,duration:0.8,ease:"power2.inOut"});
-    gsap.to(camera.rotation,{x:-0.1,duration:0.8});
-    setTimeout(()=>{
-        gsap.to(camera.position,{x:0,y:10,z:20,duration:1,ease:"power2.inOut"});
-        gsap.to(camera.rotation,{x:0,duration:1});
-    },1500);
-
-    // Intensify aurora lights
-    auroraLights.forEach(light=>{
-        gsap.to(light,{intensity:4,duration:0.5,yoyo:true,repeat:1});
-    });
-}
-
-function luxurySparkle(position,color=0x00ffcc,count=30){
-    for(let i=0;i<count;i++){
-        const p = new THREE.Mesh(new THREE.SphereGeometry(0.1,6,6),
-            new THREE.MeshBasicMaterial({color: color})
-        );
-        p.position.set(position.x,position.y,position.z);
-        scene.add(p);
-        gsap.to(p.position,{
-            x:position.x+(Math.random()-0.5)*3,
-            y:position.y+Math.random()*3,
-            z:position.z+(Math.random()-0.5)*3,
-            duration:1,
-            onComplete:()=>scene.remove(p)
-        });
-    }
-}
-
-if(winningSymbol.name===featureSymbol){
-    const idx = holdPositions.findIndex(p=>p===null);
-    if(idx>=0){
-        holdPositions[idx]=featureSymbol;
-        updateHoldDisplay(); // Show visually
-        luxurySparkle(reels[i].position,0xffd700,40);
-    }
-}
-
-// Spin sound
-function playSpinSound(){ console.log("Spin sound"); }
-// Coin drop sound
-function playCoinSound(){ console.log("Coin drop"); }
-// Big win sound
-function playBigWin(){ console.log("Big win fanfare"); }
