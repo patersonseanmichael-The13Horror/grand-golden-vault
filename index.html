@@ -6,7 +6,7 @@
 <title>Grand Golden Vault</title>
 <link rel="stylesheet" href="global.css">
 </head>
-<body class="vault-page">
+<body class="vault-page" style="background: url('images/vault-door-path.jpg') center/cover no-repeat;">
 
 <header class="topbar">
   <div class="logo">GRAND GOLDEN VAULT</div>
@@ -34,7 +34,7 @@ const heroText = landingHero.querySelector('p');
 const heroCTA = landingHero.querySelector('.cta-btn');
 const particlesContainer = document.querySelector('.particles');
 
-// Create particles
+// Create gold dust particles
 for(let i=0;i<60;i++){
   const p = document.createElement('div');
   p.classList.add('particle');
@@ -50,11 +50,24 @@ window.addEventListener('load', ()=>{
   heroText.style.opacity = 0; heroText.style.transform='translateY(20px)';
   heroCTA.style.opacity = 0; heroCTA.style.transform='translateY(20px)';
 
-  setTimeout(()=>{ heroHeading.style.transition='opacity 1.2s, transform 1.2s'; heroHeading.style.opacity=1; heroHeading.style.transform='translateY(0)'; },600);
-  setTimeout(()=>{ heroText.style.transition='opacity 1.2s, transform 1.2s'; heroText.style.opacity=1; heroText.style.transform='translateY(0)'; },1200);
-  setTimeout(()=>{ heroCTA.style.transition='opacity 1.2s, transform 1.2s'; heroCTA.style.opacity=1; heroCTA.style.transform='translateY(0)'; },1800);
+  setTimeout(()=>{ 
+    heroHeading.style.transition='opacity 1.2s, transform 1.2s'; 
+    heroHeading.style.opacity=1; 
+    heroHeading.style.transform='translateY(0)'; 
+  },600);
+
+  setTimeout(()=>{ 
+    heroText.style.transition='opacity 1.2s, transform 1.2s'; 
+    heroText.style.opacity=1; 
+    heroText.style.transform='translateY(0)'; 
+  },1200);
+
+  setTimeout(()=>{ 
+    heroCTA.style.transition='opacity 1.2s, transform 1.2s'; 
+    heroCTA.style.opacity=1; 
+    heroCTA.style.transform='translateY(0)'; 
+  },1800);
 });
 </script>
-
 </body>
 </html>
