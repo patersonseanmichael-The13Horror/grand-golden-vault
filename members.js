@@ -88,7 +88,7 @@ proofBtn.addEventListener("click", () => {
   reader.readAsDataURL(file);
 });
 
-// --- Fake live feed ---
+// --- live feed ---
 const feedBox = document.getElementById("feedBox");
 const actions = ["Deposit", "Withdrawal"];
 const amounts = ["$250", "$500", "$1,200", "$5,000", "$12,000"];
