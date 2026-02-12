@@ -35,11 +35,20 @@
     <p>Name: <span id="vaultName"></span></p>
     <p>Balance: <span id="vaultBalance"></span></p>
     <p>Tier: <span id="vaultTier"></span></p>
+    <button id="depositBtn">Deposit GOLD</button>
   </div>
 
   <div class="ledger-section">
     <h3>Ledger</h3>
     <div id="ledger"></div>
+  </div>
+
+  <!-- Proof of Payment -->
+  <div class="deposit-proof">
+    <h3>Upload Proof of Payment</h3>
+    <input type="file" id="proofUpload" accept="image/*" />
+    <button id="submitProof">Submit Proof</button>
+    <p id="proofMessage"></p>
   </div>
 
   <!-- Game Cards -->
@@ -106,8 +115,8 @@ onAuthStateChanged(auth, (user) => {
 
 <!-- VAULT ANIMATION & PARTICLES -->
 <script>
-const doors = document.getElementById('doors');
-const vault = document.getElementById('vault');
+const doors=document.getElementById('doors');
+const vault=document.getElementById('vault');
 setTimeout(()=>doors.classList.add('open'),600);
 setTimeout(()=>vault.classList.add('visible'),2000);
 
