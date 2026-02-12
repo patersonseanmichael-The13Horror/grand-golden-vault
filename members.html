@@ -5,7 +5,7 @@
 <title>Golden Vault — Members Lobby</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-  <style>
+<style>
 :root {
   --gold: #d4af37;
   --text-light: #eae6dc;
@@ -15,13 +15,12 @@
 
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;}
 body{
-  background: 
-    radial-gradient(circle at top, rgba(28,19,10,0.6), rgba(8,5,3,0.8) 70%),
-    url('images/bull-gold.jpg') center/cover no-repeat;
+  background: radial-gradient(circle at top, rgba(28,19,10,0.6), rgba(8,5,3,0.8) 70%),
+              url('images/bull-gold.jpg') center/cover no-repeat;
   color: var(--text-light);
   min-height:100vh;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow-y:auto;
+  overflow-x:hidden;
   position:relative;
   padding-top:80px;
 }
@@ -41,81 +40,6 @@ body{
   100%{transform:translateY(-100vh) translateX(30px); opacity:0;}
 }
 
-  /* SLOT MACHINE CONTAINER */
-#slots-container {
-  display: none; /* initially hidden */
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: rgba(8,5,3,0.95);
-  backdrop-filter: blur(4px);
-  border: 2px solid var(--gold);
-  border-radius: 25px;
-  padding: 20px;
-  box-shadow: 0 0 60px rgba(212,175,55,0.5), inset 0 0 40px rgba(212,175,55,0.3);
-  z-index: 20;
-}
-
-/* BALANCE DISPLAY */
-#slots-container > div:first-child {
-  font-weight: 600;
-  text-shadow: 0 0 10px var(--gold);
-}
-
-/* BUTTONS */
-#slots-container button {
-  padding: 12px 25px;
-  border-radius: 15px;
-  border: 2px solid var(--gold);
-  background: linear-gradient(145deg, rgba(212,175,55,0.2), rgba(255,223,0,0.05));
-  color: var(--gold);
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.4s ease, background 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Button hover glow and animation */
-#slots-container button:hover {
-  transform: translateY(-4px) scale(1.05);
-  box-shadow: 0 0 25px var(--gold), 0 0 40px rgba(255,223,0,0.4);
-  background: linear-gradient(145deg, rgba(212,175,55,0.4), rgba(255,223,0,0.1));
-}
-
-/* Button shine effect */
-#slots-container button::after {
-  content: '';
-  position: absolute;
-  top: 0; left: -75%;
-  width: 50%; height: 100%;
-  background: linear-gradient(120deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1), rgba(255,255,255,0.3));
-  transform: skewX(-20deg);
-  transition: 0.7s;
-}
-#slots-container button:hover::after {
-  left: 125%;
-}
-
-/* 3D canvas container */
-#game-container {
-  border: 2px solid var(--gold);
-  border-radius: 20px;
-  box-shadow: 0 0 60px rgba(212,175,55,0.5), inset 0 0 30px rgba(212,175,55,0.2);
-  width: 90%;
-  height: 70%;
-  margin: 20px 0;
-  background: #080503;
-}
-
-/* VAULT DOORS */
-.doors{position:fixed;inset:0;z-index:10;display:flex;pointer-events:none;}
-.door{width:50%;height:100%;background:linear-gradient(180deg,#1a120a,#090603);border-right:1px solid rgba(212,175,55,0.4);box-shadow: inset 0 0 40px rgba(0,0,0,0.8);transform:translateX(0);transition: transform 2.6s cubic-bezier(.77,0,.18,1);}
-.door.right{border-right:none;border-left:1px solid rgba(212,175,55,0.4);}
-.doors.open .door.left{transform:translateX(-100%);}
-.doors.open .door.right{transform:translateX(100%);}
-
 /* TOPBAR */
 .topbar{
   position:sticky; top:0; width:100%; padding:15px 30px;
@@ -126,6 +50,25 @@ body{
 }
 .topbar .wallet, .topbar .vip{font-weight:600;}
 .topbar .vip{color:var(--gold);}
+.topbar .wallet.updated{
+  animation: walletGlow 0.6s ease-in-out;
+}
+@keyframes walletGlow{
+  0%{text-shadow:0 0 5px var(--gold);}
+  50%{text-shadow:0 0 20px var(--gold);}
+  100%{text-shadow:0 0 5px var(--gold);}
+}
+
+/* VAULT DOORS */
+.doors{position:fixed;inset:0;z-index:10;display:flex;pointer-events:none;}
+.door{width:50%;height:100%;background:linear-gradient(180deg,#1a120a,#090603);
+  border-right:1px solid rgba(212,175,55,0.4);
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
+  transform:translateX(0);
+  transition: transform 2.6s cubic-bezier(.77,0,.18,1);}
+.door.right{border-right:none;border-left:1px solid rgba(212,175,55,0.4);}
+.doors.open .door.left{transform:translateX(-100%);}
+.doors.open .door.right{transform:translateX(100%);}
 
 /* VAULT LOBBY */
 .vault{
@@ -192,7 +135,7 @@ body{
   to{width:65%;}
 }
 
-/* LIVE FEED TICKER */
+/* LIVE FEED */
 .live-feed{
   background:rgba(0,0,0,0.6); border:1px solid var(--gold); border-radius:15px;
   padding:20px; height:220px; overflow:hidden; position:relative; font-size:0.95rem;
@@ -210,8 +153,17 @@ body{
   100%{top:-200%;}
 }
 
+/* SLOTS SECTION */
+#slots-section{
+  width:100%; height:600px; margin-top:30px; position:relative; display:none;
+  border:2px solid var(--gold); border-radius:12px; overflow:hidden;
+  background: rgba(8,5,3,0.95); backdrop-filter: blur(4px);
+  padding:20px; box-shadow: 0 0 60px rgba(212,175,55,0.5), inset 0 0 40px rgba(212,175,55,0.3);
+}
+
 /* EXIT BUTTON */
-.exit-btn{padding:12px 24px;border-radius:12px;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;transition:0.3s;margin-top:20px;font-size:1rem;position:relative;overflow:hidden;}
+.exit-btn{padding:12px 24px;border-radius:12px;border:1px solid var(--gold);
+background:transparent;color:var(--gold);cursor:pointer;transition:0.3s;margin-top:20px;font-size:1rem;position:relative;overflow:hidden;}
 .exit-btn::after{
   content:'';
   position:absolute; top:0; left:-75%;
@@ -222,11 +174,6 @@ body{
 }
 .exit-btn:hover::after{left:125%;}
 .exit-btn:hover{background:rgba(212,175,55,0.1);box-shadow:0 0 12px rgba(212,175,55,0.3);}
-
-/* SLOTS SECTION */
-#slots-section{
-  width:100%; height:600px; margin-top:30px; position:relative; display:none; border:2px solid var(--gold); border-radius:12px; overflow:hidden;
-}
 </style>
 </head>
 <body>
@@ -253,14 +200,13 @@ body{
     <div class="card" onclick="openSlots()">🎰<br>Platinum Slots</div>
   </div>
 
-  <!-- SLOTS SECTION -->
   <div id="slots-section">
     <div id="game-container"></div>
     <div id="ui-panel">
       <button id="spinBtn">Spin</button>
       <button id="autoSpinBtn">AutoSpin</button>
       <button id="doubleUpBtn">Double Up</button>
-      <span>Balance: $<span id="balance">1000</span></span>
+      <span>Balance: <span id="balance">1000</span> GOLD</span>
       <button onclick="closeSlots()" style="position:absolute;top:20px;left:20px;padding:10px 15px;">Back to Vault</button>
     </div>
   </div>
@@ -302,6 +248,7 @@ onAuthStateChanged(auth, (user) => {
 </script>
 
 <script>
+// DOORS & VAULT ANIMATION
 const doors=document.getElementById('doors');
 const vault=document.getElementById('vault');
 setTimeout(()=>doors.classList.add('open'),600);
@@ -312,7 +259,6 @@ function exitVault(){
   setTimeout(()=>doors.classList.remove('open'),400);
   setTimeout(()=>signOut(getAuth()).then(()=>window.location.href="login.html"),2600);
 }
-
 function goToGame(url){
   vault.classList.remove('visible');
   setTimeout(()=>doors.classList.remove('open'),400);
@@ -334,7 +280,7 @@ for(let i=0;i<70;i++){
   particlesContainer.appendChild(p);
 }
 
-// VIP BAR ANIMATION
+// VIP BAR
 const vipBar = document.getElementById('vipBar');
 setTimeout(()=>vipBar.style.width='65%', 800);
 
@@ -346,7 +292,6 @@ function generatePlayerID() {
   const last = String(Math.floor(Math.random() * 900 + 100));
   return `${first}*****${last}`;
 }
-
 function updateLiveFeed(){
   liveFeed.innerHTML='';
   const spacing = 40;
@@ -357,29 +302,32 @@ function updateLiveFeed(){
     liveFeed.appendChild(p);
   }
 }
-
 updateLiveFeed();
 setInterval(updateLiveFeed, 30*60*1000);
 
-// ----- SLOTS FUNCTIONS -----
+// WALLET UPDATE
+function updateWallet(amount){
+  const walletEl = document.querySelector('.wallet');
+  walletEl.textContent = `Wallet: ${amount.toFixed(2)} GOLD`;
+  walletEl.classList.add('updated');
+  setTimeout(()=>walletEl.classList.remove('updated'),600);
+}
+
+// SLOTS
 function openSlots(){
   document.querySelector('.game-cards').style.display='none';
   document.getElementById('slots-section').style.display='block';
   document.getElementById('slots-section').scrollIntoView({behavior:'smooth'});
   if(typeof initSlots==='function') initSlots();
 }
-
 function closeSlots(){
   document.getElementById('slots-section').style.display='none';
   document.querySelector('.game-cards').style.display='grid';
 }
 </script>
 
-<!-- THREE.JS & GSAP -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r153/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/gsap.min.js"></script>
-
-<!-- PLATINUM SLOTS JS -->
 <script type="module" src="slots.js"></script>
 
 </body>
