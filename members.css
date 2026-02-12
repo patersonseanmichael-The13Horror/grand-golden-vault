@@ -210,3 +210,54 @@ h1, h3 {
     font-family: 'Inter', sans-serif;
     font-size: 14px;
 }
+
+/* PARTICLES: cinematic glow */
+.particle {
+    position: absolute;
+    background: radial-gradient(circle, #ffd700 0%, rgba(255,215,0,0) 70%);
+    border-radius: 50%;
+    opacity: 0.5;
+    animation: floatParticle linear infinite;
+    filter: drop-shadow(0 0 6px #ffd700);
+}
+
+/* LIVE FEED: scrolling glow */
+.live-feed div {
+    transition: all 0.5s ease;
+    text-shadow: 0 0 2px #ffd700, 0 0 6px #ffd700;
+}
+
+/* WALLET / LEDGER HOVER EFFECT */
+.wallet-section:hover, .ledger-section:hover {
+    box-shadow: 0 0 15px #ffd700;
+    transform: scale(1.02);
+    transition: all 0.3s ease-in-out;
+}
+
+/* VIP BAR: animated shimmer */
+.vip-progress-inner {
+    background: linear-gradient(90deg, #ffd700 20%, #fffacd 50%, #ffd700 80%);
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+}
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* VAULT DOORS: add reflection & shadow */
+.door {
+    background: linear-gradient(to bottom, #3a2f1f 0%, #0b0603 40%, #3a2f1f 100%);
+    box-shadow: inset -5px 0 15px rgba(255,215,0,0.3);
+}
+
+/* GAME CARDS: glowing hover effect */
+.card:hover {
+    box-shadow: 0 0 20px #ffd700, 0 0 40px rgba(255,215,0,0.3);
+    transform: scale(1.12);
+}
+
+/* DEPOSIT PROOF BOX: subtle glow */
+.deposit-proof {
+    box-shadow: 0 0 15px #ffd700;
+}
