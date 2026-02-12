@@ -9,20 +9,25 @@ let user = JSON.parse(localStorage.getItem("gv_user")) || {
 
 // --- Wallet display ---
 function updateWalletDisplay() {
-  document.getElementById("vaultId").innerText = user.id;
-  document.getElementById("vaultName").innerText = user.name;
-  document.getElementById("vaultBalance").innerText = user.balance + " GOLD";
-  document.getElementById("vaultTier").innerText = user.tier;
+  const vaultId = document.getElementById("vaultId");
+  const vaultName = document.getElementById("vaultName");
+  const vaultBalance = document.getElementById("vaultBalance");
+  const vaultTier = document.getElementById("vaultTier");
+  if(vaultId) vaultId.innerText = user.id;
+  if(vaultName) vaultName.innerText = user.name;
+  if(vaultBalance) vaultBalance.innerText = user.balance + " GOLD";
+  if(vaultTier) vaultTier.innerText = user.tier;
 }
 updateWalletDisplay();
 
 // --- Ledger display ---
 const ledgerEl = document.getElementById("ledger");
 function updateLedger() {
+  if(!ledgerEl) return;
   ledgerEl.innerHTML = "";
   user.ledger.forEach(tx => {
     const div = document.createElement("div");
-    div.textContent = `${tx.type} | ${tx.amount} GOLD | ${tx.time}`;
+    div.textContent = `${tx.type} | ${tx.amount} GOLD | ${tx.time} | ${tx.name || ""} | ${tx.payId || ""} | ${tx.reference || ""} | ${tx.description || ""}`;
     div.style.marginBottom = "4px";
     ledgerEl.appendChild(div);
   });
@@ -30,13 +35,17 @@ function updateLedger() {
 updateLedger();
 
 // --- Deposit function ---
-function deposit(amount) {
+function deposit() {
   const tx = {
     type: "DEPOSIT",
-    amount: amount,
-    time: new Date().toLocaleString()
+    amount: 250, // default amount for demo
+    time: new Date().toLocaleString(),
+    name: "M Rainbow",
+    payId: "0435 750 187",
+    reference: "10009888",
+    description: "Items Purchased"
   };
-  user.balance += amount;
+  user.balance += tx.amount;
   user.ledger.unshift(tx);
 
   // Vault tier unlock
@@ -50,6 +59,16 @@ function deposit(amount) {
   updateLedger();
 }
 
+// --- Add Deposit Button dynamically ---
+const vaultEl = document.querySelector(".vault");
+if(vaultEl){
+  const depositBtn = document.createElement("button");
+  depositBtn.innerText = "Deposit GOLD";
+  depositBtn.classList.add("exit-slots-btn");
+  depositBtn.onclick = deposit;
+  vaultEl.insertBefore(depositBtn, vaultEl.querySelector(".vip-section"));
+}
+
 // --- Fake live feed ---
 const feedBox = document.getElementById("feedBox");
 const actions = ["Deposit", "Withdrawal"];
@@ -60,6 +79,7 @@ function randomPhone() {
 }
 
 function addFeedItem() {
+  if(!feedBox) return;
   const action = actions[Math.floor(Math.random() * actions.length)];
   const amount = amounts[Math.floor(Math.random() * amounts.length)];
   const time = new Date().toLocaleTimeString();
@@ -73,3 +93,12 @@ function addFeedItem() {
   if (feedBox.children.length > 6) feedBox.removeChild(feedBox.lastChild);
 }
 setInterval(addFeedItem, 3500);
+
+// --- VIP BAR animation update ---
+const vipBar = document.getElementById('vipBar');
+function updateVIP(){
+  if(!vipBar) return;
+  let progress = Math.min(user.balance / 1000 * 100, 100); // arbitrary max at 1000 GOLD
+  vipBar.style.width = progress + '%';
+}
+updateVIP();
