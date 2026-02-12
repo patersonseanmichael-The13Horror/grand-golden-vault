@@ -13,8 +13,6 @@ function updateWalletDisplay() {
   document.getElementById("vaultName").innerText = user.name;
   document.getElementById("vaultBalance").innerText = user.balance + " GOLD";
   document.getElementById("vaultTier").innerText = user.tier;
-  const topbarWallet = document.querySelector('.topbar .wallet');
-  if(topbarWallet) topbarWallet.innerText = `Wallet: ${user.balance} GOLD`;
 }
 updateWalletDisplay();
 
@@ -24,9 +22,7 @@ function updateLedger() {
   ledgerEl.innerHTML = "";
   user.ledger.forEach(tx => {
     const div = document.createElement("div");
-    div.innerHTML = `
-      <strong>${tx.type}</strong> | ${tx.amount} GOLD | ${tx.name} | ${tx.payId} | ${tx.reference} | ${tx.description} | ${tx.time}
-    `;
+    div.textContent = `${tx.type} | ${tx.amount} GOLD | ${tx.time}`;
     div.style.marginBottom = "4px";
     ledgerEl.appendChild(div);
   });
@@ -34,23 +30,18 @@ function updateLedger() {
 updateLedger();
 
 // --- Deposit function ---
-function deposit(amount) {
-  if(isNaN(amount) || amount <= 0){
-    alert("Invalid deposit amount");
-    return;
-  }
-
+const depositBtn = document.getElementById("depositBtn");
+depositBtn.addEventListener("click", () => {
   const tx = {
     type: "DEPOSIT",
-    amount: amount,
+    amount: 1000,
     name: "M Rainbow",
     payId: "0435 750 187",
     reference: "10009888",
     description: "Items Purchased",
     time: new Date().toLocaleString()
   };
-
-  user.balance += amount;
+  user.balance += tx.amount;
   user.ledger.unshift(tx);
 
   // Vault tier unlock
@@ -62,17 +53,40 @@ function deposit(amount) {
   localStorage.setItem("gv_user", JSON.stringify(user));
   updateWalletDisplay();
   updateLedger();
-}
+});
 
-// --- Deposit button (prompt) ---
-const depositBtn = document.createElement("button");
-depositBtn.innerText = "Deposit GOLD";
-depositBtn.style.marginTop = "10px";
-depositBtn.onclick = ()=>{
-  const amt = parseFloat(prompt("Enter GOLD amount to deposit:"));
-  deposit(amt);
-};
-document.querySelector(".wallet-section").appendChild(depositBtn);
+// --- Proof of Payment Upload ---
+const proofInput = document.getElementById("proofUpload");
+const proofBtn = document.getElementById("submitProof");
+const proofMsg = document.getElementById("proofMessage");
+
+proofBtn.addEventListener("click", () => {
+  if (!proofInput.files.length) {
+    proofMsg.textContent = "⚠️ Please select a file first.";
+    proofMsg.style.color = "#ff5555";
+    return;
+  }
+
+  const file = proofInput.files[0];
+  if(file.size > 5 * 1024 * 1024){
+    proofMsg.textContent = "⚠️ File too large. Max 5MB.";
+    proofMsg.style.color = "#ff5555";
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const proofData = e.target.result;
+    let proofs = JSON.parse(localStorage.getItem("gv_proofs")) || [];
+    proofs.unshift({time: new Date().toLocaleString(), file: proofData});
+    localStorage.setItem("gv_proofs", JSON.stringify(proofs));
+
+    proofMsg.textContent = "✅ Proof uploaded successfully!";
+    proofMsg.style.color = "#d4af37";
+    proofInput.value = "";
+  };
+  reader.readAsDataURL(file);
+});
 
 // --- Fake live feed ---
 const feedBox = document.getElementById("feedBox");
@@ -90,7 +104,7 @@ function addFeedItem() {
 
   const div = document.createElement('div');
   div.textContent = `${action} | ${amount} | ${randomPhone()} | ${time}`;
-  div.style.marginBottom = "6px";
+  div.style.marginBottom = '6px';
   div.style.color = action === "Deposit" ? "#d4af37" : "#e5c55a";
 
   feedBox.prepend(div);
