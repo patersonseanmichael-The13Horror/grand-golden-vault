@@ -22,8 +22,11 @@ function updateLedger() {
     ledgerEl.innerHTML = "";
     user.ledger.forEach(tx => {
         const div = document.createElement("div");
-        div.textContent = `${tx.type} | ${tx.amount} GOLD | ${tx.time}`;
-        div.style.marginBottom = "4px";
+        div.innerHTML = `
+            <strong>${tx.type}</strong> | ${tx.amount} GOLD | ${tx.time}
+            ${tx.name ? `<br>Name: ${tx.name} | PayID: ${tx.payId} | Ref: ${tx.reference} | Desc: ${tx.description}` : ""}
+        `;
+        div.style.marginBottom = "6px";
         div.style.color = "#ffd700";
         ledgerEl.appendChild(div);
     });
@@ -76,7 +79,9 @@ const feedBox = document.getElementById("feedBox");
 const actions = ["Deposit", "Withdrawal"];
 const amounts = ["$250", "$500", "$1,200", "$5,000", "$12,000"];
 
-function randomPhone() { return "04******" + Math.floor(10 + Math.random() * 89); }
+function randomPhone() { 
+    return "04******" + Math.floor(10 + Math.random() * 90); 
+}
 
 function addFeedItem() {
     const action = actions[Math.floor(Math.random() * actions.length)];
@@ -118,7 +123,7 @@ setTimeout(() => vault.classList.add("visible"), 2000);
 function exitVault() {
     vault.classList.remove("visible");
     setTimeout(() => doors.classList.remove("open"), 400);
-    setTimeout(() => alert("Signing out..."), 2600); // Replace with actual signOut if Firebase
+    setTimeout(() => alert("Signing out..."), 2600); // replace with Firebase signOut if needed
 }
 
 function goToGame(url) {
@@ -130,3 +135,17 @@ function goToGame(url) {
 // --- VIP Bar Animation ---
 const vipBar = document.getElementById("vipBar");
 setTimeout(() => vipBar.style.width = "65%", 800);
+
+// --- Slots Section Hidden Initially ---
+const slotsSection = document.getElementById("slots-section");
+if (slotsSection) slotsSection.style.display = "none";
+function openSlots() {
+    document.querySelector(".game-cards").style.display = "none";
+    slotsSection.style.display = "block";
+    slotsSection.scrollIntoView({ behavior: "smooth" });
+    if (typeof initSlots === "function") initSlots();
+}
+function closeSlots() {
+    slotsSection.style.display = "none";
+    document.querySelector(".game-cards").style.display = "grid";
+}
