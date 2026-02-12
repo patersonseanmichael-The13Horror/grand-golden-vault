@@ -1,1 +1,64 @@
+/* =========================
+   GOLDEN VAULT — GLOBAL
+========================= */
 
+:root {
+  --gold: #d4af37;
+  --gold-light: #f5e6a6;
+  --dark-bg: #080503;
+  --dark-soft: #120c08;
+  --text-light: #eae6dc;
+}
+
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  min-height: 100%;
+  font-family: 'Inter', sans-serif;
+  background: var(--dark-soft);
+  color: var(--text-light);
+}
+
+/* GOLD GRADIENT TEXT */
+.gold-text {
+  background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* PREMIUM BUTTON */
+.gold-btn {
+  padding: 12px 26px;
+  border-radius: 40px;
+  border: 1px solid rgba(212,175,55,0.5);
+  background: linear-gradient(145deg, #1a140c, #0d0906);
+  color: var(--gold);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow:
+    0 0 20px rgba(212,175,55,0.15),
+    inset 0 0 10px rgba(212,175,55,0.05);
+}
+
+.gold-btn:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 0 40px rgba(212,175,55,0.35),
+    inset 0 0 15px rgba(212,175,55,0.1);
+}
+
+/* SMOOTH FADE IN */
+.fade-in {
+  animation: fadeIn 1.2s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
