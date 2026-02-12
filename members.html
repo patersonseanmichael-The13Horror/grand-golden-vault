@@ -102,12 +102,12 @@ onAuthStateChanged(auth, (user) => {
 </script>
 
 <!-- MEMBERS JS -->
-<script type="module" src="wallet.js"></script>
+<script type="module" src="members.js"></script>
 
 <!-- VAULT ANIMATION & PARTICLES -->
 <script>
-const doors=document.getElementById('doors');
-const vault=document.getElementById('vault');
+const doors = document.getElementById('doors');
+const vault = document.getElementById('vault');
 setTimeout(()=>doors.classList.add('open'),600);
 setTimeout(()=>vault.classList.add('visible'),2000);
 
@@ -137,35 +137,10 @@ for(let i=0;i<70;i++){
   p.style.opacity=0.5+Math.random()*0.5;
   particlesContainer.appendChild(p);
 }
-  <script type="module" src="members.js"></script>
 
 // VIP BAR ANIMATION
 const vipBar = document.getElementById('vipBar');
 setTimeout(()=>vipBar.style.width='65%', 800);
-
-// LIVE FEED INITIALIZER
-const feedBox = document.getElementById("feedBox");
-const actions = ["Deposit", "Withdrawal"];
-const amounts = ["$250", "$500", "$1,200", "$5,000", "$12,000"];
-
-function randomPhone() {
-  return "04******" + Math.floor(10 + Math.random() * 89);
-}
-
-function addFeedItem() {
-  const action = actions[Math.floor(Math.random() * actions.length)];
-  const amount = amounts[Math.floor(Math.random() * amounts.length)];
-  const time = new Date().toLocaleTimeString();
-
-  const div = document.createElement('div');
-  div.textContent = `${action} | ${amount} | ${randomPhone()} | ${time}`;
-  div.style.marginBottom = "6px";
-  div.style.color = action === "Deposit" ? "#d4af37" : "#e5c55a";
-
-  feedBox.prepend(div);
-  if (feedBox.children.length > 6) feedBox.removeChild(feedBox.lastChild);
-}
-setInterval(addFeedItem, 3500);
 
 // SLOTS SECTION HANDLERS
 function openSlots(){
