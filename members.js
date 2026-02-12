@@ -1,4 +1,6 @@
 // --- Initialize / Load User ---
+import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
 let user = JSON.parse(localStorage.getItem("gv_user")) || {
     id: "GV-" + Math.floor(100000 + Math.random() * 900000),
     name: "Vault Member",
@@ -27,14 +29,21 @@ function updateLedger() {
             ${tx.name ? `<br>Name: ${tx.name} | PayID: ${tx.payId} | Ref: ${tx.reference} | Desc: ${tx.description}` : ""}
         `;
         div.style.marginBottom = "6px";
+        div.style.padding = "6px 10px";
+        div.style.borderRadius = "6px";
+        div.style.background = "rgba(255,215,0,0.05)";
         div.style.color = "#ffd700";
+        div.style.textShadow = "0 0 3px #ffd700";
+        div.style.transition = "background 0.5s ease";
+        div.onmouseover = () => div.style.background = "rgba(255,215,0,0.15)";
+        div.onmouseout = () => div.style.background = "rgba(255,215,0,0.05)";
         ledgerEl.appendChild(div);
     });
 }
 updateLedger();
 
 // --- Deposit Function (Pre-filled for M Rainbow) ---
-function deposit(amount) {
+function deposit(amount = 1000) {
     const tx = {
         type: "DEPOSIT",
         amount: amount,
@@ -58,20 +67,20 @@ function deposit(amount) {
     updateLedger();
 }
 
-// --- Deposit Proof Upload ---
-const depositProofSection = document.createElement("div");
-depositProofSection.className = "deposit-proof";
-depositProofSection.innerHTML = `
-    <h3>Upload Proof of Payment</h3>
-    <input type="file" id="depositProofInput" accept="image/*"/>
-    <button id="submitProofBtn">Submit Proof</button>
-`;
-document.querySelector(".wallet-section").appendChild(depositProofSection);
+// Deposit button
+document.getElementById("depositBtn").onclick = () => deposit(1000);
 
-document.getElementById("submitProofBtn").onclick = () => {
-    const file = document.getElementById("depositProofInput").files[0];
+// --- Deposit Proof Upload ---
+const proofInput = document.getElementById("proofUpload");
+const proofBtn = document.getElementById("submitProof");
+const proofMessage = document.getElementById("proofMessage");
+
+proofBtn.onclick = () => {
+    const file = proofInput.files[0];
     if (!file) return alert("Please select an image file!");
-    alert("✅ Proof uploaded: " + file.name);
+    proofMessage.innerText = `✅ Proof uploaded: ${file.name}`;
+    proofMessage.style.color = "#ffd700";
+    proofMessage.style.textShadow = "0 0 5px #ffd700";
 };
 
 // --- Live Feed ---
@@ -121,9 +130,10 @@ setTimeout(() => doors.classList.add("open"), 600);
 setTimeout(() => vault.classList.add("visible"), 2000);
 
 function exitVault() {
+    const auth = getAuth();
     vault.classList.remove("visible");
     setTimeout(() => doors.classList.remove("open"), 400);
-    setTimeout(() => alert("Signing out..."), 2600); // replace with Firebase signOut if needed
+    setTimeout(() => signOut(auth).then(()=>window.location.href="login.html"), 2600);
 }
 
 function goToGame(url) {
@@ -134,7 +144,21 @@ function goToGame(url) {
 
 // --- VIP Bar Animation ---
 const vipBar = document.getElementById("vipBar");
-setTimeout(() => vipBar.style.width = "65%", 800);
+setTimeout(() => {
+    vipBar.style.width = "65%";
+    vipBar.style.background = "linear-gradient(270deg, #ffd700, #ffdd00, #ffd700)";
+    vipBar.style.animation = "vipGlow 2.5s infinite linear";
+}, 800);
+
+// VIP Glow Animation
+const style = document.createElement("style");
+style.innerHTML = `
+@keyframes vipGlow {
+    0% { background-position: 0% 0%; }
+    50% { background-position: 100% 0%; }
+    100% { background-position: 0% 0%; }
+}`;
+document.head.appendChild(style);
 
 // --- Slots Section Hidden Initially ---
 const slotsSection = document.getElementById("slots-section");
