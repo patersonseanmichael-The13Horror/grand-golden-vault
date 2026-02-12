@@ -1,5 +1,6 @@
+<script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA4bJmDnapnEFlGggYVIoq2lS3QwHHz4hE",
@@ -11,4 +12,14 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
+const auth = getAuth(app);
+
+window.gvAuth = auth;
+window.gvSignOut = signOut;
+
+onAuthStateChanged(auth, (user) => {
+  if(!user || !user.emailVerified){
+    window.location.href = "login.html";
+  }
+});
+</script>
