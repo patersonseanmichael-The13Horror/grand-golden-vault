@@ -1,263 +1,253 @@
-/* === GLOBAL FONT & COLORS === */
+/* === GLOBAL === */
 body {
     margin: 0;
     font-family: 'Inter', sans-serif;
-    background: #0b0603;
+    background: #080503;
     color: #eae6dc;
     overflow-x: hidden;
-}
-
-h1, h3 {
-    font-family: 'Playfair Display', serif;
-    color: #d4af37;
 }
 
 /* === PARTICLES === */
 .particles {
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     pointer-events: none;
     z-index: 1;
 }
 .particle {
     position: absolute;
-    background: #ffd700;
     border-radius: 50%;
-    opacity: 0.7;
-    animation-name: floatParticle;
-    animation-iteration-count: infinite;
+    background: radial-gradient(circle, #ffd700 0%, #ffdd99 70%);
+    opacity: 0.5;
+    animation: float 6s infinite ease-in-out;
 }
-@keyframes floatParticle {
-    0% { transform: translateY(0) }
-    50% { transform: translateY(-20px) }
-    100% { transform: translateY(0) }
+@keyframes float {
+    0% { transform: translateY(0) scale(1); opacity: 0.5; }
+    50% { transform: translateY(-20px) scale(1.2); opacity: 0.8; }
+    100% { transform: translateY(0) scale(1); opacity: 0.5; }
 }
 
 /* === VAULT DOORS === */
 .doors {
     position: fixed;
-    top:0; left:0;
-    width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     display: flex;
-    z-index: 5;
+    z-index: 10;
 }
 .door {
     flex: 1;
-    background: linear-gradient(to bottom, #3a2f1f, #0b0603);
-    transform-origin: left;
-    transition: transform 2s ease-in-out;
+    background: linear-gradient(45deg, #4d3a0b, #d4af37);
+    transform-origin: left center;
+    transition: transform 1.5s ease;
 }
-.door.right { transform-origin: right; }
+.door.right { transform-origin: right center; }
 .doors.open .left { transform: rotateY(-90deg); }
 .doors.open .right { transform: rotateY(90deg); }
 
+/* === TOPBAR === */
+.topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    background: rgba(12,8,5,0.85);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    z-index: 5;
+    border-bottom: 1px solid #d4af37;
+}
+.topbar .wallet, .topbar .vip {
+    font-weight: 600;
+    color: #ffd700;
+}
+
 /* === VAULT LOBBY === */
 .vault {
-    position: relative;
-    z-index: 10;
+    padding: 80px 30px 30px;
+    max-width: 1200px;
+    margin: 0 auto;
     opacity: 0;
-    transition: opacity 1s ease-in-out;
-    padding: 20px;
+    transition: opacity 1s ease;
+    z-index: 2;
 }
 .vault.visible { opacity: 1; }
 
-/* === TOPBAR === */
-.topbar {
-    display: flex;
-    justify-content: space-between;
-    padding: 15px 30px;
-    background: rgba(10,8,5,0.9);
-    border-bottom: 2px solid #d4af37;
-    position: sticky;
-    top: 0;
-    z-index: 10;
+.vault h1 {
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8em;
+    color: #ffd700;
+    text-shadow: 0 0 15px #ffd700;
 }
-.topbar .wallet, .topbar .vip { font-weight: 600; }
 
 /* === WALLET & LEDGER === */
-.wallet-section, .ledger-section, .deposit-proof {
-    background: rgba(20,16,12,0.9);
-    border: 1px solid #d4af37;
+.wallet-section, .ledger-section {
+    background: rgba(12,8,5,0.7);
+    padding: 15px 20px;
     border-radius: 12px;
-    padding: 15px;
-    margin: 15px 0;
+    margin-bottom: 20px;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
 }
-.wallet-section h3, .ledger-section h3, .deposit-proof h3 {
-    margin-top: 0;
-    margin-bottom: 10px;
-}
-.wallet-section p {
-    margin: 5px 0;
+.wallet-section p, .ledger-section div {
+    font-size: 1.1em;
+    margin: 6px 0;
 }
 
-/* === DEPOSIT BUTTON === */
-#depositBtn {
-    margin-top: 10px;
-    padding: 10px 20px;
-    background: #d4af37;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
+/* === LEDGER SHIMMER === */
+.ledger-section div {
+    background: rgba(255,215,0,0.05);
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: background 0.5s ease;
 }
-#depositBtn:hover {
-    background: #ffd700;
-    transform: scale(1.05);
-}
-
-/* === PROOF OF PAYMENT === */
-.deposit-proof input[type="file"] {
-    padding: 8px;
-    margin-top: 5px;
-    border-radius: 8px;
-    border: 1px solid #d4af37;
-    background: #1a1410;
-    color: #eae6dc;
-}
-.deposit-proof button {
-    margin-top: 10px;
-    padding: 8px 16px;
-    background: #d4af37;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-.deposit-proof button:hover {
-    background: #ffd700;
-    transform: scale(1.05);
-}
-#proofMessage {
-    margin-top: 8px;
-    font-weight: 500;
+.ledger-section div:hover {
+    background: rgba(255,215,0,0.15);
 }
 
 /* === GAME CARDS === */
 .game-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(120px,1fr));
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     gap: 20px;
     margin: 20px 0;
 }
 .card {
-    background: rgba(30,20,12,0.9);
-    border: 2px solid #d4af37;
-    border-radius: 12px;
-    padding: 20px;
+    background: linear-gradient(145deg, #2e1f0d, #5c3a10);
+    color: #ffd700;
+    font-size: 1.5em;
     text-align: center;
-    font-size: 28px;
+    padding: 25px 10px;
+    border-radius: 15px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    box-shadow: 0 0 15px rgba(255,215,0,0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .card:hover {
-    transform: scale(1.1);
-    border-color: #ffd700;
+    transform: translateY(-8px);
+    box-shadow: 0 0 25px rgba(255,215,0,0.6);
 }
 
 /* === SLOTS SECTION === */
 #slots-section {
     display: none;
-    margin: 20px 0;
+    margin-top: 30px;
 }
 #ui-panel {
+    margin-top: 15px;
     display: flex;
-    align-items: center;
     gap: 10px;
-    margin-top: 10px;
+    align-items: center;
 }
 #ui-panel button {
     padding: 8px 12px;
-    background: #d4af37;
-    border: none;
+    background: #4d3a0b;
+    border: 1px solid #ffd700;
     border-radius: 8px;
+    color: #ffd700;
     cursor: pointer;
-    transition: all 0.3s ease;
+    font-weight: 600;
+    transition: background 0.3s ease, transform 0.3s ease;
 }
-#ui-panel button:hover { background: #ffd700; transform: scale(1.05); }
+#ui-panel button:hover {
+    background: #ffd700;
+    color: #4d3a0b;
+    transform: scale(1.05);
+}
 
 /* === VIP PROGRESS === */
 .vip-section {
-    margin: 20px 0;
+    margin-top: 30px;
 }
 .vip-progress {
     width: 100%;
     height: 20px;
-    background: rgba(20,16,12,0.8);
-    border: 1px solid #d4af37;
+    background: rgba(255,215,0,0.2);
     border-radius: 12px;
     overflow: hidden;
 }
 .vip-progress-inner {
+    width: 0%;
     height: 100%;
-    width: 0;
-    background: #ffd700;
+    background: linear-gradient(90deg, #ffd700, #ffdd00);
     border-radius: 12px;
-    transition: width 1.5s ease-in-out;
+    box-shadow: 0 0 10px #ffd700;
+    transition: width 1.5s ease;
 }
 
 /* === LIVE FEED === */
 .live-feed {
     margin-top: 20px;
-    padding: 15px;
-    background: rgba(20,16,12,0.9);
-    border: 1px solid #d4af37;
-    border-radius: 12px;
-    max-height: 200px;
+    background: rgba(12,8,5,0.7);
+    padding: 12px 15px;
+    border-radius: 10px;
+    max-height: 180px;
     overflow-y: auto;
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
+    box-shadow: 0 0 20px rgba(255,215,0,0.3);
+    font-size: 0.95em;
 }
 
-/* PARTICLES: cinematic glow */
-.particle {
-    position: absolute;
-    background: radial-gradient(circle, #ffd700 0%, rgba(255,215,0,0) 70%);
-    border-radius: 50%;
-    opacity: 0.5;
-    animation: floatParticle linear infinite;
-    filter: drop-shadow(0 0 6px #ffd700);
+/* === EXIT BUTTON === */
+.exit-btn {
+    display: block;
+    margin: 25px auto 0;
+    padding: 12px 20px;
+    background: #4d3a0b;
+    color: #ffd700;
+    border: 2px solid #ffd700;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.exit-btn:hover {
+    background: #ffd700;
+    color: #4d3a0b;
+    transform: scale(1.05);
 }
 
-/* LIVE FEED: scrolling glow */
-.live-feed div {
-    transition: all 0.5s ease;
-    text-shadow: 0 0 2px #ffd700, 0 0 6px #ffd700;
+/* === PROOF OF PAYMENT UPLOAD === */
+.proof-upload {
+    margin-top: 15px;
+    background: rgba(12,8,5,0.6);
+    padding: 10px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.proof-upload input[type="file"] {
+    padding: 6px;
+    border-radius: 8px;
+    border: 1px solid #ffd700;
+    background: rgba(255,215,0,0.1);
+    color: #ffd700;
+    cursor: pointer;
+}
+.proof-upload button {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    background: #ffd700;
+    color: #4d3a0b;
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform 0.3s ease;
+}
+.proof-upload button:hover {
+    transform: scale(1.05);
 }
 
-/* WALLET / LEDGER HOVER EFFECT */
-.wallet-section:hover, .ledger-section:hover {
-    box-shadow: 0 0 15px #ffd700;
-    transform: scale(1.02);
-    transition: all 0.3s ease-in-out;
-}
-
-/* VIP BAR: animated shimmer */
-.vip-progress-inner {
-    background: linear-gradient(90deg, #ffd700 20%, #fffacd 50%, #ffd700 80%);
-    background-size: 200% 100%;
-    animation: shimmer 2s linear infinite;
-}
-@keyframes shimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-}
-
-/* VAULT DOORS: add reflection & shadow */
-.door {
-    background: linear-gradient(to bottom, #3a2f1f 0%, #0b0603 40%, #3a2f1f 100%);
-    box-shadow: inset -5px 0 15px rgba(255,215,0,0.3);
-}
-
-/* GAME CARDS: glowing hover effect */
-.card:hover {
-    box-shadow: 0 0 20px #ffd700, 0 0 40px rgba(255,215,0,0.3);
-    transform: scale(1.12);
-}
-
-/* DEPOSIT PROOF BOX: subtle glow */
-.deposit-proof {
-    box-shadow: 0 0 15px #ffd700;
+/* === RESPONSIVE === */
+@media(max-width: 768px){
+    .vault { padding: 80px 15px 15px; }
+    .game-cards { grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); }
 }
