@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Golden Vault — Deposit</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="members.css">
+</head>
+<body>
+
+<!-- PARTICLES -->
+<div class="particles" id="particles"></div>
+
+<!-- VAULT DOORS -->
+<div class="doors" id="doors">
+  <div class="door left"></div>
+  <div class="door right"></div>
+</div>
+
+<!-- VAULT HEADER -->
+<div class="vault" id="vault">
+  <h1>Golden Vault — Deposit Funds</h1>
+
+  <!-- PAYID Info Box -->
+  <div class="payid-box" style="max-width:500px; margin:40px auto; text-align:center;">
+    <h3>Submit Payment Proof</h3>
+    <p><strong>Name of Payee:</strong> M Rainbow</p>
+    <p><strong>PayID:</strong> 0435 - 750 - 187</p>
+    <p><strong>Ref:</strong> 10009444</p>
+    <p><strong>Description:</strong> Online / Items Purchased</p>
+
+    <input type="file" id="proofUpload" accept="image/*" style="margin-top:15px;"/>
+    <button id="submitProofBtn" style="margin-top:10px;">Submit Screenshot</button>
+    <p id="proofMessage" style="margin-top:12px; color:#ffd700;"></p>
+    
+    <button onclick="backToVault()" style="margin-top:20px; padding:10px 20px; background:#4d3a0b; color:#ffd700; border:2px solid #ffd700; border-radius:12px; cursor:pointer;">Back to Vault</button>
+  </div>
+</div>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-storage.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA4bJmDnapnEFlGggYVIoq2lS3QwHHz4hE",
+  authDomain: "grand-golden-vault.firebaseapp.com",
+  projectId: "grand-golden-vault",
+  storageBucket: "grand-golden-vault.firebasestorage.app",
+  messagingSenderId: "969306014666",
+  appId: "1:969306014666:web:228839a8b7f36e9b808533"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const storage = getStorage(app);
+
+// Check user auth
+onAuthStateChanged(auth, (user) => {
+  if(!user || !user.emailVerified){
+    window.location.href = "login.html";
+  }
+});
+
+// Submit Proof Upload
+document.getElementById("submitProofBtn").onclick = async () => {
+  const file = document.getElementById("proofUpload").files[0];
+  const messageEl = document.getElementById("proofMessage");
+
+  if(!file){
+    messageEl.innerText = "⚠ Please select an image!";
+    return;
+  }
+
+  try {
+    const userFolder = auth.currentUser ? auth.currentUser.uid : "guest";
+    const storageRef = ref(storage, `proofs/${userFolder}/${file.name}`);
+    await uploadBytes(storageRef, file);
+    const url = await getDownloadURL(storageRef);
+
+    messageEl.innerText = `✅ Screenshot uploaded!`;
+    console.log("File URL:", url);
+  } catch(err){
+    console.error(err);
+    messageEl.innerText = "❌ Upload failed!";
+  }
+};
+
+// Back to Members Lobby
+function backToVault(){
+  window.location.href = "members.html";
+}
+
+// PARTICLES EFFECT
+const particlesContainer = document.getElementById('particles');
+particlesContainer.innerHTML='';
+for(let i=0;i<70;i++){
+  const p=document.createElement('div');
+  p.classList.add('particle');
+  p.style.left=Math.random()*100+'vw';
+  p.style.top=Math.random()*100+'vh';
+  p.style.width=2+Math.random()*6+'px';
+  p.style.height=p.style.width;
+  p.style.animationDuration=(4+Math.random()*6)+'s';
+  p.style.opacity=0.5+Math.random()*0.5;
+  particlesContainer.appendChild(p);
+}
+
+// VAULT DOORS ANIMATION
+const doors=document.getElementById('doors');
+const vault=document.getElementById('vault');
+setTimeout(()=>doors.classList.add('open'),600);
+setTimeout(()=>vault.classList.add('visible'),2000);
+</script>
+
+</body>
+</html>
