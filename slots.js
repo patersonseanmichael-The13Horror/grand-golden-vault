@@ -1,169 +1,107 @@
-// --------------------------------------
-// GRAND GOLDEN VAULT
-// Institutional Slots Table
-// --------------------------------------
-
-(function () {
+// GRAND GOLDEN VAULT — Modular Slots
+(function(){
   "use strict";
 
+  // ----- DOM Elements -----
   const reels = document.querySelectorAll(".reel");
   const spinBtn = document.getElementById("spinBtn");
-  const resultText = document.getElementById("resultText");
   const balanceEl = document.getElementById("balance");
+  const resultText = document.getElementById("resultText");
 
-  const BET_AMOUNT = 50;
-  const symbols = ["🍒", "💎", "7️⃣", "🔔", "💰", "⭐", "🪙"];
-
+  // ----- Config -----
+  const symbols = ["🍒","💎","7️⃣","🔔","💰","⭐","🪙"];
+  const BET_AMOUNT = 50; 
   let spinning = false;
 
-  // ----------------------------
-  // INIT
-  // ----------------------------
+  // ----- Initialize Vault and State -----
+  VaultEngine.init();
+  StateManager.load();  // load previous state if any
+  updateBalanceUI();
 
- VaultEngine.init();       // Loads or initializes user balance
-StateManager.load();      // Load current slots state if any
-
-  function updateBalanceUI() {
-    const balance = VaultEngine.getBalance();
-    balanceEl.innerText = `GOLD: ${balance.toFixed(2)}`;
+  function updateBalanceUI(){
+    balanceEl.textContent = VaultEngine.getBalance();
   }
 
-  // ----------------------------
-  // CONTROLLED RNG
-  // ----------------------------
-
-  function secureRandomIndex() {
-    const array = new Uint32Array(1);
-    crypto.getRandomValues(array);
-    return array[0] % symbols.length;
+  function getRandomSymbol(){
+    return symbols[RNGEngine.getRandom(0,symbols.length-1)];
   }
 
-  // ----------------------------
-  // SPIN LOGIC
-  // ----------------------------
+  function spinSlots(){
+    if(spinning) return;
 
-  function spinSlots() {
-    if (spinning) return; // spin lock
-
-    const balance = VaultEngine.getBalance();
-
-    if (balance < BET_AMOUNT) {
-      resultText.innerText = "Insufficient GOLD.";
+    // Validate bet
+    if(!BetEngine.canBet(BET_AMOUNT)){
+      resultText.textContent = "Cannot place bet!";
       return;
     }
 
     try {
-      VaultEngine.debit(BET_AMOUNT, "slots-bet");
-    } catch (err) {
-      resultText.innerText = err.message;
+      VaultEngine.debit(BET_AMOUNT,"slots-bet");
+      BetEngine.placeBet(BET_AMOUNT,"slots");
+    } catch(e){
+      resultText.textContent = e.message;
       return;
     }
 
     updateBalanceUI();
-    resultText.innerText = "Spinning...";
+    resultText.textContent = "Spinning...";
     spinning = true;
     spinBtn.disabled = true;
 
+    // Spin animation
     const finalSymbols = [];
-
-    reels.forEach((reel, i) => {
-      let spinCount = 25 + secureRandomIndex();
+    reels.forEach((reel,i)=>{
+      let spinCount = 25 + RNGEngine.getRandom(0,10);
       let current = 0;
 
-      const interval = setInterval(() => {
+      const interval = setInterval(()=>{
         reel.innerText = symbols[current % symbols.length];
         current++;
         spinCount--;
-
-        if (spinCount <= 0) {
+        if(spinCount <=0){
           clearInterval(interval);
-
-          const finalIndex = secureRandomIndex();
-          const finalSymbol = symbols[finalIndex];
-
+          const finalSymbol = getRandomSymbol();
           reel.innerText = finalSymbol;
           finalSymbols[i] = finalSymbol;
 
-          if (finalSymbols.filter(s => s === undefined).length === 0) {
+          // Once all reels finished
+          if(finalSymbols.filter(s=>s===undefined).length===0){
             resolveSpin(finalSymbols);
           }
         }
-
-      }, 70 + i * 40);
+      },70 + i*30);
     });
   }
 
-  // ----------------------------
-  // PAYOUT ENGINE
-  // ----------------------------
-
-  function resolveSpin(finalSymbols) {
-    const [a, b, c] = finalSymbols;
+  function resolveSpin(finalSymbols){
+    const [a,b,c] = finalSymbols;
     let winAmount = 0;
+    let message = "No Win";
 
-    if (a === b && b === c) {
-      winAmount = BET_AMOUNT * 20; // jackpot multiplier
-      resultText.innerText =
-        `JACKPOT! ${finalSymbols.join(" ")} — +${winAmount} GOLD`;
-    }
-    else if (a === b || b === c || a === c) {
-      winAmount = BET_AMOUNT * 4;
-      resultText.innerText =
-        `Match! ${finalSymbols.join(" ")} — +${winAmount} GOLD`;
-    }
-    else {
-      resultText.innerText =
-        `No Win: ${finalSymbols.join(" ")}`;
+    if(a===b && b===c){
+      winAmount = BET_AMOUNT*20;
+      message = `JACKPOT! ${finalSymbols.join(" ")} — +${winAmount} GOLD`;
+      if(window.animationController) animationController.triggerBigWin();
+    } else if(a===b || b===c || a===c){
+      winAmount = BET_AMOUNT*4;
+      message = `Match! ${finalSymbols.join(" ")} — +${winAmount} GOLD`;
     }
 
-    if (winAmount > 0) {
-      VaultEngine.credit(winAmount, "slots-win");
+    if(winAmount>0){
+      VaultEngine.credit(winAmount,"slots-win");
     }
 
+    resultText.textContent = message;
     updateBalanceUI();
+    StateManager.save({
+      reels: finalSymbols,
+      lastResult: message,
+      balance: VaultEngine.getBalance()
+    });
 
     spinning = false;
     spinBtn.disabled = false;
-
-    if (winAmount >= BET_AMOUNT * 20) {
-      triggerBigWinEffect();
-    }
   }
-
-  // ----------------------------
-  // BIG WIN EFFECT
-  // ----------------------------
-
-  function triggerBigWinEffect() {
-    const badge = document.createElement("div");
-    badge.className = "vip-badge";
-    badge.innerText = "VAULT JACKPOT";
-    badge.style.position = "fixed";
-    badge.style.top = "30%";
-    badge.style.left = "50%";
-    badge.style.transform = "translateX(-50%) scale(0)";
-    badge.style.zIndex = "9999";
-    badge.style.fontSize = "2.5rem";
-
-    document.body.appendChild(badge);
-
-    badge.animate([
-      { transform: "translateX(-50%) scale(0)", opacity: 0 },
-      { transform: "translateX(-50%) scale(1.3)", opacity: 1 },
-      { transform: "translateX(-50%) scale(1)", opacity: 1 },
-      { transform: "translateX(-50%) scale(1)", opacity: 0 }
-    ], {
-      duration: 2200,
-      easing: "ease-out",
-      fill: "forwards"
-    });
-
-    setTimeout(() => badge.remove(), 2200);
-  }
-
-  // ----------------------------
-  // EVENT BINDING
-  // ----------------------------
 
   spinBtn.addEventListener("click", spinSlots);
 
