@@ -1,76 +1,74 @@
 // ================================
-// GOLD VAULT - WALLET.JS
+// GOLD VAULT — WALLET.JS
 // ================================
 
-
-// -------------------------------
-// LOAD USER
-// -------------------------------
+// Load User
 let user = JSON.parse(localStorage.getItem("gv_user"));
 
 if (!user) {
-    alert("User session not found.");
+    alert("Session expired. Redirecting...");
     window.location.href = "index.html";
 }
 
-
-// -------------------------------
-// SAVE USER
-// -------------------------------
+// Save User
 function saveUser() {
     localStorage.setItem("gv_user", JSON.stringify(user));
 }
 
 
 // -------------------------------
-// HANDLE DEPOSIT SUBMISSION
+// HANDLE DEPOSIT + PROOF
 // -------------------------------
-const submitBtn = document.getElementById("submitProofBtn");
+const submitBtn = document.querySelector(".upload-section button");
+const messageEl = document.getElementById("message");
 
-if (submitBtn) {
-    submitBtn.onclick = () => {
+submitBtn.addEventListener("click", () => {
 
-        const file = document.getElementById("proofUpload").files[0];
-        const amountInput = document.getElementById("depositAmount");
+    const amountInput = document.getElementById("depositAmount");
+    const fileInput = document.getElementById("proofFile");
 
-        if (!amountInput.value) {
-            return alert("Please enter deposit amount.");
-        }
+    const amount = parseFloat(amountInput.value);
+    const file = fileInput.files[0];
 
-        const amount = parseFloat(amountInput.value);
+    // Validation
+    if (isNaN(amount) || amount < 5) {
+        messageEl.textContent = "Minimum deposit is $5";
+        return;
+    }
 
-        // Deposit Limits
-        if (amount < 5 || amount > 50000) {
-            return alert("Deposit must be between $5 and $50,000.");
-        }
+    if (amount > 50000) {
+        messageEl.textContent = "Maximum deposit is $50,000";
+        return;
+    }
 
-        if (!file) {
-            return alert("Please upload payment screenshot.");
-        }
+    if (!file) {
+        messageEl.textContent = "Please upload payment screenshot.";
+        return;
+    }
 
-        // Add to balance
-        user.balance += amount;
+    // Add Balance
+    user.balance += amount;
 
-        // Add to ledger
-        user.ledger.unshift({
-            type: "Wallet Deposit",
-            amount: amount,
-            time: new Date().toLocaleString(),
-            details: `
-                Name: M Rainbow |
-                PayID: 0435 750 187 |
-                Ref: 10009444 |
-                Description: Online / Items Purchased
-            `
-        });
+    // Add Ledger Entry (MATCHES members.js format)
+    user.ledger.unshift({
+        type: "Wallet Deposit",
+        amount: amount,
+        time: new Date().toLocaleString(),
+        details: `
+            Name: M Rainbow |
+            PayID: 0435 - 750 - 187 |
+            Ref: 10009444 |
+            Description: Online / Items Purchased
+        `
+    });
 
-        saveUser();
+    saveUser();
 
-        document.getElementById("proofMessage").innerHTML =
-            `✅ Deposit submitted successfully!<br>
-             Amount: $${amount.toFixed(2)} GOLD`;
+    messageEl.innerHTML = `
+        ✅ Deposit Submitted Successfully<br>
+        $${amount.toFixed(2)} GOLD Added
+    `;
 
-        amountInput.value = "";
-        document.getElementById("proofUpload").value = "";
-    };
-}
+    amountInput.value = "";
+    fileInput.value = "";
+});
