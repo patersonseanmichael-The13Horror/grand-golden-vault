@@ -27,47 +27,6 @@
 <!-- GOLD DUST PARTICLES -->
 <div class="particles"></div>
 
-<script>
-const landingHero = document.querySelector('.landing-hero');
-const heroHeading = landingHero.querySelector('h1');
-const heroText = landingHero.querySelector('p');
-const heroCTA = landingHero.querySelector('.cta-btn');
-const particlesContainer = document.querySelector('.particles');
-
-// Create gold dust particles
-for(let i=0;i<60;i++){
-  const p = document.createElement('div');
-  p.classList.add('particle');
-  p.style.left = Math.random()*100 + 'vw';
-  p.style.width = p.style.height = (2+Math.random()*3)+'px';
-  p.style.animationDuration = (5+Math.random()*6)+'s';
-  particlesContainer.appendChild(p);
-}
-
-// Animate hero text
-window.addEventListener('load', ()=>{
-  heroHeading.style.opacity = 0; heroHeading.style.transform='translateY(20px)';
-  heroText.style.opacity = 0; heroText.style.transform='translateY(20px)';
-  heroCTA.style.opacity = 0; heroCTA.style.transform='translateY(20px)';
-
-  setTimeout(()=>{ 
-    heroHeading.style.transition='opacity 1.2s, transform 1.2s'; 
-    heroHeading.style.opacity=1; 
-    heroHeading.style.transform='translateY(0)'; 
-  },600);
-
-  setTimeout(()=>{ 
-    heroText.style.transition='opacity 1.2s, transform 1.2s'; 
-    heroText.style.opacity=1; 
-    heroText.style.transform='translateY(0)'; 
-  },1200);
-
-  setTimeout(()=>{ 
-    heroCTA.style.transition='opacity 1.2s, transform 1.2s'; 
-    heroCTA.style.opacity=1; 
-    heroCTA.style.transform='translateY(0)'; 
-  },1800);
-});
-</script>
+<script type="module" src="../ui/animationController.js"></script>
 </body>
 </html>
