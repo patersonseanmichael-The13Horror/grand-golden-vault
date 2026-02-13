@@ -20,7 +20,7 @@
 
 <!-- TOPBAR -->
 <div class="topbar">
-  <div class="wallet">Wallet: 0 GOLD</div>
+  <div class="wallet">Wallet: <span id="topWallet">0</span> GOLD</div>
   <div class="vip">VIP: Gold</div>
 </div>
 
@@ -45,21 +45,21 @@
 
   <!-- Game Cards -->
   <div class="game-cards">
-    <div class="card" onclick="goToGame('blackjack.html')">🂡<br>Blackjack</div>
-    <div class="card" onclick="goToGame('roulette.html')">🎰<br>Roulette</div>
-    <div class="card" onclick="goToGame('poker.html')">🃏<br>Poker</div>
-    <div class="card" onclick="openSlots()">🎰<br>Platinum Slots</div>
+    <div class="card" data-url="blackjack.html">🂡<br>Blackjack</div>
+    <div class="card" data-url="roulette.html">🎰<br>Roulette</div>
+    <div class="card" data-url="poker.html">🃏<br>Poker</div>
+    <div class="card" id="openSlotsCard">🎰<br>Platinum Slots</div>
   </div>
 
   <!-- SLOTS SECTION -->
-  <div id="slots-section">
+  <div id="slots-section" style="display:none;">
     <div id="game-container"></div>
     <div id="ui-panel">
       <button id="spinBtn">Spin</button>
       <button id="autoSpinBtn">AutoSpin</button>
       <button id="doubleUpBtn">Double Up</button>
       <span>Balance: $<span id="balance">1000</span></span>
-      <button onclick="closeSlots()" class="exit-slots-btn">Back to Vault</button>
+      <button id="closeSlotsBtn" class="exit-slots-btn">Back to Vault</button>
     </div>
   </div>
 
@@ -75,13 +75,13 @@
   <div class="live-feed" id="feedBox"></div>
 
   <!-- Exit Button -->
-  <button class="exit-btn" onclick="exitVault()">Exit Vault</button>
+  <button class="exit-btn" id="exitVaultBtn">Exit Vault</button>
 </div>
 
-<!-- FIREBASE -->
+<!-- FIREBASE AUTH -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA4bJmDnapnEFlGggYVIoq2lS3QwHHz4hE",
@@ -102,27 +102,50 @@ onAuthStateChanged(auth, (user) => {
 });
 </script>
 
-<!-- MEMBERS JS -->
+<!-- MEMBERS LOGIC -->
 <script type="module" src="members.js"></script>
 
-<!-- VAULT ANIMATION & PARTICLES -->
+<!-- LOBBY ANIMATION SCRIPT -->
 <script>
 const doors=document.getElementById('doors');
 const vault=document.getElementById('vault');
+
 setTimeout(()=>doors.classList.add('open'),600);
 setTimeout(()=>vault.classList.add('visible'),2000);
 
-function exitVault(){
-  vault.classList.remove('visible');
-  setTimeout(()=>doors.classList.remove('open'),400);
-  setTimeout(()=>signOut(getAuth()).then(()=>window.location.href="login.html"),2600);
-}
+// CARD NAVIGATION
+document.querySelectorAll('.card[data-url]').forEach(card=>{
+  card.addEventListener('click',()=>{
+    const url=card.dataset.url;
+    vault.classList.remove('visible');
+    setTimeout(()=>doors.classList.remove('open'),400);
+    setTimeout(()=>window.location.href=url,2600);
+  });
+});
 
-function goToGame(url){
+// EXIT VAULT
+document.getElementById('exitVaultBtn').addEventListener('click',()=>{
   vault.classList.remove('visible');
   setTimeout(()=>doors.classList.remove('open'),400);
-  setTimeout(()=>window.location.href=url,2600);
-}
+  setTimeout(()=>window.location.href="login.html",2600);
+});
+
+// SLOTS OPEN
+document.getElementById('openSlotsCard').addEventListener('click',()=>{
+  document.querySelector('.game-cards').style.display='none';
+  document.getElementById('slots-section').style.display='block';
+  document.getElementById('slots-section').scrollIntoView({behavior:'smooth'});
+});
+
+// SLOTS CLOSE
+document.getElementById('closeSlotsBtn').addEventListener('click',()=>{
+  document.getElementById('slots-section').style.display='none';
+  document.querySelector('.game-cards').style.display='grid';
+});
+
+// VIP BAR
+const vipBar = document.getElementById('vipBar');
+setTimeout(()=>vipBar.style.width='65%', 800);
 
 // PARTICLES
 const particlesContainer = document.getElementById('particles');
@@ -137,22 +160,6 @@ for(let i=0;i<70;i++){
   p.style.animationDuration=(4+Math.random()*6)+'s';
   p.style.opacity=0.5+Math.random()*0.5;
   particlesContainer.appendChild(p);
-}
-
-// VIP BAR ANIMATION
-const vipBar = document.getElementById('vipBar');
-setTimeout(()=>vipBar.style.width='65%', 800);
-
-// SLOTS SECTION HANDLERS
-function openSlots(){
-  document.querySelector('.game-cards').style.display='none';
-  document.getElementById('slots-section').style.display='block';
-  document.getElementById('slots-section').scrollIntoView({behavior:'smooth'});
-  if(typeof initSlots==='function') initSlots();
-}
-function closeSlots(){
-  document.getElementById('slots-section').style.display='none';
-  document.querySelector('.game-cards').style.display='grid';
 }
 </script>
 
