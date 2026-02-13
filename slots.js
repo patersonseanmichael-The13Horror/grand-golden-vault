@@ -97,4 +97,26 @@
 
   spinBtn.addEventListener("click", spinSlots);
 
+  document.getElementById("autoSpinBtn").addEventListener("click", ()=>{
+  let spins = 10;
+  const autoSpin = setInterval(()=>{
+    if(spins-- <= 0 || VaultEngine.getBalance() < BET_AMOUNT){
+      clearInterval(autoSpin);
+      return;
+    }
+    spinSlots();
+  }, 1200);
+});
+
+document.getElementById("doubleUpBtn").addEventListener("click", ()=>{
+  if(spinning) return;
+  const doubleBet = BET_AMOUNT * 2;
+  if(doubleBet > VaultEngine.getBalance()){
+    resultText.textContent = "Cannot Double Up!";
+    return;
+  }
+  VaultEngine.debit(doubleBet, "slots-double");
+  spinSlots();
+});
+
 })();
