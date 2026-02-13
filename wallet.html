@@ -2,116 +2,211 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Wallet — Golden Vault</title>
+<title>Golden Vault — Wallet</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
 <style>
-:root {
-  --gold: #d4af37;
-  --text-light: #eae6dc;
-  --bg-dark: #080503;
-  --panel: #140e09;
+:root{
+  --gold:#d4af37;
+  --dark:#080503;
+  --panel:#140e09;
+  --text:#eae6dc;
 }
-*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;}
+
 body{
+  margin:0;
   background: radial-gradient(circle at top,#1c130a,#080503 70%);
-  color: var(--text-light);
+  font-family:'Inter',sans-serif;
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  justify-content:center;
   min-height:100vh;
-  display:flex;align-items:center;justify-content:center;
+}
+
+/* Center Box */
+.wallet-box{
+  width:95%;
+  max-width:480px;
+  background:linear-gradient(180deg,#160f09,#0b0704);
+  border:1px solid rgba(212,175,55,0.6);
+  border-radius:18px;
+  padding:30px;
+  box-shadow:
+    0 0 50px rgba(212,175,55,0.2),
+    inset 0 0 30px rgba(0,0,0,0.6);
+  text-align:center;
+}
+
+/* Title */
+.wallet-box h1{
+  color:var(--gold);
+  margin-bottom:20px;
+  text-shadow:0 0 10px var(--gold);
+}
+
+/* Graph Info Box */
+.payid-graph{
+  border:1px solid var(--gold);
+  border-radius:12px;
+  margin-bottom:20px;
   overflow:hidden;
 }
 
-/* Vault Doors */
-.doors{position:fixed;inset:0;z-index:10;display:flex;pointer-events:none;}
-.door{width:50%;height:100%;background:linear-gradient(180deg,#1a120a,#090603);
-border-right:1px solid rgba(212,175,55,0.4);
-box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
-transform:translateX(0);transition: transform 2.6s cubic-bezier(.77,0,.18,1);}
-.door.right{border-right:none;border-left:1px solid rgba(212,175,55,0.4);}
-.doors.open .door.left{transform:translateX(-100%);}
-.doors.open .door.right{transform:translateX(100%);}
-
-/* Vault Content */
-.vault{
-  width:92%;max-width:400px;
-  background:linear-gradient(180deg,#160f09,#0b0704);
-  border:1px solid rgba(212,175,55,0.5);
-  border-radius:18px;padding:30px;
-  box-shadow:0 0 60px rgba(212,175,55,0.18),inset 0 0 30px rgba(0,0,0,0.6);
-  text-align:center;
-  opacity:0;transform:scale(0.96);transition:opacity 1.2s ease, transform 1.2s ease;
+.payid-row{
+  padding:10px 14px;
+  border-bottom:1px solid rgba(212,175,55,0.3);
+  display:flex;
+  justify-content:space-between;
 }
-.vault.visible{opacity:1;transform:scale(1);}
 
-h1{color:var(--gold);margin-bottom:20px;}
-.balance{font-size:1.5rem;color:var(--gold);margin-bottom:15px;}
-input{padding:10px 14px;border-radius:8px;border:1px solid var(--gold);background:transparent;color:var(--text-light);width:80%;margin-bottom:12px;}
-button{padding:10px 20px;border-radius:8px;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;transition:0.3s;}
-button:hover{background:rgba(212,175,55,0.1);box-shadow:0 0 12px rgba(212,175,55,0.3);}
-.exit-btn{margin-top:20px;}
-.message{margin-top:12px;height:24px;font-size:1rem;}
+.payid-row:last-child{
+  border-bottom:none;
+}
+
+.label{
+  color:var(--gold);
+  font-weight:600;
+}
+
+.value{
+  color:var(--text);
+}
+
+/* Input */
+input{
+  width:80%;
+  padding:10px;
+  margin-top:15px;
+  border-radius:8px;
+  border:1px solid var(--gold);
+  background:transparent;
+  color:var(--text);
+}
+
+/* Buttons */
+button{
+  margin-top:15px;
+  padding:10px 20px;
+  border-radius:10px;
+  border:1px solid var(--gold);
+  background:linear-gradient(145deg,#4d3a0b,#7a5f2f);
+  color:var(--gold);
+  font-weight:600;
+  cursor:pointer;
+  transition:all .3s ease;
+}
+
+button:hover{
+  background:var(--gold);
+  color:#4d3a0b;
+  box-shadow:0 0 15px var(--gold);
+}
+
+.upload-section{
+  margin-top:15px;
+}
+
+.message{
+  margin-top:10px;
+  height:22px;
+}
 </style>
 </head>
 <body>
 
-<!-- Vault Doors -->
-<div class="doors" id="doors">
-  <div class="door left"></div>
-  <div class="door right"></div>
+<div class="wallet-box">
+
+<h1>Wallet Deposit</h1>
+
+<div class="payid-graph">
+  <div class="payid-row">
+    <span class="label">Name</span>
+    <span class="value">M Rainbow</span>
+  </div>
+  <div class="payid-row">
+    <span class="label">PayID</span>
+    <span class="value">0435 - 750 - 187</span>
+  </div>
+  <div class="payid-row">
+    <span class="label">Reference</span>
+    <span class="value">10009444</span>
+  </div>
+  <div class="payid-row">
+    <span class="label">Description</span>
+    <span class="value">Online / Items Purchased</span>
+  </div>
 </div>
 
-<!-- Vault Content -->
-<div class="vault" id="vault">
-<h1>Wallet — Golden Vault</h1>
-<div class="balance" id="balance">$1000</div>
+<p style="color:var(--gold); font-size:0.9em;">
+Minimum Deposit: $5 | Maximum Deposit: $50,000
+</p>
 
-<input type="number" id="deposit-amount" placeholder="Deposit amount" />
-<br/>
-<button onclick="deposit()">Deposit</button>
+<input type="number" id="depositAmount" placeholder="Enter deposit amount"/>
+
+<br>
+<button onclick="submitDeposit()">Submit Deposit</button>
+
+<div class="upload-section">
+  <input type="file" id="proofFile" accept="image/*"/>
+  <br>
+  <button onclick="uploadProof()">Submit Screenshot</button>
+</div>
 
 <div class="message" id="message"></div>
 
-<button class="exit-btn" onclick="exitVault()">Exit Vault</button>
+<br>
+<button onclick="window.location.href='members.html'">
+Back to Vault
+</button>
+
 </div>
 
 <script>
-const doors = document.getElementById('doors');
-const vault = document.getElementById('vault');
-const balanceEl = document.getElementById('balance');
-const messageEl = document.getElementById('message');
+function submitDeposit(){
+  const amount = parseFloat(document.getElementById("depositAmount").value);
+  const msg = document.getElementById("message");
 
-if (!localStorage.getItem('goldenVaultBalance')) {
-  localStorage.setItem('goldenVaultBalance', '1000');
-}
-
-function updateBalanceDisplay() {
-  balanceEl.textContent = "$" + localStorage.getItem('goldenVaultBalance');
-}
-
-updateBalanceDisplay();
-
-// Vault animation
-setTimeout(() => doors.classList.add('open'), 600);
-setTimeout(() => vault.classList.add('visible'), 2000);
-
-function exitVault() {
-  vault.classList.remove('visible');
-  setTimeout(() => doors.classList.remove('open'), 400);
-  setTimeout(() => window.location.href="members.html", 2600);
-}
-
-function deposit() {
-  let amount = parseInt(document.getElementById('deposit-amount').value);
-  if (isNaN(amount) || amount <= 0) {
-    messageEl.textContent = "Enter a valid amount";
+  if(isNaN(amount) || amount < 5){
+    msg.textContent = "Minimum deposit is $5";
     return;
   }
-  let balance = parseInt(localStorage.getItem('goldenVaultBalance'));
-  balance += amount;
-  localStorage.setItem('goldenVaultBalance', balance);
-  updateBalanceDisplay();
-  messageEl.textContent = "Deposited $" + amount;
-  document.getElementById('deposit-amount').value = "";
+
+  if(amount > 50000){
+    msg.textContent = "Maximum deposit is $50,000";
+    return;
+  }
+
+  let user = JSON.parse(localStorage.getItem("gv_user"));
+  if(!user) return;
+
+  user.balance += amount;
+
+  user.ledger.push({
+    type:"DEPOSIT",
+    amount:amount,
+    time:new Date().toLocaleString(),
+    name:"M Rainbow",
+    payId:"0435 - 750 - 187",
+    reference:"10009444",
+    description:"Online / Items Purchased"
+  });
+
+  localStorage.setItem("gv_user", JSON.stringify(user));
+  msg.textContent = "Deposit submitted successfully.";
+  document.getElementById("depositAmount").value="";
+}
+
+function uploadProof(){
+  const file = document.getElementById("proofFile").files[0];
+  const msg = document.getElementById("message");
+  if(!file){
+    msg.textContent="Please select screenshot first.";
+    return;
+  }
+  msg.textContent="Proof uploaded: "+file.name;
 }
 </script>
+
 </body>
 </html>
