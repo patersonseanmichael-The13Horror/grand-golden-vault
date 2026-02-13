@@ -161,52 +161,6 @@ Back to Vault
 </button>
 
 </div>
-
-<script>
-function submitDeposit(){
-  const amount = parseFloat(document.getElementById("depositAmount").value);
-  const msg = document.getElementById("message");
-
-  if(isNaN(amount) || amount < 5){
-    msg.textContent = "Minimum deposit is $5";
-    return;
-  }
-
-  if(amount > 50000){
-    msg.textContent = "Maximum deposit is $50,000";
-    return;
-  }
-
-  let user = JSON.parse(localStorage.getItem("gv_user"));
-  if(!user) return;
-
-  user.balance += amount;
-
-  user.ledger.push({
-    type:"DEPOSIT",
-    amount:amount,
-    time:new Date().toLocaleString(),
-    name:"M Rainbow",
-    payId:"0435 - 750 - 187",
-    reference:"10009444",
-    description:"Online / Items Purchased"
-  });
-
-  localStorage.setItem("gv_user", JSON.stringify(user));
-  msg.textContent = "Deposit submitted successfully.";
-  document.getElementById("depositAmount").value="";
-}
-
-function uploadProof(){
-  const file = document.getElementById("proofFile").files[0];
-  const msg = document.getElementById("message");
-  if(!file){
-    msg.textContent="Please select screenshot first.";
-    return;
-  }
-  msg.textContent="Proof uploaded: "+file.name;
-}
-</script>
-
+<script src="wallet.js"></script>
 </body>
 </html>
