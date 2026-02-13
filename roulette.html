@@ -2,318 +2,199 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>VIP Roulette — Golden Vault</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
+<title>Roulette — Golden Vault</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="global.css">
 <style>
-:root{
-  --gold:#d4af37;
-  --bg-dark:#0b0704;
-  --green:#0f800f;
+/* ---- PAGE-SPECIFIC STYLES ---- */
+.vault {
+  background: radial-gradient(circle at center,#1c130a,#080503 80%);
+  padding: 40px;
+  border-radius: 20px;
+  border: 1px solid rgba(212,175,55,0.5);
+  width: 95%;
+  max-width: 900px;
+  text-align: center;
+  box-shadow: 0 0 50px rgba(212,175,55,0.5);
+  position: relative;
 }
 
-*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;}
+h1 { color: var(--gold); margin-bottom: 20px; }
 
-body.vault-bg.roulette-page{
-  background:url('grand-golden-vault/images/roulette.jpg') no-repeat center center fixed;
-  background-size:cover;
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
+.roulette-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
-/* Vignette */
-body::after{
-  content:"";
-  position:fixed;
-  inset:0;
-  background:radial-gradient(circle at center,rgba(0,0,0,0)55%,rgba(0,0,0,0.75)100%);
-  pointer-events:none;
+.roulette-wheel {
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  border: 12px solid var(--gold);
+  background: radial-gradient(circle, #000 60%, #222 100%);
+  position: relative;
+  box-shadow: inset 0 0 20px rgba(255,215,0,0.5);
 }
 
-/* Doors */
-.doors{position:fixed;inset:0;display:flex;z-index:10;}
-.door{
-  width:50%;height:100%;
-  background:linear-gradient(180deg,#1a120a,#090603);
-  border-right:1px solid rgba(212,175,55,0.4);
-  transition:transform 2.6s cubic-bezier(.77,0,.18,1);
-}
-.door.right{border-right:none;border-left:1px solid rgba(212,175,55,0.4);}
-.doors.open .door.left{transform:translateX(-100%);}
-.doors.open .door.right{transform:translateX(100%);}
-
-/* Vault */
-.vault{
-  width:95%;max-width:1200px;
-  background:linear-gradient(180deg,rgba(22,15,9,0.95),rgba(11,7,4,0.95));
-  border:2px solid rgba(212,175,55,0.6);
-  border-radius:20px;
-  padding:30px;
-  box-shadow:0 0 120px rgba(212,175,55,0.4), inset 0 0 40px rgba(0,0,0,0.6);
-  text-align:center;
-  opacity:0;
-  transform:scale(0.96);
-  transition:opacity 1s ease,transform 1s ease;
-}
-.vault.visible{opacity:1;transform:scale(1);}
-
-h1{color:var(--gold);margin-bottom:10px;}
-.balance{color:var(--gold);font-size:1.4rem;margin-bottom:10px;}
-
-#canvas{
-  margin:20px auto;
-  display:block;
-  border-radius:50%;
-  background:#111;
-  box-shadow:0 0 30px rgba(212,175,55,0.6) inset;
+.ball {
+  width: 15px;
+  height: 15px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
-  <div id="rouletteHistory" class="history-panel"></div>
-<div id="analyticsPanel" class="analytics-panel"></div>
-<div id="highRollerTicker" class="ticker"></div>
-
-<audio id="spinSound" src="assets/audio/spin.mp3"></audio>
-<audio id="tickSound" src="assets/audio/tick.mp3"></audio>
-<audio id="winSound" src="assets/audio/win.mp3"></audio>
-
-/* Table */
-.table{
-  margin:20px auto;
-  display:grid;
-  grid-template-columns:repeat(12,50px);
-  gap:4px;
-  justify-content:center;
+.table {
+  background: var(--panel);
+  padding: 20px;
+  border-radius: 12px;
+  display: grid;
+  grid-template-columns: repeat(12, 40px);
+  gap: 4px;
+  justify-content: center;
+  box-shadow: 0 0 20px rgba(212,175,55,0.3);
 }
 
-.cell{
-  width:50px;height:50px;
-  display:flex;align-items:center;justify-content:center;
-  font-weight:bold;border-radius:6px;
-  cursor:pointer;transition:0.2s;
+.cell {
+  width: 40px;
+  height: 40px;
+  background: #222;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: none;
 }
 
-.red{background:#b00000;color:#fff;}
-.black{background:#000;color:#fff;}
-.green{background:#0f800f;color:#fff;}
+.cell.red { background: #b71c1c; }
+.cell.black { background: #111; }
+.cell.green { background: #0a5; }
 
-.cell:hover{box-shadow:0 0 10px gold;}
-
-button{
-  padding:10px 25px;
-  border:1px solid var(--gold);
-  background:transparent;
-  color:var(--gold);
-  border-radius:8px;
-  cursor:pointer;
-  margin:5px;
+.bet-info {
+  margin-top: 15px;
+  color: var(--gold);
+  font-size: 1.2rem;
 }
 
-button:hover{
-  background:rgba(212,175,55,0.1);
+button#spinBtn {
+  margin-top: 15px;
+  padding: 12px 24px;
+  font-size: 1rem;
 }
-
-.message{margin-top:12px;height:24px;}
-
-.exit-btn{margin-top:20px;}
-
-.history-panel{
-  margin-top:15px;
-  display:flex;
-  gap:6px;
-  justify-content:center;
-  flex-wrap:wrap;
-}
-
-.history-ball{
-  width:28px;height:28px;
-  border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:12px;font-weight:bold;
-  color:#fff;
-}
-
-.analytics-panel{
-  margin-top:10px;
-  font-size:0.9rem;
-  color:#d4af37;
-}
-
-.ticker{
-  margin-top:15px;
-  font-size:0.85rem;
-  color:#ccc;
-  opacity:0.8;
-}
-
 </style>
 </head>
-
-<body class="vault-bg roulette-page">
-
-<div class="doors" id="doors">
-  <div class="door left"></div>
-  <div class="door right"></div>
-</div>
-
-<div class="vault" id="vault">
-  <h1>VIP Roulette — Golden Vault</h1>
-  <div class="balance" id="balance"></div>
-
-  <canvas id="canvas" width="500" height="500"></canvas>
+<body>
+<div class="vault">
+  <h1>Roulette — Golden Vault</h1>
+  <div class="roulette-container">
+    <div class="roulette-wheel" id="wheel">
+      <div class="ball" id="ball"></div>
+    </div>
+    <div class="table" id="rouletteTable"></div>
+  </div>
+  <div class="bet-info" id="betInfo">Balance: $1000 | Current Bet: $0</div>
   <button id="spinBtn">Spin</button>
-
-  <div class="message" id="message"></div>
-  <div class="table" id="table"></div>
-
-  <button class="exit-btn" onclick="exitVault()">Exit Vault</button>
 </div>
 
-<script src="core/vaultEngine.js"></script>
 <script>
-"use strict";
+// ---- CONFIG ----
+const WALLET_KEY = "goldenVaultBalance";
+let balance = parseInt(localStorage.getItem(WALLET_KEY)) || 1000;
+let currentBet = 0;
+const betInfo = document.getElementById("betInfo");
+const tableEl = document.getElementById("rouletteTable");
+const spinBtn = document.getElementById("spinBtn");
+const wheel = document.getElementById("wheel");
+const ball = document.getElementById("ball");
 
-VaultEngine.init();
-
-const balanceEl=document.getElementById("balance");
-const messageEl=document.getElementById("message");
-const spinBtn=document.getElementById("spinBtn");
-const table=document.getElementById("table");
-const canvas=document.getElementById("canvas");
-const ctx=canvas.getContext("2d");
-
-function updateBalance(){
-  balanceEl.innerText="GOLD: "+VaultEngine.getBalance().toFixed(2);
-}
-updateBalance();
-
-setTimeout(()=>{
-  document.getElementById("doors").classList.add("open");
-  document.getElementById("vault").classList.add("visible");
-},800);
-
-const CHIP=100;
-let bets=[];
-let spinning=false;
-
-const wheel=[
-0,32,15,19,4,21,2,25,17,34,6,27,
-13,36,11,30,8,23,10,5,24,16,33,
-1,20,14,31,9,22,18,29,7,28,12,35,3,26
+const numbers = [
+  {num:0,color:"green"}, {num:32,color:"red"},{num:15,color:"black"},{num:19,color:"red"},
+  {num:4,color:"black"},{num:21,color:"red"},{num:2,color:"black"},{num:25,color:"red"},
+  {num:17,color:"black"},{num:34,color:"red"},{num:6,color:"black"},{num:27,color:"red"},
+  {num:13,color:"black"},{num:36,color:"red"},{num:11,color:"black"},{num:30,color:"red"},
+  {num:8,color:"black"},{num:23,color:"red"},{num:10,color:"black"},{num:5,color:"red"},
+  {num:24,color:"black"},{num:16,color:"red"},{num:33,color:"black"},{num:1,color:"red"},
+  {num:20,color:"black"},{num:14,color:"red"},{num:31,color:"black"},{num:9,color:"red"},
+  {num:22,color:"black"},{num:18,color:"red"},{num:29,color:"black"},{num:7,color:"red"},
+  {num:28,color:"black"},{num:12,color:"red"},{num:35,color:"black"},{num:3,color:"red"},
+  {num:26,color:"black"}
 ];
 
-const reds=[1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
-function isRed(n){return reds.includes(n);}
+// ---- CREATE TABLE CELLS ----
+numbers.forEach(n=>{
+  const cell = document.createElement("div");
+  cell.classList.add("cell");
+  cell.classList.add(n.color);
+  cell.textContent = n.num;
+  cell.onclick = ()=>{
+    currentBet += 10;
+    balance -=10;
+    updateBetInfo();
+    cell.style.boxShadow = "0 0 15px gold";
+    setTimeout(()=>cell.style.boxShadow="",300);
+  }
+  tableEl.appendChild(cell);
+});
 
-function secureIndex(){
-  const a=new Uint32Array(1);
-  crypto.getRandomValues(a);
-  return a[0]%wheel.length;
+// ---- UPDATE BET INFO ----
+function updateBetInfo(){
+  betInfo.textContent = `Balance: $${balance} | Current Bet: $${currentBet}`;
 }
 
-/* BUILD TABLE */
-for(let n=0;n<=36;n++){
-  const c=document.createElement("div");
-  c.className="cell";
-  c.innerText=n;
-
-  if(n===0)c.classList.add("green");
-  else if(isRed(n))c.classList.add("red");
-  else c.classList.add("black");
-
-  c.onclick=()=>{
-    if(spinning)return;
-    bets.push({type:"number",value:n,payout:36});
-    c.style.boxShadow="0 0 12px gold";
-  };
-
-  table.appendChild(c);
-}
-
-/* DRAW WHEEL */
-let angle=0;
-const radius=220;
-
-function draw(){
-  ctx.clearRect(0,0,500,500);
-  const seg=(2*Math.PI)/wheel.length;
-
-  for(let i=0;i<wheel.length;i++){
-    ctx.beginPath();
-    ctx.moveTo(250,250);
-    ctx.arc(250,250,radius,
-      angle+i*seg,
-      angle+(i+1)*seg);
-
-    ctx.fillStyle=
-      wheel[i]===0?"#0f800f":
-      isRed(wheel[i])?"#b00000":"#000";
-
-    ctx.fill();
-    ctx.strokeStyle="#111";
-    ctx.stroke();
-  }
-}
-draw();
-
-/* SPIN */
-spinBtn.onclick=()=>{
-  if(spinning||bets.length===0)return;
-
-  const total=bets.length*CHIP;
-  if(VaultEngine.getBalance()<total){
-    messageEl.innerText="Insufficient GOLD";
-    return;
-  }
-
-  VaultEngine.debit(total,"roulette-bet");
-  updateBalance();
-
-  spinning=true;
-  spinBtn.disabled=true;
-
-  const winNum=wheel[secureIndex()];
-  let velocity=0.5;
-  const decay=0.992;
-
-  function animate(){
-    velocity*=decay;
-    angle+=velocity;
-    draw();
-
-    if(velocity>0.002){
-      requestAnimationFrame(animate);
-    }else{
-      resolve(winNum);
-    }
-  }
-  animate();
+// ---- SPIN LOGIC ----
+spinBtn.onclick = ()=>{
+  if(currentBet===0) return alert("Place a bet first!");
+  const winningIndex = Math.floor(Math.random()*numbers.length);
+  const winningNumber = numbers[winningIndex];
+  animateWheelSpin(winningIndex);
 };
 
-function resolve(number){
-  let totalWin=0;
+// ---- WHEEL ANIMATION ----
+function animateWheelSpin(winIdx){
+  let rotation = 0;
+  const totalRot = 360*6 + (winIdx * (360/numbers.length));
+  const duration = 4000;
+  const start = performance.now();
 
-  bets.forEach(b=>{
-    if(b.type==="number"&&b.value===number)
-      totalWin+=CHIP*b.payout;
-  });
-
-  if(totalWin>0){
-    VaultEngine.credit(totalWin,"roulette-win");
-    messageEl.innerText=`Ball: ${number} — WIN +${totalWin}`;
-  }else{
-    messageEl.innerText=`Ball: ${number} — No Win`;
+  function spin(timestamp){
+    let elapsed = timestamp - start;
+    let progress = Math.min(elapsed/duration,1);
+    wheel.style.transform = `rotate(${totalRot*progress}deg)`;
+    ball.style.transform = `translateX(-50%) rotate(${360*6*progress}deg)`;
+    if(progress<1){
+      requestAnimationFrame(spin);
+    } else {
+      resolveSpin(numbers[winIdx]);
+    }
   }
+  requestAnimationFrame(spin);
+}
 
-  updateBalance();
-  bets=[];
-  document.querySelectorAll(".cell")
-    .forEach(c=>c.style.boxShadow="none");
-
-  spinning=false;
-  spinBtn.disabled=false;
+// ---- RESOLVE WIN ----
+function resolveSpin(winning){
+  const betCells = Array.from(tableEl.children).filter(c=>c.style.boxShadow!=="");
+  let won = false;
+  betCells.forEach(cell=>{
+    if(parseInt(cell.textContent)===winning.num){
+      won = true;
+      balance += currentBet*35;
+      animationController.winParticles();
+    }
+  });
+  if(!won) currentBet=0;
+  else currentBet=0;
+  updateBetInfo();
+  localStorage.setItem(WALLET_KEY,balance);
+  // clear bets
+  Array.from(tableEl.children).forEach(c=>c.style.boxShadow="");
 }
 </script>
 </body>
