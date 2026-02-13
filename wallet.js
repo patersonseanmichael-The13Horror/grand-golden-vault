@@ -1,74 +1,78 @@
-// ================================
-// GOLD VAULT — WALLET.JS
-// ================================
+// --- Load User Data ---
+let user = JSON.parse(localStorage.getItem("gv_user")) || {
+    id: "GV-" + Math.floor(100000 + Math.random() * 900000),
+    name: "Vault Member",
+    balance: 0,
+    tier: 1,
+    ledger: []
+};
 
-// Load User
-let user = JSON.parse(localStorage.getItem("gv_user"));
-
-if (!user) {
-    alert("Session expired. Redirecting...");
-    window.location.href = "index.html";
+// --- Update Wallet Display ---
+function updateWallet() {
+    document.getElementById("walletId").innerText = user.id;
+    document.getElementById("walletName").innerText = user.name;
+    document.getElementById("walletBalance").innerText = user.balance.toFixed(2) + " GOLD";
+    document.getElementById("walletTier").innerText = user.tier;
+    updateLedger();
 }
 
-// Save User
-function saveUser() {
-    localStorage.setItem("gv_user", JSON.stringify(user));
+// --- Ledger Display ---
+const ledgerEl = document.getElementById("ledger");
+function updateLedger() {
+    ledgerEl.innerHTML = "";
+    user.ledger.slice().reverse().forEach(tx => {
+        const div = document.createElement("div");
+        div.innerHTML = `
+            <strong>${tx.type}</strong> | ${tx.amount.toFixed(2)} GOLD | ${tx.time}<br>
+            ${tx.description ? 'Desc: ' + tx.description : ''}
+        `;
+        div.style.marginBottom = "6px";
+        div.style.color = "#ffd700";
+        ledgerEl.appendChild(div);
+    });
 }
 
+// --- Deposit Function ---
+document.getElementById("depositBtn").onclick = () => {
+    const amount = parseFloat(document.getElementById("depositAmount").value);
+    const desc = document.getElementById("depositDesc").value || "Deposit";
 
-// -------------------------------
-// HANDLE DEPOSIT + PROOF
-// -------------------------------
-const submitBtn = document.querySelector(".upload-section button");
-const messageEl = document.getElementById("message");
+    if (!amount || amount <= 0) return alert("Enter a valid amount");
 
-submitBtn.addEventListener("click", () => {
-
-    const amountInput = document.getElementById("depositAmount");
-    const fileInput = document.getElementById("proofFile");
-
-    const amount = parseFloat(amountInput.value);
-    const file = fileInput.files[0];
-
-    // Validation
-    if (isNaN(amount) || amount < 5) {
-        messageEl.textContent = "Minimum deposit is $5";
-        return;
-    }
-
-    if (amount > 50000) {
-        messageEl.textContent = "Maximum deposit is $50,000";
-        return;
-    }
-
-    if (!file) {
-        messageEl.textContent = "Please upload payment screenshot.";
-        return;
-    }
-
-    // Add Balance
-    user.balance += amount;
-
-    // Add Ledger Entry (MATCHES members.js format)
-    user.ledger.unshift({
-        type: "Wallet Deposit",
+    const tx = {
+        type: "Deposit",
         amount: amount,
         time: new Date().toLocaleString(),
-        details: `
-            Name: M Rainbow |
-            PayID: 0435 - 750 - 187 |
-            Ref: 10009444 |
-            Description: Online / Items Purchased
-        `
-    });
+        description: desc,
+    };
 
-    saveUser();
+    user.balance += amount;
+    user.ledger.push(tx);
 
-    messageEl.innerHTML = `
-        ✅ Deposit Submitted Successfully<br>
-        $${amount.toFixed(2)} GOLD Added
-    `;
+    // VIP Tier Progress
+    if(user.balance >= 10000) user.tier = 5;
+    else if(user.balance >= 5000) user.tier = 4;
+    else if(user.balance >= 2000) user.tier = 3;
+    else if(user.balance >= 1000) user.tier = 2;
 
-    amountInput.value = "";
-    fileInput.value = "";
-});
+    localStorage.setItem("gv_user", JSON.stringify(user));
+    updateWallet();
+
+    // Back to Vault Update
+    if(localStorage.getItem("gv_lastPage") === "members") {
+        const event = new Event("walletUpdated");
+        window.dispatchEvent(event);
+    }
+
+    document.getElementById("depositAmount").value = "";
+    document.getElementById("depositDesc").value = "";
+}
+
+// --- Back to Vault ---
+document.getElementById("backVaultBtn").onclick = () => {
+    localStorage.setItem("gv_lastPage", "members");
+    window.location.href = "members.html";
+}
+
+// --- Initial Load ---
+updateWallet();
