@@ -4,34 +4,69 @@
 <meta charset="UTF-8">
 <title>Platinum Vegas Lounge Slots</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="stylesheet" href="../global.css">
 <style>
 body {
   margin: 0;
   overflow: hidden;
-  background: linear-gradient(135deg, #080503, #120c08);
+  background: radial-gradient(circle at top,#1c130a,#080503 80%);
   font-family: 'Inter', sans-serif;
-  color: #eae6dc;
+  color: var(--text-light);
 }
+
 #game-container {
   width: 100vw;
   height: 100vh;
   position: relative;
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
+
+#reels {
+  display:flex;
+  gap:15px;
+}
+
+.reel {
+  width:100px;
+  height:100px;
+  background:#222;
+  border-radius:12px;
+  box-shadow:0 0 20px rgba(212,175,55,0.5);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:3rem;
+  color:#fff;
+}
+
+#resultText {
+  position:absolute;
+  top:20%;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:1.5rem;
+  color: var(--gold);
+  text-shadow:0 0 10px #d4af37;
+}
+
 #ui-panel {
   position: absolute;
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 20px;
+  gap: 15px;
   background: rgba(0,0,0,0.4);
   padding: 15px 25px;
   border-radius: 12px;
   backdrop-filter: blur(10px);
   z-index: 10;
 }
-button {
-  background: #d4af37;
+
+#ui-panel button {
+  background: var(--gold);
   color: #080503;
   border: none;
   padding: 10px 20px;
@@ -40,20 +75,35 @@ button {
   cursor: pointer;
   transition: 0.2s all;
 }
-button:hover { transform: scale(1.05); }
+
+#ui-panel button:hover { transform: scale(1.05); }
+
 </style>
 </head>
 <body>
-<div id="game-container"></div>
+
+<div id="game-container">
+  <div id="reels">
+    <div class="reel"></div>
+    <div class="reel"></div>
+    <div class="reel"></div>
+  </div>
+  <div id="resultText"></div>
+</div>
+
 <div id="ui-panel">
   <button id="spinBtn">Spin</button>
   <button id="autoSpinBtn">AutoSpin</button>
   <button id="doubleUpBtn">Double Up</button>
-  <span>Balance: $<span id="balance">1000</span></span>
+  <span>Balance: $<span id="balance">0</span></span>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r153/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/gsap.min.js"></script>
+<script src="../core/VaultEngine.js"></script>
+<script src="../core/RNGEngine.js"></script>
+<script src="../core/BetEngine.js"></script>
+<script src="../core/StateManager.js"></script>
+<script src="../core/animationController.js"></script>
 <script src="slots.js"></script>
+
 </body>
 </html>
