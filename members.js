@@ -7,17 +7,12 @@ let user = JSON.parse(localStorage.getItem("gv_user")) || {
     ledger: []
 };
 
-// --- Reset Ledger to Nil ---
+// --- Reset Ledger ---
 user.ledger = [];
 localStorage.setItem("gv_user", JSON.stringify(user));
 
 // --- Wallet Display ---
 function updateWalletDisplay() {
-    const depositBtn = document.getElementById("depositBtn");
-    if (depositBtn) depositBtn.onclick = () => {
-        window.location.href = "wallet.html";
-    };
-
     document.getElementById("vaultId").innerText = user.id;
     document.getElementById("vaultName").innerText = user.name;
     document.getElementById("vaultBalance").innerText = user.balance.toFixed(2) + " GOLD";
@@ -42,98 +37,72 @@ function updateLedger() {
 }
 updateLedger();
 
-// --- Live Feed (Scrolling Casino Wins) ---
+// --- Live Feed ---
 const feedBox = document.getElementById("feedBox");
-const maxFeedItems = 12; // max number of lines to show
+const maxFeedItems = 12;
 
 function addLiveFeedEntry() {
     if (!feedBox) return;
-
-    // Randomized winner info
     const phone = "04*****" + Math.floor(100 + Math.random() * 900);
     const amount = Math.floor(Math.random() * 5000) + 50;
     const div = document.createElement("div");
     div.textContent = `${phone} just won ${amount} GOLD!`;
     div.style.marginBottom = "4px";
     div.style.color = "#ffd700";
-
-    // Add to top of feed
     feedBox.prepend(div);
-
-    // Keep feed length limited
-    while (feedBox.children.length > maxFeedItems) {
-        feedBox.removeChild(feedBox.lastChild);
-    }
-
-    // Animate scrolling (optional smooth slide)
+    while (feedBox.children.length > maxFeedItems) feedBox.removeChild(feedBox.lastChild);
     gsap.from(div, { opacity: 0, y: -10, duration: 0.5 });
 }
 
-// Initialize with a few entries
 for (let i = 0; i < 6; i++) addLiveFeedEntry();
-
-// Add a new entry every 5 seconds
 setInterval(addLiveFeedEntry, 5000);
 
-// --- Game Buttons ---
+// --- Vault Doors & Navigation ---
+const vault = document.getElementById('vault');
+const doors = document.getElementById('doors');
+
 function goToGame(url) {
-    const vault = document.getElementById('vault');
-    const doors = document.getElementById('doors');
     if (vault) vault.classList.remove('visible');
     if (doors) doors.classList.remove('open');
-    setTimeout(() => window.location.href = url, 600); // short delay for animation
+    setTimeout(() => window.location.href = url, 600);
 }
 
-document.querySelectorAll('.card').forEach(card => {
+// --- Deposit Button ---
+const depositBtn = document.getElementById("depositBtn");
+if (depositBtn) depositBtn.onclick = () => {
+    window.location.href = "wallet.html";
+};
+
+// --- Game Cards ---
+document.querySelectorAll('.game-cards .card').forEach(card => {
     const text = card.textContent.trim().toLowerCase();
     if (text.includes('blackjack')) card.onclick = () => goToGame('blackjack.html');
     if (text.includes('roulette')) card.onclick = () => goToGame('roulette.html');
     if (text.includes('poker')) card.onclick = () => goToGame('poker.html');
-    if (text.includes('slots')) card.onclick = () => {
-        document.querySelector('.game-cards').style.display='none';
-        const slotsSection = document.getElementById('slots-section');
-        if (slotsSection) slotsSection.style.display='block';
-        if (typeof initSlots === 'function') initSlots();
-    };
+    if (text.includes('slots') || text.includes('platinum slots')) card.onclick = () => openSlots();
 });
+
+// --- Slots Section ---
+function openSlots() {
+    const gameCards = document.querySelector('.game-cards');
+    const slotsSection = document.getElementById('slots-section');
+    if (gameCards) gameCards.style.display = 'none';
+    if (slotsSection) {
+        slotsSection.style.display = 'block';
+        slotsSection.scrollIntoView({ behavior: 'smooth' });
+        if (typeof initSlots === 'function') initSlots();
+    }
+}
+
+function closeSlots() {
+    const gameCards = document.querySelector('.game-cards');
+    const slotsSection = document.getElementById('slots-section');
+    if (slotsSection) slotsSection.style.display = 'none';
+    if (gameCards) gameCards.style.display = 'grid';
+}
 
 // --- VIP Bar Animation ---
 const vipBar = document.getElementById("vipBar");
 if (vipBar) setTimeout(() => vipBar.style.width = '65%', 800);
 
-// --- Deposit Button ---
-const depositBtn = document.getElementById("depositBtn");
-if (depositBtn) depositBtn.onclick = () => {
-    // Redirect to wallet
-    window.location.href = "wallet.html";
-};
-
-function goToGame(url){
-    vault.classList.remove('visible');
-    setTimeout(() => doors.classList.remove('open'), 400);
-    setTimeout(() => window.location.href = url, 2600);
-}
-
-// Assign cards
-document.querySelectorAll('.game-cards .card').forEach(card => {
-    const gameText = card.textContent.trim().toLowerCase();
-    if(gameText.includes('blackjack')) card.onclick = () => goToGame('blackjack.html');
-    if(gameText.includes('roulette')) card.onclick = () => goToGame('roulette.html');
-    if(gameText.includes('poker')) card.onclick = () => goToGame('poker.html');
-    if(gameText.includes('platinum slots')) card.onclick = () => openSlots();
-});
-
-function goToGame(url){
-    vault.classList.remove('visible');
-    setTimeout(() => doors.classList.remove('open'), 400);
-    setTimeout(() => window.location.href = url, 2600);
-}
-
-// Assign cards
-document.querySelectorAll('.game-cards .card').forEach(card => {
-    const gameText = card.textContent.trim().toLowerCase();
-    if(gameText.includes('blackjack')) card.onclick = () => goToGame('blackjack.html');
-    if(gameText.includes('roulette')) card.onclick = () => goToGame('roulette.html');
-    if(gameText.includes('poker')) card.onclick = () => goToGame('poker.html');
-    if(gameText.includes('platinum slots')) card.onclick = () => openSlots();
-});
+console.log("✅ Members JS initialized: wallet, ledger, live feed, games, VIP, slots");
