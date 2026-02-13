@@ -139,28 +139,77 @@ body {
 /* === SLOTS SECTION === */
 #slots-section {
     display: none;
-    margin-top: 30px;
+    margin-top: 40px;
+    padding: 25px;
+    background: linear-gradient(180deg, rgba(20,12,5,0.9), rgba(8,5,3,0.95));
+    border-radius: 18px;
+    box-shadow: 
+        0 0 40px rgba(255,215,0,0.3),
+        inset 0 0 25px rgba(0,0,0,0.7);
+    border: 1px solid rgba(255,215,0,0.4);
 }
+
+/* Game Container Glow */
+#game-container {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 0 35px rgba(255,215,0,0.4);
+}
+
+/* UI PANEL */
 #ui-panel {
-    margin-top: 15px;
+    margin-top: 20px;
     display: flex;
-    gap: 10px;
+    flex-wrap: wrap;
+    gap: 12px;
     align-items: center;
+    justify-content: center;
+    padding: 15px;
+    background: rgba(255,215,0,0.05);
+    border-radius: 14px;
+    border: 1px solid rgba(255,215,0,0.25);
 }
+
+/* Slot Buttons */
 #ui-panel button {
-    padding: 8px 12px;
-    background: #4d3a0b;
+    padding: 10px 18px;
+    background: linear-gradient(145deg, #3b2a09, #6e4f1c);
     border: 1px solid #ffd700;
-    border-radius: 8px;
+    border-radius: 10px;
     color: #ffd700;
     cursor: pointer;
-    font-weight: 600;
-    transition: background 0.3s ease, transform 0.3s ease;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 12px rgba(255,215,0,0.3);
 }
+
 #ui-panel button:hover {
     background: #ffd700;
-    color: #4d3a0b;
-    transform: scale(1.05);
+    color: #3b2a09;
+    transform: translateY(-3px);
+    box-shadow: 0 0 20px rgba(255,215,0,0.7);
+}
+
+/* Balance Display */
+#ui-panel span {
+    font-weight: 600;
+    color: #ffdf70;
+    font-size: 1.1em;
+    padding: 6px 10px;
+    background: rgba(255,215,0,0.08);
+    border-radius: 8px;
+}
+
+/* Exit Slots Button */
+.exit-slots-btn {
+    background: linear-gradient(145deg, #4d0b0b, #7a1c1c) !important;
+    border: 1px solid #ffae00 !important;
+}
+
+.exit-slots-btn:hover {
+    background: #ffae00 !important;
+    color: #4d0b0b !important;
 }
 
 /* === VIP PROGRESS === */
