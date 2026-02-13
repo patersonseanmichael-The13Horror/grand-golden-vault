@@ -122,3 +122,18 @@ document.querySelectorAll('.game-cards .card').forEach(card => {
     if(gameText.includes('poker')) card.onclick = () => goToGame('poker.html');
     if(gameText.includes('platinum slots')) card.onclick = () => openSlots();
 });
+
+function goToGame(url){
+    vault.classList.remove('visible');
+    setTimeout(() => doors.classList.remove('open'), 400);
+    setTimeout(() => window.location.href = url, 2600);
+}
+
+// Assign cards
+document.querySelectorAll('.game-cards .card').forEach(card => {
+    const gameText = card.textContent.trim().toLowerCase();
+    if(gameText.includes('blackjack')) card.onclick = () => goToGame('blackjack.html');
+    if(gameText.includes('roulette')) card.onclick = () => goToGame('roulette.html');
+    if(gameText.includes('poker')) card.onclick = () => goToGame('poker.html');
+    if(gameText.includes('platinum slots')) card.onclick = () => openSlots();
+});
