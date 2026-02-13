@@ -35,42 +35,22 @@ function updateLedger() {
 }
 updateLedger();
 
-// --- Deposit / Withdrawal Live Feed ---
-document.getElementById("depositBtn").onclick = () => {
-    window.location.href = "wallet.html";
-};
-
 function randomDeposit() {
-    const cents = (Math.random() * 0.99).toFixed(2);
-    const amount = Math.random() < 0.5
-        ? (Math.random() * (10.99 - 10.01) + 10.01).toFixed(2)  
-        : (Math.random() * (1599 - 1501) + 1501).toFixed(2);    
-    return parseFloat(amount) + parseFloat(cents);
+    // Either small $10.00–$10.99 OR high $1500–$1599
+    if (Math.random() < 0.5) {
+        return (Math.random() * (10.99 - 10.00) + 10.00).toFixed(2);
+    } else {
+        return (Math.random() * (1599.99 - 1500.00) + 1500.00).toFixed(2);
+    }
 }
 
 function randomWithdrawal() {
     return (Math.random() * (87443.23 - 17288.45) + 17288.45).toFixed(2);
 }
 
-function randomPhone() { 
-    return "04******" + Math.floor(10 + Math.random() * 90); 
+function randomPhone() {
+    return "04*****" + Math.floor(100 + Math.random() * 900);
 }
-
-function addFeedItem() {
-    const type = Math.random() < 0.5 ? "DEPOSIT" : "WITHDRAWAL";
-    const amount = type === "DEPOSIT" ? randomDeposit() : randomWithdrawal();
-    const time = new Date().toLocaleTimeString();
-
-    const div = document.createElement("div");
-    div.textContent = `${type} | $${amount} | ${randomPhone()} | ${time}`;
-    div.style.marginBottom = "6px";
-    div.style.color = type === "DEPOSIT" ? "#ffd700" : "#e5c55a";
-    div.style.textShadow = "0 0 3px #ffd700";
-
-    feedBox.prepend(div);
-    if(feedBox.children.length>6) feedBox.removeChild(feedBox.lastChild);
-}
-setInterval(addFeedItem, 3500);
 
 // --- PayID Proof Upload ---
 document.getElementById("submitProofBtn").onclick = () => {
