@@ -1,78 +1,118 @@
-// --- Load User Data ---
-let user = JSON.parse(localStorage.getItem("gv_user")) || {
-    id: "GV-" + Math.floor(100000 + Math.random() * 900000),
-    name: "Vault Member",
-    balance: 0,
-    tier: 1,
-    ledger: []
-};
+// GRAND GOLDEN VAULT
+// Wallet UI Controller
+// Uses VaultEngine as authority
 
-// --- Update Wallet Display ---
-function updateWallet() {
-    document.getElementById("walletId").innerText = user.id;
-    document.getElementById("walletName").innerText = user.name;
-    document.getElementById("walletBalance").innerText = user.balance.toFixed(2) + " GOLD";
-    document.getElementById("walletTier").innerText = user.tier;
-    updateLedger();
-}
+(function () {
+  "use strict";
 
-// --- Ledger Display ---
-const ledgerEl = document.getElementById("ledger");
-function updateLedger() {
+  // ----------------------------
+  // DOM CACHE
+  // ----------------------------
+
+  const walletIdEl = document.getElementById("walletId");
+  const walletNameEl = document.getElementById("walletName");
+  const walletBalanceEl = document.getElementById("walletBalance");
+  const walletTierEl = document.getElementById("walletTier");
+  const ledgerEl = document.getElementById("ledger");
+
+  const depositBtn = document.getElementById("depositBtn");
+  const depositAmountEl = document.getElementById("depositAmount");
+  const depositDescEl = document.getElementById("depositDesc");
+  const backVaultBtn = document.getElementById("backVaultBtn");
+
+  // ----------------------------
+  // INIT ENGINE
+  // ----------------------------
+
+  const state = VaultEngine.init();
+
+  // ----------------------------
+  // TIER CALCULATION
+  // ----------------------------
+
+  function calculateTier(balance) {
+    if (balance >= 10000) return 5;
+    if (balance >= 5000) return 4;
+    if (balance >= 2000) return 3;
+    if (balance >= 1000) return 2;
+    return 1;
+  }
+
+  // ----------------------------
+  // UI RENDER
+  // ----------------------------
+
+  function renderWallet() {
+    const vaultState = VaultEngine.getState();
+    const balance = vaultState.balance;
+    const tier = calculateTier(balance);
+
+    walletIdEl.innerText = vaultState.user.id;
+    walletNameEl.innerText = vaultState.user.name;
+    walletBalanceEl.innerText = balance.toFixed(2) + " GOLD";
+    walletTierEl.innerText = tier;
+
+    renderLedger(vaultState.transactions);
+  }
+
+  function renderLedger(transactions) {
     ledgerEl.innerHTML = "";
-    user.ledger.slice().reverse().forEach(tx => {
-        const div = document.createElement("div");
-        div.innerHTML = `
-            <strong>${tx.type}</strong> | ${tx.amount.toFixed(2)} GOLD | ${tx.time}<br>
-            ${tx.description ? 'Desc: ' + tx.description : ''}
-        `;
-        div.style.marginBottom = "6px";
-        div.style.color = "#ffd700";
-        ledgerEl.appendChild(div);
+
+    [...transactions].reverse().forEach(tx => {
+      const div = document.createElement("div");
+
+      const formattedTime = new Date(tx.timestamp).toLocaleString();
+
+      div.innerHTML = `
+        <strong>${tx.type.toUpperCase()}</strong> |
+        ${tx.amount.toFixed(2)} GOLD |
+        ${formattedTime}<br>
+        Source: ${tx.source}
+      `;
+
+      div.style.marginBottom = "6px";
+      div.style.color = "#ffd700";
+
+      ledgerEl.appendChild(div);
     });
-}
+  }
 
-// --- Deposit Function ---
-document.getElementById("depositBtn").onclick = () => {
-    const amount = parseFloat(document.getElementById("depositAmount").value);
-    const desc = document.getElementById("depositDesc").value || "Deposit";
+  // ----------------------------
+  // DEPOSIT HANDLER
+  // ----------------------------
 
-    if (!amount || amount <= 0) return alert("Enter a valid amount");
+  depositBtn.addEventListener("click", () => {
+    const amount = parseFloat(depositAmountEl.value);
+    const description = depositDescEl.value || "Deposit";
 
-    const tx = {
-        type: "Deposit",
-        amount: amount,
-        time: new Date().toLocaleString(),
-        description: desc,
-    };
-
-    user.balance += amount;
-    user.ledger.push(tx);
-
-    // VIP Tier Progress
-    if(user.balance >= 10000) user.tier = 5;
-    else if(user.balance >= 5000) user.tier = 4;
-    else if(user.balance >= 2000) user.tier = 3;
-    else if(user.balance >= 1000) user.tier = 2;
-
-    localStorage.setItem("gv_user", JSON.stringify(user));
-    updateWallet();
-
-    // Back to Vault Update
-    if(localStorage.getItem("gv_lastPage") === "members") {
-        const event = new Event("walletUpdated");
-        window.dispatchEvent(event);
+    if (!amount || amount <= 0) {
+      alert("Enter a valid amount.");
+      return;
     }
 
-    document.getElementById("depositAmount").value = "";
-    document.getElementById("depositDesc").value = "";
-}
+    try {
+      VaultEngine.credit(amount, description);
+      renderWallet();
+    } catch (err) {
+      alert(err.message);
+    }
 
-// --- Back to Vault ---
-document.getElementById("backVaultBtn").onclick = () => {
-    localStorage.setItem("gv_lastPage", "members");
+    depositAmountEl.value = "";
+    depositDescEl.value = "";
+  });
+
+  // ----------------------------
+  // NAVIGATION
+  // ----------------------------
+
+  backVaultBtn.addEventListener("click", () => {
     window.location.href = "members.html";
-}
+  });
 
-// --- Initial Load ---
-updateWallet();
+  // ----------------------------
+  // INITIAL RENDER
+  // ----------------------------
+
+  renderWallet();
+
+})();
