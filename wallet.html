@@ -4,163 +4,37 @@
 <meta charset="UTF-8">
 <title>Golden Vault — Wallet</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
-<style>
-:root{
-  --gold:#d4af37;
-  --dark:#080503;
-  --panel:#140e09;
-  --text:#eae6dc;
-}
-
-body{
-  margin:0;
-  background: radial-gradient(circle at top,#1c130a,#080503 70%);
-  font-family:'Inter',sans-serif;
-  color:var(--text);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  min-height:100vh;
-}
-
-/* Center Box */
-.wallet-box{
-  width:95%;
-  max-width:480px;
-  background:linear-gradient(180deg,#160f09,#0b0704);
-  border:1px solid rgba(212,175,55,0.6);
-  border-radius:18px;
-  padding:30px;
-  box-shadow:
-    0 0 50px rgba(212,175,55,0.2),
-    inset 0 0 30px rgba(0,0,0,0.6);
-  text-align:center;
-}
-
-/* Title */
-.wallet-box h1{
-  color:var(--gold);
-  margin-bottom:20px;
-  text-shadow:0 0 10px var(--gold);
-}
-
-/* Graph Info Box */
-.payid-graph{
-  border:1px solid var(--gold);
-  border-radius:12px;
-  margin-bottom:20px;
-  overflow:hidden;
-}
-
-.payid-row{
-  padding:10px 14px;
-  border-bottom:1px solid rgba(212,175,55,0.3);
-  display:flex;
-  justify-content:space-between;
-}
-
-.payid-row:last-child{
-  border-bottom:none;
-}
-
-.label{
-  color:var(--gold);
-  font-weight:600;
-}
-
-.value{
-  color:var(--text);
-}
-
-/* Input */
-input{
-  width:80%;
-  padding:10px;
-  margin-top:15px;
-  border-radius:8px;
-  border:1px solid var(--gold);
-  background:transparent;
-  color:var(--text);
-}
-
-/* Buttons */
-button{
-  margin-top:15px;
-  padding:10px 20px;
-  border-radius:10px;
-  border:1px solid var(--gold);
-  background:linear-gradient(145deg,#4d3a0b,#7a5f2f);
-  color:var(--gold);
-  font-weight:600;
-  cursor:pointer;
-  transition:all .3s ease;
-}
-
-button:hover{
-  background:var(--gold);
-  color:#4d3a0b;
-  box-shadow:0 0 15px var(--gold);
-}
-
-.upload-section{
-  margin-top:15px;
-}
-
-.message{
-  margin-top:10px;
-  height:22px;
-}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="members.css">
 </head>
-<body>
+<body class="vault-page">
 
-<div class="wallet-box">
+<div class="vault">
+  <h1>Golden Vault — Wallet</h1>
 
-<h1>Wallet Deposit</h1>
+  <div class="wallet-section">
+    <h3>Member Wallet</h3>
+    <p>ID: <span id="walletId"></span></p>
+    <p>Name: <span id="walletName"></span></p>
+    <p>Balance: <span id="walletBalance"></span></p>
+    <p>Tier: <span id="walletTier"></span></p>
+  </div>
 
-<div class="payid-graph">
-  <div class="payid-row">
-    <span class="label">Name</span>
-    <span class="value">M Rainbow</span>
+  <div class="deposit-section">
+    <h3>Deposit GOLD</h3>
+    <input type="number" id="depositAmount" placeholder="Enter amount" min="1"/>
+    <input type="text" id="depositDesc" placeholder="Description (optional)"/>
+    <button id="depositBtn">Deposit</button>
   </div>
-  <div class="payid-row">
-    <span class="label">PayID</span>
-    <span class="value">0435 - 750 - 187</span>
+
+  <div class="ledger-section">
+    <h3>Ledger</h3>
+    <div id="ledger"></div>
   </div>
-  <div class="payid-row">
-    <span class="label">Reference</span>
-    <span class="value">10009444</span>
-  </div>
-  <div class="payid-row">
-    <span class="label">Description</span>
-    <span class="value">Online / Items Purchased</span>
-  </div>
+
+  <button id="backVaultBtn">Back to Vault</button>
 </div>
 
-<p style="color:var(--gold); font-size:0.9em;">
-Minimum Deposit: $5 | Maximum Deposit: $50,000
-</p>
-
-<input type="number" id="depositAmount" placeholder="Enter deposit amount"/>
-
-<br>
-<button onclick="submitDeposit()">Submit Deposit</button>
-
-<div class="upload-section">
-  <input type="file" id="proofFile" accept="image/*"/>
-  <br>
-  <button onclick="uploadProof()">Submit Screenshot</button>
-</div>
-
-<div class="message" id="message"></div>
-
-<br>
-<button onclick="window.location.href='members.html'">
-Back to Vault
-</button>
-
-</div>
-<script src="wallet.js"></script>
+<script type="module" src="wallet.js"></script>
 </body>
 </html>
