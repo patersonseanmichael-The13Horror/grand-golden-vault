@@ -20,8 +20,8 @@
   // INIT
   // ----------------------------
 
-  VaultEngine.init();
-  updateBalanceUI();
+ VaultEngine.init();       // Loads or initializes user balance
+StateManager.load();      // Load current slots state if any
 
   function updateBalanceUI() {
     const balance = VaultEngine.getBalance();
