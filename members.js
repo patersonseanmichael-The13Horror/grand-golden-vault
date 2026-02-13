@@ -11,6 +11,9 @@ let user = JSON.parse(localStorage.getItem("gv_user")) || {
 
 // --- Wallet Display ---
 function updateWalletDisplay() {
+    document.getElementById("depositBtn").onclick = () => {
+    window.location.href = "wallet.html";
+};
     document.getElementById("vaultId").innerText = user.id;
     document.getElementById("vaultName").innerText = user.name;
     document.getElementById("vaultBalance").innerText = user.balance.toFixed(2) + " GOLD";
