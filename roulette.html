@@ -4,134 +4,116 @@
 <meta charset="UTF-8">
 <title>VIP Roulette — Golden Vault</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
 <style>
-:root {
-  --gold: #d4af37;
-  --text-light: #eae6dc;
-  --bg-dark: #0b0704;
-  --green-felt: #0b3d0b;
-  --wheel-size: 400px;
-  --ball-size: 14px;
+:root{
+  --gold:#d4af37;
+  --bg-dark:#0b0704;
+  --green:#0f800f;
 }
+
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;}
-body{
-  <body class="vault-bg roulette-page">
-  background: url('grand-golden-vault/images/roulette.jpg') no-repeat center center fixed;
-  background-size: cover;
-  overflow:hidden;
+
+body.vault-bg.roulette-page{
+  background:url('grand-golden-vault/images/roulette.jpg') no-repeat center center fixed;
+  background-size:cover;
+  min-height:100vh;
   display:flex;
   align-items:center;
   justify-content:center;
-  min-height:100vh;
-  position:relative;
+  overflow:hidden;
 }
 
-/* Vignette overlay to highlight the wheel */
+/* Vignette */
 body::after{
   content:"";
   position:fixed;
   inset:0;
-  background: radial-gradient(circle at center, rgba(0,0,0,0.0) 55%, rgba(0,0,0,0.75) 100%);
+  background:radial-gradient(circle at center,rgba(0,0,0,0)55%,rgba(0,0,0,0.75)100%);
   pointer-events:none;
-  z-index:1;
 }
 
-/* Vignette overlay to highlight the wheel */
-body::after{
-  content:"";
-  position:fixed;
-  inset:0;
-  background: radial-gradient(circle at center, rgba(0,0,0,0.0) 55%, rgba(0,0,0,0.75) 100%);
-  pointer-events:none;
-  z-index:1;
-}
-
-/* Vault Doors */
-.doors{
-  position:fixed;inset:0;z-index:10;display:flex;pointer-events:none;
-}
+/* Doors */
+.doors{position:fixed;inset:0;display:flex;z-index:10;}
 .door{
   width:50%;height:100%;
   background:linear-gradient(180deg,#1a120a,#090603);
   border-right:1px solid rgba(212,175,55,0.4);
-  box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
-  transform:translateX(0);
-  transition: transform 2.6s cubic-bezier(.77,0,.18,1);
-  z-index:11;
+  transition:transform 2.6s cubic-bezier(.77,0,.18,1);
 }
 .door.right{border-right:none;border-left:1px solid rgba(212,175,55,0.4);}
 .doors.open .door.left{transform:translateX(-100%);}
 .doors.open .door.right{transform:translateX(100%);}
 
-/* Vault Content */
+/* Vault */
 .vault{
-  width:95%; max-width:1200px;
-  max-height:90vh;
-  overflow-y:auto;
-  background:linear-gradient(180deg,rgba(22,15,9,0.9),rgba(11,7,4,0.9));
+  width:95%;max-width:1200px;
+  background:linear-gradient(180deg,rgba(22,15,9,0.95),rgba(11,7,4,0.95));
   border:2px solid rgba(212,175,55,0.6);
   border-radius:20px;
   padding:30px;
   box-shadow:0 0 120px rgba(212,175,55,0.4), inset 0 0 40px rgba(0,0,0,0.6);
   text-align:center;
-  opacity:0; transform:scale(0.96);
-  transition:opacity 1.2s ease, transform 1.2s ease;
-  position:relative;
-  z-index:2;
+  opacity:0;
+  transform:scale(0.96);
+  transition:opacity 1s ease,transform 1s ease;
 }
 .vault.visible{opacity:1;transform:scale(1);}
-h1{color:var(--gold);margin-bottom:10px;}
-.balance{font-size:1.5rem;color:var(--gold);margin-bottom:15px;}
 
-/* Canvas roulette */
+h1{color:var(--gold);margin-bottom:10px;}
+.balance{color:var(--gold);font-size:1.4rem;margin-bottom:10px;}
+
 #canvas{
-  display:block;
   margin:20px auto;
+  display:block;
   border-radius:50%;
-  box-shadow:0 0 30px rgba(212,175,55,0.5) inset,0 0 60px rgba(212,175,55,0.3);
-  background: radial-gradient(circle at center, #222 0%, #111 70%);
-  position:relative;
-  z-index:2;
+  background:#111;
+  box-shadow:0 0 30px rgba(212,175,55,0.6) inset;
 }
 
-/* Table layout */
+/* Table */
 .table{
   margin:20px auto;
-  display:flex;flex-wrap:wrap;justify-content:center;gap:4px;
-  max-width:600px;
-  position:relative;
-  z-index:2;
+  display:grid;
+  grid-template-columns:repeat(12,50px);
+  gap:4px;
+  justify-content:center;
 }
+
 .cell{
-  width:50px;height:50px;display:flex;align-items:center;justify-content:center;
-  font-weight:bold;border:1px solid #111;border-radius:6px;
-  cursor:pointer;transition:0.3s;
+  width:50px;height:50px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:bold;border-radius:6px;
+  cursor:pointer;transition:0.2s;
 }
-.cell.red{background:#c40000;color:#fff;}
-.cell.black{background:#000;color:#fff;}
-.cell.green{background:#0f800f;color:#fff;}
-.cell:hover{box-shadow:0 0 12px rgba(255,255,255,0.6);}
+
+.red{background:#b00000;color:#fff;}
+.black{background:#000;color:#fff;}
+.green{background:#0f800f;color:#fff;}
+
+.cell:hover{box-shadow:0 0 10px gold;}
+
 button{
   padding:10px 25px;
-  border-radius:8px;
   border:1px solid var(--gold);
   background:transparent;
   color:var(--gold);
+  border-radius:8px;
   cursor:pointer;
-  transition:0.3s;
   margin:5px;
-  position:relative;
-  z-index:2;
 }
+
 button:hover{
   background:rgba(212,175,55,0.1);
-  box-shadow:0 0 12px rgba(212,175,55,0.3);
 }
+
+.message{margin-top:12px;height:24px;}
+
 .exit-btn{margin-top:20px;}
-.message{margin-top:12px;height:24px;font-size:1.1rem;position:relative;z-index:2;}
 </style>
 </head>
-<body>
+
+<body class="vault-bg roulette-page">
 
 <div class="doors" id="doors">
   <div class="door left"></div>
@@ -140,15 +122,12 @@ button:hover{
 
 <div class="vault" id="vault">
   <h1>VIP Roulette — Golden Vault</h1>
-  <div class="balance" id="balance">$1000</div>
+  <div class="balance" id="balance"></div>
 
   <canvas id="canvas" width="500" height="500"></canvas>
+  <button id="spinBtn">Spin</button>
 
-  <div>
-    <button id="spinBtn">Spin</button>
-  </div>
   <div class="message" id="message"></div>
-
   <div class="table" id="table"></div>
 
   <button class="exit-btn" onclick="exitVault()">Exit Vault</button>
@@ -160,242 +139,137 @@ button:hover{
 
 VaultEngine.init();
 
-const balanceEl = document.getElementById("balance");
-const messageEl = document.getElementById("message");
-const spinBtn = document.getElementById("spinBtn");
-const table = document.getElementById("table");
+const balanceEl=document.getElementById("balance");
+const messageEl=document.getElementById("message");
+const spinBtn=document.getElementById("spinBtn");
+const table=document.getElementById("table");
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
 
-function updateBalanceUI() {
-  balanceEl.innerText =
-    "GOLD: " + VaultEngine.getBalance().toFixed(2);
+function updateBalance(){
+  balanceEl.innerText="GOLD: "+VaultEngine.getBalance().toFixed(2);
 }
-updateBalanceUI();
+updateBalance();
 
-const CHIP_VALUE = 100;
-let bets = [];
-let spinning = false;
+setTimeout(()=>{
+  document.getElementById("doors").classList.add("open");
+  document.getElementById("vault").classList.add("visible");
+},800);
 
-// ----------------------------
-// EUROPEAN WHEEL ORDER
-// ----------------------------
+const CHIP=100;
+let bets=[];
+let spinning=false;
 
-const wheel = [
-  0,32,15,19,4,21,2,25,17,34,6,27,
-  13,36,11,30,8,23,10,5,24,16,33,
-  1,20,14,31,9,22,18,29,7,28,12,35,3,26
+const wheel=[
+0,32,15,19,4,21,2,25,17,34,6,27,
+13,36,11,30,8,23,10,5,24,16,33,
+1,20,14,31,9,22,18,29,7,28,12,35,3,26
 ];
 
-const redNumbers = [
-  1,3,5,7,9,12,14,16,18,19,
-  21,23,25,27,30,32,34,36
-];
+const reds=[1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
+function isRed(n){return reds.includes(n);}
 
-function isRed(n){ return redNumbers.includes(n); }
-
-// ----------------------------
-// SECURE RNG
-// ----------------------------
-
-function secureRandomIndex(){
-  const arr = new Uint32Array(1);
-  crypto.getRandomValues(arr);
-  return arr[0] % wheel.length;
+function secureIndex(){
+  const a=new Uint32Array(1);
+  crypto.getRandomValues(a);
+  return a[0]%wheel.length;
 }
 
-// ----------------------------
-// BUILD TABLE (Numbers)
-// ----------------------------
+/* BUILD TABLE */
+for(let n=0;n<=36;n++){
+  const c=document.createElement("div");
+  c.className="cell";
+  c.innerText=n;
 
-wheel.forEach(num=>{
-  const cell = document.createElement("div");
-  cell.className = "cell";
-  cell.innerText = num;
+  if(n===0)c.classList.add("green");
+  else if(isRed(n))c.classList.add("red");
+  else c.classList.add("black");
 
-  if(num===0) cell.classList.add("green");
-  else if(isRed(num)) cell.classList.add("red");
-  else cell.classList.add("black");
-
-  cell.addEventListener("click",()=>{
-    if(spinning) return;
-    placeBet({type:"number", value:num, payout:36});
-    cell.style.boxShadow="0 0 12px gold";
-  });
-
-  table.appendChild(cell);
-});
-
-// ----------------------------
-// SIDE BET BUTTONS
-// ----------------------------
-
-function createSideBet(label, type, value, payout){
-  const btn = document.createElement("button");
-  btn.innerText = label;
-  btn.onclick = ()=>{
-    if(spinning) return;
-    placeBet({type, value, payout});
+  c.onclick=()=>{
+    if(spinning)return;
+    bets.push({type:"number",value:n,payout:36});
+    c.style.boxShadow="0 0 12px gold";
   };
-  table.appendChild(btn);
+
+  table.appendChild(c);
 }
 
-createSideBet("RED","color","red",2);
-createSideBet("BLACK","color","black",2);
-createSideBet("EVEN","evenodd","even",2);
-createSideBet("ODD","evenodd","odd",2);
-createSideBet("1–18","half","low",2);
-createSideBet("19–36","half","high",2);
-createSideBet("1st 12","dozen",1,3);
-createSideBet("2nd 12","dozen",2,3);
-createSideBet("3rd 12","dozen",3,3);
+/* DRAW WHEEL */
+let angle=0;
+const radius=220;
 
-// ----------------------------
-// BET MANAGEMENT
-// ----------------------------
-
-function placeBet(bet){
-  bets.push(bet);
-  messageEl.innerText =
-    `Bets Placed: ${bets.length} (Each ${CHIP_VALUE} GOLD)`;
-}
-
-// ----------------------------
-// CANVAS
-// ----------------------------
-
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
-const centerX = canvas.width/2;
-const centerY = canvas.height/2;
-const radius = 200;
-
-let angle = 0;
-
-function drawWheel(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  const segAngle = (2*Math.PI)/wheel.length;
+function draw(){
+  ctx.clearRect(0,0,500,500);
+  const seg=(2*Math.PI)/wheel.length;
 
   for(let i=0;i<wheel.length;i++){
     ctx.beginPath();
-    ctx.moveTo(centerX,centerY);
-    ctx.arc(centerX,centerY,radius,
-      angle+i*segAngle,
-      angle+(i+1)*segAngle);
+    ctx.moveTo(250,250);
+    ctx.arc(250,250,radius,
+      angle+i*seg,
+      angle+(i+1)*seg);
 
-    ctx.fillStyle =
-      wheel[i]===0 ? "#0f800f" :
-      isRed(wheel[i]) ? "#b00000" : "#000";
+    ctx.fillStyle=
+      wheel[i]===0?"#0f800f":
+      isRed(wheel[i])?"#b00000":"#000";
 
     ctx.fill();
     ctx.strokeStyle="#111";
     ctx.stroke();
-
-    ctx.save();
-    ctx.translate(centerX,centerY);
-    ctx.rotate(angle+(i+0.5)*segAngle);
-    ctx.fillStyle="#fff";
-    ctx.font="14px Arial";
-    ctx.fillText(wheel[i],radius-20,5);
-    ctx.restore();
   }
 }
-drawWheel();
+draw();
 
-// ----------------------------
-// SPIN
-// ----------------------------
+/* SPIN */
+spinBtn.onclick=()=>{
+  if(spinning||bets.length===0)return;
 
-spinBtn.addEventListener("click",()=>{
-  if(spinning || bets.length===0) return;
-
-  const totalBet = bets.length * CHIP_VALUE;
-
-  if(VaultEngine.getBalance() < totalBet){
-    messageEl.innerText="Insufficient GOLD.";
+  const total=bets.length*CHIP;
+  if(VaultEngine.getBalance()<total){
+    messageEl.innerText="Insufficient GOLD";
     return;
   }
 
-  VaultEngine.debit(totalBet,"roulette-bet");
-  updateBalanceUI();
+  VaultEngine.debit(total,"roulette-bet");
+  updateBalance();
 
   spinning=true;
   spinBtn.disabled=true;
-  messageEl.innerText="Spinning...";
 
-  const winningNumber = wheel[secureRandomIndex()];
-
-  let velocity = 0.5;
-  const decay = 0.993;
+  const winNum=wheel[secureIndex()];
+  let velocity=0.5;
+  const decay=0.992;
 
   function animate(){
     velocity*=decay;
     angle+=velocity;
-    drawWheel();
+    draw();
 
     if(velocity>0.002){
       requestAnimationFrame(animate);
-    } else {
-      resolveBets(winningNumber);
+    }else{
+      resolve(winNum);
     }
   }
   animate();
-});
+};
 
-// ----------------------------
-// RESOLVE BETS
-// ----------------------------
+function resolve(number){
+  let totalWin=0;
 
-function resolveBets(number){
-
-  let totalWin = 0;
-
-  bets.forEach(bet=>{
-    if(bet.type==="number" && bet.value===number)
-      totalWin += CHIP_VALUE * bet.payout;
-
-    if(bet.type==="color"){
-      if(bet.value==="red" && isRed(number))
-        totalWin += CHIP_VALUE * bet.payout;
-      if(bet.value==="black" && number!==0 && !isRed(number))
-        totalWin += CHIP_VALUE * bet.payout;
-    }
-
-    if(bet.type==="evenodd"){
-      if(number!==0){
-        if(bet.value==="even" && number%2===0)
-          totalWin+=CHIP_VALUE*bet.payout;
-        if(bet.value==="odd" && number%2!==0)
-          totalWin+=CHIP_VALUE*bet.payout;
-      }
-    }
-
-    if(bet.type==="half"){
-      if(bet.value==="low" && number>=1 && number<=18)
-        totalWin+=CHIP_VALUE*bet.payout;
-      if(bet.value==="high" && number>=19 && number<=36)
-        totalWin+=CHIP_VALUE*bet.payout;
-    }
-
-    if(bet.type==="dozen"){
-      if(bet.value===1 && number>=1 && number<=12)
-        totalWin+=CHIP_VALUE*bet.payout;
-      if(bet.value===2 && number>=13 && number<=24)
-        totalWin+=CHIP_VALUE*bet.payout;
-      if(bet.value===3 && number>=25 && number<=36)
-        totalWin+=CHIP_VALUE*bet.payout;
-    }
+  bets.forEach(b=>{
+    if(b.type==="number"&&b.value===number)
+      totalWin+=CHIP*b.payout;
   });
 
   if(totalWin>0){
     VaultEngine.credit(totalWin,"roulette-win");
-    messageEl.innerText =
-      `Ball: ${number} — WIN +${totalWin} GOLD`;
-  } else {
-    messageEl.innerText =
-      `Ball: ${number} — No Win`;
+    messageEl.innerText=`Ball: ${number} — WIN +${totalWin}`;
+  }else{
+    messageEl.innerText=`Ball: ${number} — No Win`;
   }
 
-  updateBalanceUI();
-
+  updateBalance();
   bets=[];
   document.querySelectorAll(".cell")
     .forEach(c=>c.style.boxShadow="none");
