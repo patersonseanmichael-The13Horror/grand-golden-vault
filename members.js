@@ -136,3 +136,12 @@ for(let i=0;i<70;i++){
   p.style.opacity=0.5+Math.random()*0.5;
   particlesContainer.appendChild(p);
 }
+
+window.addEventListener("walletUpdated", () => {
+    let updatedUser = JSON.parse(localStorage.getItem("gv_user"));
+    if (updatedUser) {
+        user = updatedUser;
+        updateWalletDisplay();
+        updateLedger();
+    }
+});
