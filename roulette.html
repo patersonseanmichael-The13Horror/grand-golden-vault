@@ -158,10 +158,6 @@ button:hover{
 <script>
 "use strict";
 
-// ----------------------------
-// INIT VAULT ENGINE
-// ----------------------------
-
 VaultEngine.init();
 
 const balanceEl = document.getElementById("balance");
@@ -173,183 +169,240 @@ function updateBalanceUI() {
   balanceEl.innerText =
     "GOLD: " + VaultEngine.getBalance().toFixed(2);
 }
-
 updateBalanceUI();
 
-// ----------------------------
-// ROULETTE CONFIG
-// ----------------------------
-
-const BET_AMOUNT = 100;
-let selectedNumber = null;
+const CHIP_VALUE = 100;
+let bets = [];
 let spinning = false;
 
-// European wheel
-const segments = [
-  "0","32","15","19","4","21","2","25","17","34","6","27",
-  "13","36","11","30","8","23","10","5","24","16","33",
-  "1","20","14","31","9","22","18","29","7","28","12","35","3","26"
+// ----------------------------
+// EUROPEAN WHEEL ORDER
+// ----------------------------
+
+const wheel = [
+  0,32,15,19,4,21,2,25,17,34,6,27,
+  13,36,11,30,8,23,10,5,24,16,33,
+  1,20,14,31,9,22,18,29,7,28,12,35,3,26
 ];
+
+const redNumbers = [
+  1,3,5,7,9,12,14,16,18,19,
+  21,23,25,27,30,32,34,36
+];
+
+function isRed(n){ return redNumbers.includes(n); }
 
 // ----------------------------
 // SECURE RNG
 // ----------------------------
 
-function secureRandomIndex() {
+function secureRandomIndex(){
   const arr = new Uint32Array(1);
   crypto.getRandomValues(arr);
-  return arr[0] % segments.length;
+  return arr[0] % wheel.length;
 }
 
 // ----------------------------
-// BUILD TABLE
+// BUILD TABLE (Numbers)
 // ----------------------------
 
-segments.forEach(num => {
+wheel.forEach(num=>{
   const cell = document.createElement("div");
-
   cell.className = "cell";
   cell.innerText = num;
 
-  if (num === "0") cell.classList.add("green");
-  else if (parseInt(num) % 2 === 0) cell.classList.add("black");
-  else cell.classList.add("red");
+  if(num===0) cell.classList.add("green");
+  else if(isRed(num)) cell.classList.add("red");
+  else cell.classList.add("black");
 
-  cell.addEventListener("click", () => {
-    if (spinning) return;
-
-    selectedNumber = num;
-    document.querySelectorAll(".cell")
-      .forEach(c => c.style.outline = "none");
-
-    cell.style.outline = "3px solid gold";
+  cell.addEventListener("click",()=>{
+    if(spinning) return;
+    placeBet({type:"number", value:num, payout:36});
+    cell.style.boxShadow="0 0 12px gold";
   });
 
   table.appendChild(cell);
 });
 
 // ----------------------------
-// CANVAS WHEEL
+// SIDE BET BUTTONS
+// ----------------------------
+
+function createSideBet(label, type, value, payout){
+  const btn = document.createElement("button");
+  btn.innerText = label;
+  btn.onclick = ()=>{
+    if(spinning) return;
+    placeBet({type, value, payout});
+  };
+  table.appendChild(btn);
+}
+
+createSideBet("RED","color","red",2);
+createSideBet("BLACK","color","black",2);
+createSideBet("EVEN","evenodd","even",2);
+createSideBet("ODD","evenodd","odd",2);
+createSideBet("1–18","half","low",2);
+createSideBet("19–36","half","high",2);
+createSideBet("1st 12","dozen",1,3);
+createSideBet("2nd 12","dozen",2,3);
+createSideBet("3rd 12","dozen",3,3);
+
+// ----------------------------
+// BET MANAGEMENT
+// ----------------------------
+
+function placeBet(bet){
+  bets.push(bet);
+  messageEl.innerText =
+    `Bets Placed: ${bets.length} (Each ${CHIP_VALUE} GOLD)`;
+}
+
+// ----------------------------
+// CANVAS
 // ----------------------------
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-
-const centerX = canvas.width / 2;
-const centerY = canvas.height / 2;
+const centerX = canvas.width/2;
+const centerY = canvas.height/2;
 const radius = 200;
 
 let angle = 0;
 
-function drawWheel() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  const segAngle = (2 * Math.PI) / segments.length;
+function drawWheel(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const segAngle = (2*Math.PI)/wheel.length;
 
-  for (let i = 0; i < segments.length; i++) {
+  for(let i=0;i<wheel.length;i++){
     ctx.beginPath();
-    ctx.moveTo(centerX, centerY);
-    ctx.arc(
-      centerX,
-      centerY,
-      radius,
-      angle + i * segAngle,
-      angle + (i + 1) * segAngle
-    );
+    ctx.moveTo(centerX,centerY);
+    ctx.arc(centerX,centerY,radius,
+      angle+i*segAngle,
+      angle+(i+1)*segAngle);
 
     ctx.fillStyle =
-      i % 2 === 0 ? "#b8860b" : "#8b0000";
+      wheel[i]===0 ? "#0f800f" :
+      isRed(wheel[i]) ? "#b00000" : "#000";
 
     ctx.fill();
-    ctx.strokeStyle = "#111";
+    ctx.strokeStyle="#111";
     ctx.stroke();
 
     ctx.save();
-    ctx.translate(centerX, centerY);
-    ctx.rotate(angle + (i + 0.5) * segAngle);
-    ctx.fillStyle = "#fff";
-    ctx.font = "16px Arial";
-    ctx.fillText(segments[i], radius - 20, 5);
+    ctx.translate(centerX,centerY);
+    ctx.rotate(angle+(i+0.5)*segAngle);
+    ctx.fillStyle="#fff";
+    ctx.font="14px Arial";
+    ctx.fillText(wheel[i],radius-20,5);
     ctx.restore();
   }
 }
-
 drawWheel();
 
 // ----------------------------
-// SPIN LOGIC
+// SPIN
 // ----------------------------
 
-spinBtn.addEventListener("click", () => {
-  if (spinning) return;
+spinBtn.addEventListener("click",()=>{
+  if(spinning || bets.length===0) return;
 
-  if (!selectedNumber) {
-    messageEl.innerText = "Select a number.";
+  const totalBet = bets.length * CHIP_VALUE;
+
+  if(VaultEngine.getBalance() < totalBet){
+    messageEl.innerText="Insufficient GOLD.";
     return;
   }
 
-  if (VaultEngine.getBalance() < BET_AMOUNT) {
-    messageEl.innerText = "Insufficient GOLD.";
-    return;
-  }
-
-  try {
-    VaultEngine.debit(BET_AMOUNT, "roulette-bet");
-  } catch (err) {
-    messageEl.innerText = err.message;
-    return;
-  }
-
+  VaultEngine.debit(totalBet,"roulette-bet");
   updateBalanceUI();
 
-  spinning = true;
-  spinBtn.disabled = true;
-  messageEl.innerText = "Spinning...";
+  spinning=true;
+  spinBtn.disabled=true;
+  messageEl.innerText="Spinning...";
 
-  const winningIndex = secureRandomIndex();
-  const winningNumber = segments[winningIndex];
+  const winningNumber = wheel[secureRandomIndex()];
 
-  let velocity = 0.4;
-  const decay = 0.992;
+  let velocity = 0.5;
+  const decay = 0.993;
 
-  function animate() {
-    velocity *= decay;
-    angle += velocity;
+  function animate(){
+    velocity*=decay;
+    angle+=velocity;
     drawWheel();
 
-    if (velocity > 0.002) {
+    if(velocity>0.002){
       requestAnimationFrame(animate);
     } else {
-      finishSpin(winningNumber);
+      resolveBets(winningNumber);
     }
   }
-
   animate();
 });
 
 // ----------------------------
-// RESOLVE BET
+// RESOLVE BETS
 // ----------------------------
 
-function finishSpin(winningNumber) {
+function resolveBets(number){
 
-  let winAmount = 0;
+  let totalWin = 0;
 
-  if (winningNumber === selectedNumber) {
-    winAmount = BET_AMOUNT * 36;
-    VaultEngine.credit(winAmount, "roulette-win");
+  bets.forEach(bet=>{
+    if(bet.type==="number" && bet.value===number)
+      totalWin += CHIP_VALUE * bet.payout;
+
+    if(bet.type==="color"){
+      if(bet.value==="red" && isRed(number))
+        totalWin += CHIP_VALUE * bet.payout;
+      if(bet.value==="black" && number!==0 && !isRed(number))
+        totalWin += CHIP_VALUE * bet.payout;
+    }
+
+    if(bet.type==="evenodd"){
+      if(number!==0){
+        if(bet.value==="even" && number%2===0)
+          totalWin+=CHIP_VALUE*bet.payout;
+        if(bet.value==="odd" && number%2!==0)
+          totalWin+=CHIP_VALUE*bet.payout;
+      }
+    }
+
+    if(bet.type==="half"){
+      if(bet.value==="low" && number>=1 && number<=18)
+        totalWin+=CHIP_VALUE*bet.payout;
+      if(bet.value==="high" && number>=19 && number<=36)
+        totalWin+=CHIP_VALUE*bet.payout;
+    }
+
+    if(bet.type==="dozen"){
+      if(bet.value===1 && number>=1 && number<=12)
+        totalWin+=CHIP_VALUE*bet.payout;
+      if(bet.value===2 && number>=13 && number<=24)
+        totalWin+=CHIP_VALUE*bet.payout;
+      if(bet.value===3 && number>=25 && number<=36)
+        totalWin+=CHIP_VALUE*bet.payout;
+    }
+  });
+
+  if(totalWin>0){
+    VaultEngine.credit(totalWin,"roulette-win");
     messageEl.innerText =
-      `Ball: ${winningNumber} — WIN +${winAmount} GOLD`;
+      `Ball: ${number} — WIN +${totalWin} GOLD`;
   } else {
     messageEl.innerText =
-      `Ball: ${winningNumber} — No Win`;
+      `Ball: ${number} — No Win`;
   }
 
   updateBalanceUI();
 
-  spinning = false;
-  spinBtn.disabled = false;
-}
+  bets=[];
+  document.querySelectorAll(".cell")
+    .forEach(c=>c.style.boxShadow="none");
 
+  spinning=false;
+  spinBtn.disabled=false;
+}
 </script>
 </body>
 </html>
