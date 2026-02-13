@@ -140,6 +140,132 @@
     spinBtn.disabled = false;
   }
 
+  // --------------------------------------
+// SOVEREIGN UPGRADE LAYER
+// --------------------------------------
+
+let sessionStats = {
+  spins: 0,
+  wagered: 0,
+  paidOut: 0
+};
+
+const historyPanel = document.getElementById("rouletteHistory");
+const analyticsPanel = document.getElementById("analyticsPanel");
+const ticker = document.getElementById("highRollerTicker");
+
+const spinSound = document.getElementById("spinSound");
+const tickSound = document.getElementById("tickSound");
+const winSound = document.getElementById("winSound");
+
+function playSound(sound){
+  if(!sound) return;
+  sound.currentTime = 0;
+  sound.play().catch(()=>{});
+}
+
+// ----------------------------
+// A) BALL ORBIT EFFECT
+// ----------------------------
+
+function simulateBallTicks(duration=2000){
+  const interval = setInterval(()=>{
+    playSound(tickSound);
+  }, 120);
+
+  setTimeout(()=>{
+    clearInterval(interval);
+  }, duration);
+}
+
+// ----------------------------
+// B) ANALYTICS
+// ----------------------------
+
+function updateAnalytics(){
+  const edge = sessionStats.wagered > 0
+    ? ((sessionStats.wagered - sessionStats.paidOut)
+      / sessionStats.wagered * 100).toFixed(2)
+    : 0;
+
+  analyticsPanel.innerText =
+    `Spins: ${sessionStats.spins} | Wagered: ${sessionStats.wagered} | Paid: ${sessionStats.paidOut} | House Edge: ${edge}%`;
+}
+
+// ----------------------------
+// C) HISTORY PANEL
+// ----------------------------
+
+function addHistory(number){
+  const ball = document.createElement("div");
+  ball.className="history-ball";
+
+  if(number===0) ball.style.background="#0f800f";
+  else if(isRed(number)) ball.style.background="#b00000";
+  else ball.style.background="#000";
+
+  ball.innerText = number;
+
+  historyPanel.prepend(ball);
+
+  if(historyPanel.children.length>15){
+    historyPanel.removeChild(historyPanel.lastChild);
+  }
+}
+
+// ----------------------------
+// D) HIGH ROLLER TICKER
+// ----------------------------
+
+function randomMaskedId(){
+  return Math.floor(10+Math.random()*89)+"*****"+Math.floor(100+Math.random()*899);
+}
+
+function randomWin(){
+  return Math.floor(200+Math.random()*5000);
+}
+
+function startTicker(){
+  setInterval(()=>{
+    ticker.innerText =
+      `${randomMaskedId()} just won ${randomWin()} GOLD`;
+  }, 3500);
+}
+
+startTicker();
+
+// ----------------------------
+// E) HOOK INTO EXISTING FLOW
+// ----------------------------
+
+// Wrap original resolveSpin safely
+const originalResolve = resolveSpin;
+
+resolveSpin = function(number){
+
+  sessionStats.spins++;
+  sessionStats.wagered += BET_AMOUNT;
+
+  playSound(spinSound);
+  simulateBallTicks(1500);
+
+  const balanceBefore = VaultEngine.getBalance();
+
+  originalResolve(number);
+
+  const balanceAfter = VaultEngine.getBalance();
+
+  const paid = Math.max(balanceAfter - balanceBefore, 0);
+  sessionStats.paidOut += paid;
+
+  if(paid>0){
+    playSound(winSound);
+  }
+
+  addHistory(number);
+  updateAnalytics();
+};
+
   // ----------------------------
   // WIN EFFECT
   // ----------------------------
