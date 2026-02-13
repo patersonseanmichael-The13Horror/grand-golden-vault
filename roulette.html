@@ -154,139 +154,202 @@ button:hover{
   <button class="exit-btn" onclick="exitVault()">Exit Vault</button>
 </div>
 
+<script src="core/vaultEngine.js"></script>
 <script>
-// --------- Canvas & Wheel Setup ---------
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const centerX = canvas.width/2;
-const centerY = canvas.height/2;
-const radius = 200;
-const segments = ['1','2','3','4','5','6','7','8'];
-const colors = ['#d4af37','#c0c0c0','#e67e22','#2ecc71','#3498db','#9b59b6','#1abc9c','#e74c3c'];
+"use strict";
 
-let angle = 0;
+// ----------------------------
+// INIT VAULT ENGINE
+// ----------------------------
+
+VaultEngine.init();
+
+const balanceEl = document.getElementById("balance");
+const messageEl = document.getElementById("message");
+const spinBtn = document.getElementById("spinBtn");
+const table = document.getElementById("table");
+
+function updateBalanceUI() {
+  balanceEl.innerText =
+    "GOLD: " + VaultEngine.getBalance().toFixed(2);
+}
+
+updateBalanceUI();
+
+// ----------------------------
+// ROULETTE CONFIG
+// ----------------------------
+
+const BET_AMOUNT = 100;
+let selectedNumber = null;
 let spinning = false;
 
-// Ball properties
-let ballAngle = 0;
-let ballSpeed = 0;
-let ballRadius = 14;
+// European wheel
+const segments = [
+  "0","32","15","19","4","21","2","25","17","34","6","27",
+  "13","36","11","30","8","23","10","5","24","16","33",
+  "1","20","14","31","9","22","18","29","7","28","12","35","3","26"
+];
 
-// Create table layout
-const table = document.getElementById('table');
-segments.forEach((num,i)=>{
-  const cell = document.createElement('div');
-  cell.className = i%2===0 ? 'cell red':'cell.black';
+// ----------------------------
+// SECURE RNG
+// ----------------------------
+
+function secureRandomIndex() {
+  const arr = new Uint32Array(1);
+  crypto.getRandomValues(arr);
+  return arr[0] % segments.length;
+}
+
+// ----------------------------
+// BUILD TABLE
+// ----------------------------
+
+segments.forEach(num => {
+  const cell = document.createElement("div");
+
+  cell.className = "cell";
   cell.innerText = num;
+
+  if (num === "0") cell.classList.add("green");
+  else if (parseInt(num) % 2 === 0) cell.classList.add("black");
+  else cell.classList.add("red");
+
+  cell.addEventListener("click", () => {
+    if (spinning) return;
+
+    selectedNumber = num;
+    document.querySelectorAll(".cell")
+      .forEach(c => c.style.outline = "none");
+
+    cell.style.outline = "3px solid gold";
+  });
+
   table.appendChild(cell);
 });
 
-// --------- Draw Wheel ---------
-function drawWheel(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
+// ----------------------------
+// CANVAS WHEEL
+// ----------------------------
 
-    const segAngle = (2*Math.PI)/segments.length;
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
 
-    for(let i=0;i<segments.length;i++){
-        ctx.beginPath();
-        ctx.moveTo(centerX,centerY);
-        ctx.arc(centerX,centerY,radius, angle+i*segAngle, angle+(i+1)*segAngle);
+const centerX = canvas.width / 2;
+const centerY = canvas.height / 2;
+const radius = 200;
 
-        const grad = ctx.createRadialGradient(centerX,centerY,radius*0.05, centerX,centerY,radius);
-        grad.addColorStop(0,'#fff');
-        grad.addColorStop(0.5, colors[i%colors.length]);
-        grad.addColorStop(1,'#000');
-        ctx.fillStyle = grad;
-        ctx.fill();
-        ctx.strokeStyle = '#222';
-        ctx.lineWidth = 2;
-        ctx.stroke();
+let angle = 0;
 
-        ctx.save();
-        ctx.translate(centerX,centerY);
-        ctx.rotate(angle+(i+0.5)*segAngle);
-        ctx.textAlign = "right";
-        ctx.fillStyle = "#fff";
-        ctx.shadowColor = "#ffd700";
-        ctx.shadowBlur = 12;
-        ctx.font = "20px Arial Black";
-        ctx.fillText(segments[i], radius-20,10);
-        ctx.restore();
-    }
+function drawWheel() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const segAngle = (2 * Math.PI) / segments.length;
 
+  for (let i = 0; i < segments.length; i++) {
     ctx.beginPath();
-    ctx.arc(centerX,centerY,20,0,2*Math.PI);
-    ctx.fillStyle = "#555";
+    ctx.moveTo(centerX, centerY);
+    ctx.arc(
+      centerX,
+      centerY,
+      radius,
+      angle + i * segAngle,
+      angle + (i + 1) * segAngle
+    );
+
+    ctx.fillStyle =
+      i % 2 === 0 ? "#b8860b" : "#8b0000";
+
     ctx.fill();
-    ctx.strokeStyle = "#222";
+    ctx.strokeStyle = "#111";
     ctx.stroke();
 
-    ctx.beginPath();
-    ctx.moveTo(centerX, centerY-radius-10);
-    ctx.lineTo(centerX-15, centerY-radius+20);
-    ctx.lineTo(centerX+15, centerY-radius+20);
-    ctx.closePath();
-    ctx.fillStyle = "red";
-    ctx.fill();
-
-    const ballX = centerX + Math.cos(ballAngle)*(radius-25);
-    const ballY = centerY + Math.sin(ballAngle)*(radius-25);
-    ctx.beginPath();
-    ctx.arc(ballX,ballY,ballRadius,0,2*Math.PI);
+    ctx.save();
+    ctx.translate(centerX, centerY);
+    ctx.rotate(angle + (i + 0.5) * segAngle);
     ctx.fillStyle = "#fff";
-    ctx.shadowColor = "#fff";
-    ctx.shadowBlur = 14;
-    ctx.fill();
+    ctx.font = "16px Arial";
+    ctx.fillText(segments[i], radius - 20, 5);
+    ctx.restore();
+  }
 }
 
-// --------- Spin Function with Ball Bounce ---------
-function spinWheel(){
-    if(spinning) return;
-    spinning = true;
-
-    let spinVelocity = Math.random()*0.35 + 0.25;
-    let spinDecay = 0.993;
-    ballSpeed = -spinVelocity*1.7;
-    ballAngle = angle;
-
-    let bounceAmplitude = Math.random()*0.04 + 0.03;
-    let bounceDirection = 1;
-
-    function animate(){
-        spinVelocity *= spinDecay;
-        angle += spinVelocity;
-
-        ballSpeed *= 0.995;
-        ballAngle += ballSpeed + Math.sin(Date.now()*0.005)*bounceAmplitude*bounceDirection;
-
-        drawWheel();
-
-        if(Math.abs(spinVelocity) > 0.002){
-            requestAnimationFrame(animate);
-        } else {
-            spinning = false;
-            const segAngle = (2*Math.PI)/segments.length;
-            const index = Math.floor(((2*Math.PI - angle%(2*Math.PI))/segAngle))%segments.length;
-            document.getElementById('message').innerText = "The ball landed on: " + segments[index];
-        }
-    }
-    animate();
-}
-
-// --------- Initial Draw & Event Listeners ---------
 drawWheel();
-document.getElementById('spinBtn').addEventListener('click', spinWheel);
 
-window.addEventListener('load',()=>{
-    document.getElementById('doors').classList.add('open');
-    document.getElementById('vault').classList.add('visible');
+// ----------------------------
+// SPIN LOGIC
+// ----------------------------
+
+spinBtn.addEventListener("click", () => {
+  if (spinning) return;
+
+  if (!selectedNumber) {
+    messageEl.innerText = "Select a number.";
+    return;
+  }
+
+  if (VaultEngine.getBalance() < BET_AMOUNT) {
+    messageEl.innerText = "Insufficient GOLD.";
+    return;
+  }
+
+  try {
+    VaultEngine.debit(BET_AMOUNT, "roulette-bet");
+  } catch (err) {
+    messageEl.innerText = err.message;
+    return;
+  }
+
+  updateBalanceUI();
+
+  spinning = true;
+  spinBtn.disabled = true;
+  messageEl.innerText = "Spinning...";
+
+  const winningIndex = secureRandomIndex();
+  const winningNumber = segments[winningIndex];
+
+  let velocity = 0.4;
+  const decay = 0.992;
+
+  function animate() {
+    velocity *= decay;
+    angle += velocity;
+    drawWheel();
+
+    if (velocity > 0.002) {
+      requestAnimationFrame(animate);
+    } else {
+      finishSpin(winningNumber);
+    }
+  }
+
+  animate();
 });
 
-function exitVault(){
-    document.getElementById('doors').classList.remove('open');
-    document.getElementById('vault').classList.remove('visible');
-    setTimeout(()=>window.close(),1500);
+// ----------------------------
+// RESOLVE BET
+// ----------------------------
+
+function finishSpin(winningNumber) {
+
+  let winAmount = 0;
+
+  if (winningNumber === selectedNumber) {
+    winAmount = BET_AMOUNT * 36;
+    VaultEngine.credit(winAmount, "roulette-win");
+    messageEl.innerText =
+      `Ball: ${winningNumber} — WIN +${winAmount} GOLD`;
+  } else {
+    messageEl.innerText =
+      `Ball: ${winningNumber} — No Win`;
+  }
+
+  updateBalanceUI();
+
+  spinning = false;
+  spinBtn.disabled = false;
 }
+
 </script>
 </body>
 </html>
