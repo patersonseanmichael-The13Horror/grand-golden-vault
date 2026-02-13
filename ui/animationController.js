@@ -138,3 +138,38 @@ const animationController = {
 
 /* ===== INITIALIZE AMBIENCE ===== */
 setTimeout(()=>animationController.pulseVaultGlow(), 2200);
+
+export function initLandingAnimation() {
+  const landingHero = document.querySelector('.landing-hero');
+  const heroHeading = landingHero.querySelector('h1');
+  const heroText = landingHero.querySelector('p');
+  const heroCTA = landingHero.querySelector('.cta-btn');
+  const particlesContainer = document.querySelector('.particles');
+
+  for (let i = 0; i < 60; i++) {
+    const p = document.createElement('div');
+    p.classList.add('particle');
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.width = p.style.height = (2 + Math.random() * 3) + 'px';
+    p.style.animationDuration = (5 + Math.random() * 6) + 's';
+    particlesContainer.appendChild(p);
+  }
+
+  window.addEventListener('load', () => {
+    animate(heroHeading, 600);
+    animate(heroText, 1200);
+    animate(heroCTA, 1800);
+  });
+
+  function animate(el, delay) {
+    el.style.opacity = 0;
+    el.style.transform = 'translateY(20px)';
+    setTimeout(() => {
+      el.style.transition = 'opacity 1.2s, transform 1.2s';
+      el.style.opacity = 1;
+      el.style.transform = 'translateY(0)';
+    }, delay);
+  }
+}
+
+initLandingAnimation();
