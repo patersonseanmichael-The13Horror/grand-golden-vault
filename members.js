@@ -1,3 +1,6 @@
+import { initSlots } from './slots.js';
+import { gsap } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/gsap.min.js';
+
 // --- Initialize / Load User ---
 let user = JSON.parse(localStorage.getItem("gv_user")) || {
     id: "GV-" + Math.floor(100000 + Math.random() * 900000),
@@ -17,6 +20,8 @@ function updateWalletDisplay() {
     document.getElementById("vaultName").innerText = user.name;
     document.getElementById("vaultBalance").innerText = user.balance.toFixed(2) + " GOLD";
     document.getElementById("vaultTier").innerText = user.tier;
+    const topWallet = document.getElementById("topWallet");
+    if(topWallet) topWallet.innerText = user.balance.toFixed(2);
 }
 updateWalletDisplay();
 
@@ -41,12 +46,17 @@ updateLedger();
 const feedBox = document.getElementById("feedBox");
 const maxFeedItems = 12;
 
+function generatePlayerID() {
+    const first = String(Math.floor(Math.random() * 90 + 10));
+    const last = String(Math.floor(Math.random() * 900 + 100));
+    return `${first}*****${last}`;
+}
+
 function addLiveFeedEntry() {
     if (!feedBox) return;
-    const phone = "04*****" + Math.floor(100 + Math.random() * 900);
-    const amount = Math.floor(Math.random() * 5000) + 50;
     const div = document.createElement("div");
-    div.textContent = `${phone} just won ${amount} GOLD!`;
+    const amount = Math.floor(Math.random() * 5000 + 50);
+    div.textContent = `${generatePlayerID()} just won ${amount} GOLD!`;
     div.style.marginBottom = "4px";
     div.style.color = "#ffd700";
     feedBox.prepend(div);
@@ -69,9 +79,7 @@ function goToGame(url) {
 
 // --- Deposit Button ---
 const depositBtn = document.getElementById("depositBtn");
-if (depositBtn) depositBtn.onclick = () => {
-    window.location.href = "wallet.html";
-};
+if (depositBtn) depositBtn.onclick = () => window.location.href = "wallet.html";
 
 // --- Game Cards ---
 document.querySelectorAll('.game-cards .card').forEach(card => {
@@ -79,7 +87,7 @@ document.querySelectorAll('.game-cards .card').forEach(card => {
     if (text.includes('blackjack')) card.onclick = () => goToGame('blackjack.html');
     if (text.includes('roulette')) card.onclick = () => goToGame('roulette.html');
     if (text.includes('poker')) card.onclick = () => goToGame('poker.html');
-    if (text.includes('slots') || text.includes('platinum slots')) card.onclick = () => openSlots();
+    if (text.includes('slots')) card.onclick = () => openSlots();
 });
 
 // --- Slots Section ---
@@ -90,7 +98,7 @@ function openSlots() {
     if (slotsSection) {
         slotsSection.style.display = 'block';
         slotsSection.scrollIntoView({ behavior: 'smooth' });
-        if (typeof initSlots === 'function') initSlots();
+        initSlots();
     }
 }
 
@@ -101,8 +109,30 @@ function closeSlots() {
     if (gameCards) gameCards.style.display = 'grid';
 }
 
+document.getElementById('closeSlotsBtn').onclick = closeSlots;
+
 // --- VIP Bar Animation ---
 const vipBar = document.getElementById("vipBar");
 if (vipBar) setTimeout(() => vipBar.style.width = '65%', 800);
 
-console.log("✅ Members JS initialized: wallet, ledger, live feed, games, VIP, slots");
+// --- Exit Vault ---
+document.getElementById('exitVaultBtn').onclick = () => {
+    vault.classList.remove('visible');
+    setTimeout(() => doors.classList.remove('open'), 400);
+    setTimeout(() => window.location.href = "login.html", 2600);
+};
+
+// --- Particles ---
+const particlesContainer = document.getElementById('particles');
+particlesContainer.innerHTML='';
+for(let i=0;i<70;i++){
+  const p=document.createElement('div');
+  p.classList.add('particle');
+  p.style.left=Math.random()*100+'vw';
+  p.style.top=Math.random()*100+'vh';
+  p.style.width=2+Math.random()*6+'px';
+  p.style.height=p.style.width;
+  p.style.animationDuration=(4+Math.random()*6)+'s';
+  p.style.opacity=0.5+Math.random()*0.5;
+  particlesContainer.appendChild(p);
+}
