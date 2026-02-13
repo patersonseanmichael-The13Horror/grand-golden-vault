@@ -7,6 +7,8 @@ let user = JSON.parse(localStorage.getItem("gv_user")) || {
     ledger: []
 };
 
+
+
 // --- Wallet Display ---
 function updateWalletDisplay() {
     document.getElementById("vaultId").innerText = user.id;
@@ -34,7 +36,9 @@ function updateLedger() {
 updateLedger();
 
 // --- Deposit / Withdrawal Live Feed ---
-const feedBox = document.getElementById("feedBox");
+document.getElementById("depositBtn").onclick = () => {
+    window.location.href = "wallet.html";
+};
 
 function randomDeposit() {
     const cents = (Math.random() * 0.99).toFixed(2);
