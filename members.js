@@ -100,3 +100,10 @@ document.querySelectorAll('.card').forEach(card => {
 // --- VIP Bar Animation ---
 const vipBar = document.getElementById("vipBar");
 if (vipBar) setTimeout(() => vipBar.style.width = '65%', 800);
+
+// --- Deposit Button ---
+const depositBtn = document.getElementById("depositBtn");
+if (depositBtn) depositBtn.onclick = () => {
+    // Redirect to wallet
+    window.location.href = "wallet.html";
+};
