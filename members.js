@@ -42,21 +42,38 @@ function updateLedger() {
 }
 updateLedger();
 
-// --- Live Feed (Randomized Wins Example) ---
+// --- Live Feed (Scrolling Casino Wins) ---
 const feedBox = document.getElementById("feedBox");
-function updateLiveFeed() {
+const maxFeedItems = 12; // max number of lines to show
+
+function addLiveFeedEntry() {
     if (!feedBox) return;
-    feedBox.innerHTML = ""; // reset feed
-    for (let i = 0; i < 6; i++) {
-        const phone = "04*****" + Math.floor(100 + Math.random() * 900);
-        const amount = Math.floor(Math.random() * 5000) + 50;
-        const div = document.createElement("div");
-        div.textContent = `${phone} just won ${amount} GOLD!`;
-        div.style.marginBottom = "4px";
-        feedBox.appendChild(div);
+
+    // Randomized winner info
+    const phone = "04*****" + Math.floor(100 + Math.random() * 900);
+    const amount = Math.floor(Math.random() * 5000) + 50;
+    const div = document.createElement("div");
+    div.textContent = `${phone} just won ${amount} GOLD!`;
+    div.style.marginBottom = "4px";
+    div.style.color = "#ffd700";
+
+    // Add to top of feed
+    feedBox.prepend(div);
+
+    // Keep feed length limited
+    while (feedBox.children.length > maxFeedItems) {
+        feedBox.removeChild(feedBox.lastChild);
     }
+
+    // Animate scrolling (optional smooth slide)
+    gsap.from(div, { opacity: 0, y: -10, duration: 0.5 });
 }
-updateLiveFeed();
+
+// Initialize with a few entries
+for (let i = 0; i < 6; i++) addLiveFeedEntry();
+
+// Add a new entry every 5 seconds
+setInterval(addLiveFeedEntry, 5000);
 
 // --- Game Buttons ---
 function goToGame(url) {
