@@ -1,284 +1,90 @@
-// --------------------------------------
-// GRAND GOLDEN VAULT
-// Institutional Roulette Table
-// --------------------------------------
+/* roulette.js — Golden Vault interactive roulette */
 
-(function () {
-  "use strict";
+const WALLET_KEY = "goldenVaultBalance";
+let balance = parseInt(localStorage.getItem(WALLET_KEY)) || 1000;
+let currentBet = 0;
 
-  const spinBtn = document.getElementById("spinBtn");
-  const resultText = document.getElementById("resultText");
-  const balanceEl = document.getElementById("balance");
+const tableEl = document.getElementById("rouletteTable");
+const betInfo = document.getElementById("betInfo");
+const spinBtn = document.getElementById("spinBtn");
+const wheel = document.getElementById("wheel");
+const ball = document.getElementById("ball");
 
-  const BET_AMOUNT = 100;
+// Numbers on a European roulette wheel
+const numbers = [
+  {num:0,color:"green"}, {num:32,color:"red"},{num:15,color:"black"},{num:19,color:"red"},
+  {num:4,color:"black"},{num:21,color:"red"},{num:2,color:"black"},{num:25,color:"red"},
+  {num:17,color:"black"},{num:34,color:"red"},{num:6,color:"black"},{num:27,color:"red"},
+  {num:13,color:"black"},{num:36,color:"red"},{num:11,color:"black"},{num:30,color:"red"},
+  {num:8,color:"black"},{num:23,color:"red"},{num:10,color:"black"},{num:5,color:"red"},
+  {num:24,color:"black"},{num:16,color:"red"},{num:33,color:"black"},{num:1,color:"red"},
+  {num:20,color:"black"},{num:14,color:"red"},{num:31,color:"black"},{num:9,color:"red"},
+  {num:22,color:"black"},{num:18,color:"red"},{num:29,color:"black"},{num:7,color:"red"},
+  {num:28,color:"black"},{num:12,color:"red"},{num:35,color:"black"},{num:3,color:"red"},
+  {num:26,color:"black"}
+];
 
-  let selectedBet = null;
-  let spinning = false;
-
-  // ----------------------------
-  // ROULETTE DATA
-  // ----------------------------
-
-  const redNumbers = [
-    1,3,5,7,9,12,14,16,18,19,
-    21,23,25,27,30,32,34,36
-  ];
-
-  function isRed(num) {
-    return redNumbers.includes(num);
+// ---- CREATE TABLE CELLS ----
+numbers.forEach(n=>{
+  const cell = document.createElement("div");
+  cell.classList.add("cell");
+  cell.classList.add(n.color);
+  cell.textContent = n.num;
+  cell.onclick = ()=>{
+    if(balance<10) return alert("Not enough balance");
+    currentBet += 10;
+    balance -=10;
+    updateBetInfo();
+    cell.style.boxShadow = "0 0 15px gold";
+    setTimeout(()=>cell.style.boxShadow="",300);
   }
+  tableEl.appendChild(cell);
+});
 
-  function secureRandomNumber() {
-    const array = new Uint32Array(1);
-    crypto.getRandomValues(array);
-    return array[0] % 37; // 0–36
-  }
+// ---- UPDATE BET INFO ----
+function updateBetInfo(){
+  betInfo.textContent = `Balance: $${balance} | Current Bet: $${currentBet}`;
+}
 
-  // ----------------------------
-  // INIT
-  // ----------------------------
-
-  VaultEngine.init();
-  updateBalanceUI();
-
-  function updateBalanceUI() {
-    balanceEl.innerText =
-      "GOLD: " + VaultEngine.getBalance().toFixed(2);
-  }
-
-  // ----------------------------
-  // BET SELECTION
-  // ----------------------------
-
-  document.querySelectorAll(".bet-option").forEach(btn => {
-    btn.addEventListener("click", () => {
-      if (spinning) return;
-
-      selectedBet = btn.dataset.bet;
-      document.querySelectorAll(".bet-option")
-        .forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-    });
-  });
-
-  // ----------------------------
-  // SPIN LOGIC
-  // ----------------------------
-
-  spinBtn.addEventListener("click", () => {
-    if (spinning) return;
-
-    if (!selectedBet) {
-      resultText.innerText = "Select a bet first.";
-      return;
-    }
-
-    const balance = VaultEngine.getBalance();
-
-    if (balance < BET_AMOUNT) {
-      resultText.innerText = "Insufficient GOLD.";
-      return;
-    }
-
-    try {
-      VaultEngine.debit(BET_AMOUNT, "roulette-bet");
-    } catch (err) {
-      resultText.innerText = err.message;
-      return;
-    }
-
-    updateBalanceUI();
-
-    spinning = true;
-    spinBtn.disabled = true;
-    resultText.innerText = "Spinning wheel...";
-
-    setTimeout(() => {
-      const winningNumber = secureRandomNumber();
-      resolveSpin(winningNumber);
-    }, 2000);
-  });
-
-  // ----------------------------
-  // PAYOUT ENGINE
-  // ----------------------------
-
-  function resolveSpin(number) {
-    let winAmount = 0;
-    let win = false;
-
-    if (selectedBet === "red" && isRed(number)) {
-      winAmount = BET_AMOUNT * 2;
-      win = true;
-    }
-
-    else if (selectedBet === "black" && number !== 0 && !isRed(number)) {
-      winAmount = BET_AMOUNT * 2;
-      win = true;
-    }
-
-    else if (!isNaN(parseInt(selectedBet))) {
-      if (parseInt(selectedBet) === number) {
-        winAmount = BET_AMOUNT * 36;
-        win = true;
-      }
-    }
-
-    if (win) {
-      VaultEngine.credit(winAmount, "roulette-win");
-      resultText.innerText =
-        `Ball: ${number} — YOU WIN +${winAmount} GOLD`;
-      triggerWinEffect();
-    } else {
-      resultText.innerText =
-        `Ball: ${number} — No Win`;
-    }
-
-    updateBalanceUI();
-
-    spinning = false;
-    spinBtn.disabled = false;
-  }
-
-  // --------------------------------------
-// SOVEREIGN UPGRADE LAYER
-// --------------------------------------
-
-let sessionStats = {
-  spins: 0,
-  wagered: 0,
-  paidOut: 0
+// ---- SPIN LOGIC ----
+spinBtn.onclick = ()=>{
+  if(currentBet===0) return alert("Place a bet first!");
+  const winningIndex = Math.floor(Math.random()*numbers.length);
+  const winningNumber = numbers[winningIndex];
+  animateWheelSpin(winningIndex);
 };
 
-const historyPanel = document.getElementById("rouletteHistory");
-const analyticsPanel = document.getElementById("analyticsPanel");
-const ticker = document.getElementById("highRollerTicker");
+// ---- WHEEL ANIMATION ----
+function animateWheelSpin(winIdx){
+  let totalRot = 360*6 + (winIdx * (360/numbers.length));
+  const duration = 4000;
+  const start = performance.now();
 
-const spinSound = document.getElementById("spinSound");
-const tickSound = document.getElementById("tickSound");
-const winSound = document.getElementById("winSound");
-
-function playSound(sound){
-  if(!sound) return;
-  sound.currentTime = 0;
-  sound.play().catch(()=>{});
-}
-
-// ----------------------------
-// A) BALL ORBIT EFFECT
-// ----------------------------
-
-function simulateBallTicks(duration=2000){
-  const interval = setInterval(()=>{
-    playSound(tickSound);
-  }, 120);
-
-  setTimeout(()=>{
-    clearInterval(interval);
-  }, duration);
-}
-
-// ----------------------------
-// B) ANALYTICS
-// ----------------------------
-
-function updateAnalytics(){
-  const edge = sessionStats.wagered > 0
-    ? ((sessionStats.wagered - sessionStats.paidOut)
-      / sessionStats.wagered * 100).toFixed(2)
-    : 0;
-
-  analyticsPanel.innerText =
-    `Spins: ${sessionStats.spins} | Wagered: ${sessionStats.wagered} | Paid: ${sessionStats.paidOut} | House Edge: ${edge}%`;
-}
-
-// ----------------------------
-// C) HISTORY PANEL
-// ----------------------------
-
-function addHistory(number){
-  const ball = document.createElement("div");
-  ball.className="history-ball";
-
-  if(number===0) ball.style.background="#0f800f";
-  else if(isRed(number)) ball.style.background="#b00000";
-  else ball.style.background="#000";
-
-  ball.innerText = number;
-
-  historyPanel.prepend(ball);
-
-  if(historyPanel.children.length>15){
-    historyPanel.removeChild(historyPanel.lastChild);
+  function spin(timestamp){
+    let elapsed = timestamp - start;
+    let progress = Math.min(elapsed/duration,1);
+    wheel.style.transform = `rotate(${totalRot*progress}deg)`;
+    ball.style.transform = `translateX(-50%) rotate(${360*6*progress}deg)`;
+    if(progress<1) requestAnimationFrame(spin);
+    else resolveSpin(numbers[winIdx]);
   }
+  requestAnimationFrame(spin);
 }
 
-// ----------------------------
-// D) HIGH ROLLER TICKER
-// ----------------------------
-
-function randomMaskedId(){
-  return Math.floor(10+Math.random()*89)+"*****"+Math.floor(100+Math.random()*899);
+// ---- RESOLVE WIN ----
+function resolveSpin(winning){
+  const betCells = Array.from(tableEl.children).filter(c=>c.style.boxShadow!=="");
+  let won = false;
+  betCells.forEach(cell=>{
+    if(parseInt(cell.textContent)===winning.num){
+      won = true;
+      balance += currentBet*35;
+      if(typeof animationController!=="undefined") animationController.winParticles();
+    }
+  });
+  currentBet = 0;
+  updateBetInfo();
+  localStorage.setItem(WALLET_KEY,balance);
+  // clear bets
+  Array.from(tableEl.children).forEach(c=>c.style.boxShadow="");
 }
-
-function randomWin(){
-  return Math.floor(200+Math.random()*5000);
-}
-
-function startTicker(){
-  setInterval(()=>{
-    ticker.innerText =
-      `${randomMaskedId()} just won ${randomWin()} GOLD`;
-  }, 3500);
-}
-
-startTicker();
-
-// ----------------------------
-// E) HOOK INTO EXISTING FLOW
-// ----------------------------
-
-// Wrap original resolveSpin safely
-const originalResolve = resolveSpin;
-
-resolveSpin = function(number){
-
-  sessionStats.spins++;
-  sessionStats.wagered += BET_AMOUNT;
-
-  playSound(spinSound);
-  simulateBallTicks(1500);
-
-  const balanceBefore = VaultEngine.getBalance();
-
-  originalResolve(number);
-
-  const balanceAfter = VaultEngine.getBalance();
-
-  const paid = Math.max(balanceAfter - balanceBefore, 0);
-  sessionStats.paidOut += paid;
-
-  if(paid>0){
-    playSound(winSound);
-  }
-
-  addHistory(number);
-  updateAnalytics();
-};
-
-  // ----------------------------
-  // WIN EFFECT
-  // ----------------------------
-
-  function triggerWinEffect() {
-    document.body.animate(
-      [
-        { transform: "scale(1)" },
-        { transform: "scale(1.02)" },
-        { transform: "scale(1)" }
-      ],
-      { duration: 300, easing: "ease-out" }
-    );
-  }
-
-})();
