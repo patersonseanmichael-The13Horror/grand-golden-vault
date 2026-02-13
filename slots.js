@@ -1,101 +1,118 @@
-// ---------------------------
-// Golden Vault Slots JS
-// ---------------------------
+// GRAND GOLDEN VAULT
+// Wallet UI Controller
+// Uses VaultEngine as authority
 
-const reels = document.querySelectorAll(".reel");
-const spinBtn = document.getElementById("spinBtn");
-const resultText = document.getElementById("resultText");
-const balanceEl = document.getElementById("balance");
-let balance = 5000; // Example starting balance
-balanceEl.innerText = `GOLD: ${balance}`;
+(function () {
+  "use strict";
 
-// Symbols for the reels
-const symbols = ["🍒", "💎", "7️⃣", "🔔", "💰", "⭐", "🪙"];
-const reelCount = reels.length;
+  // ----------------------------
+  // DOM CACHE
+  // ----------------------------
 
-// Spin function
-function spinSlots() {
-    if (balance <= 0) {
-        resultText.innerText = "Not enough GOLD!";
-        return;
-    }
+  const walletIdEl = document.getElementById("walletId");
+  const walletNameEl = document.getElementById("walletName");
+  const walletBalanceEl = document.getElementById("walletBalance");
+  const walletTierEl = document.getElementById("walletTier");
+  const ledgerEl = document.getElementById("ledger");
 
-    balance -= 50; // Bet amount
-    balanceEl.innerText = `GOLD: ${balance}`;
+  const depositBtn = document.getElementById("depositBtn");
+  const depositAmountEl = document.getElementById("depositAmount");
+  const depositDescEl = document.getElementById("depositDesc");
+  const backVaultBtn = document.getElementById("backVaultBtn");
 
-    resultText.innerText = "Spinning...";
+  // ----------------------------
+  // INIT ENGINE
+  // ----------------------------
 
-    let finalSymbols = [];
+  const state = VaultEngine.init();
 
-    // Spin each reel
-    reels.forEach((reel, i) => {
-        let spinTimes = 20 + Math.floor(Math.random() * 20);
-        let index = 0;
+  // ----------------------------
+  // TIER CALCULATION
+  // ----------------------------
 
-        let spinInterval = setInterval(() => {
-            reel.innerText = symbols[index % symbols.length];
-            index++;
-            spinTimes--;
-            if (spinTimes <= 0) {
-                clearInterval(spinInterval);
-                finalSymbols[i] = symbols[(index - 1) % symbols.length];
+  function calculateTier(balance) {
+    if (balance >= 10000) return 5;
+    if (balance >= 5000) return 4;
+    if (balance >= 2000) return 3;
+    if (balance >= 1000) return 2;
+    return 1;
+  }
 
-                // Check if all reels finished
-                if (finalSymbols.filter(s => s === undefined).length === 0) {
-                    checkWin(finalSymbols);
-                }
-            }
-        }, 80 + i * 20); // Slight delay per reel for luxury staggered spin
+  // ----------------------------
+  // UI RENDER
+  // ----------------------------
+
+  function renderWallet() {
+    const vaultState = VaultEngine.getState();
+    const balance = vaultState.balance;
+    const tier = calculateTier(balance);
+
+    walletIdEl.innerText = vaultState.user.id;
+    walletNameEl.innerText = vaultState.user.name;
+    walletBalanceEl.innerText = balance.toFixed(2) + " GOLD";
+    walletTierEl.innerText = tier;
+
+    renderLedger(vaultState.transactions);
+  }
+
+  function renderLedger(transactions) {
+    ledgerEl.innerHTML = "";
+
+    [...transactions].reverse().forEach(tx => {
+      const div = document.createElement("div");
+
+      const formattedTime = new Date(tx.timestamp).toLocaleString();
+
+      div.innerHTML = `
+        <strong>${tx.type.toUpperCase()}</strong> |
+        ${tx.amount.toFixed(2)} GOLD |
+        ${formattedTime}<br>
+        Source: ${tx.source}
+      `;
+
+      div.style.marginBottom = "6px";
+      div.style.color = "#ffd700";
+
+      ledgerEl.appendChild(div);
     });
-}
+  }
 
-// Check winning combinations
-function checkWin(finalSymbols) {
-    // Simple: all three symbols match = big win
-    const [a, b, c] = finalSymbols;
-    let winAmount = 0;
+  // ----------------------------
+  // DEPOSIT HANDLER
+  // ----------------------------
 
-    if (a === b && b === c) {
-        winAmount = 1000;
-        resultText.innerText = `JACKPOT! ${finalSymbols.join(" ")} — You won ${winAmount} GOLD!`;
-    } else if (a === b || b === c || a === c) {
-        winAmount = 200;
-        resultText.innerText = `Nice! ${finalSymbols.join(" ")} — You won ${winAmount} GOLD!`;
-    } else {
-        resultText.innerText = `No luck this time: ${finalSymbols.join(" ")}`;
+  depositBtn.addEventListener("click", () => {
+    const amount = parseFloat(depositAmountEl.value);
+    const description = depositDescEl.value || "Deposit";
+
+    if (!amount || amount <= 0) {
+      alert("Enter a valid amount.");
+      return;
     }
 
-    balance += winAmount;
-    balanceEl.innerText = `GOLD: ${balance}`;
-
-    // Optional: VIP sparkle effect if win is big
-    if(winAmount >= 1000){
-        showVIPAnimation(1); // or tie to tier system
+    try {
+      VaultEngine.credit(amount, description);
+      renderWallet();
+    } catch (err) {
+      alert(err.message);
     }
-}
 
-// Optional: VIP glow animation (reuse from wallet.js)
-function showVIPAnimation(tier){
-    const badge = document.createElement("div");
-    badge.className = "vip-badge";
-    badge.innerText = `Big Win! VIP Tier ${tier}`;
-    badge.style.position = "fixed";
-    badge.style.top = "25%";
-    badge.style.left = "50%";
-    badge.style.transform = "translateX(-50%) scale(0)";
-    badge.style.zIndex = 1000;
-    badge.style.fontSize = "2rem";
-    document.body.appendChild(badge);
+    depositAmountEl.value = "";
+    depositDescEl.value = "";
+  });
 
-    badge.animate([
-        { transform: "translateX(-50%) scale(0)", opacity: 0 },
-        { transform: "translateX(-50%) scale(1.2)", opacity: 1 },
-        { transform: "translateX(-50%) scale(1)", opacity: 1 },
-        { transform: "translateX(-50%) scale(1)", opacity: 0 }
-    ], { duration: 2500, easing: "ease-out", fill: "forwards" });
+  // ----------------------------
+  // NAVIGATION
+  // ----------------------------
 
-    setTimeout(() => badge.remove(), 2500);
-}
+  backVaultBtn.addEventListener("click", () => {
+    window.location.href = "members.html";
+  });
 
-// Spin button listener
-spinBtn.addEventListener("click", spinSlots);
+  // ----------------------------
+  // INITIAL RENDER
+  // ----------------------------
+
+  renderWallet();
+
+})();
