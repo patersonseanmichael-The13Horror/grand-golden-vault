@@ -16,11 +16,12 @@
 
   <h3 style="margin-top:32px;">Available Games</h3>
 
-  <div class="vault-grid">
-    <div class="vault-tile" onclick="locked()">
-      <h3>Blackjack</h3>
-      <p>Institutional table play</p>
-    </div>
+ <div class="vault-tile" 
+   onclick="VaultRouter.toGame('BLACKJACK')" 
+   style="opacity:1; cursor:pointer;">
+  <h3>Blackjack</h3>
+  <p>Institutional table play</p>
+</div>
 
     <div class="vault-tile" onclick="locked()">
       <h3>Roulette</h3>
