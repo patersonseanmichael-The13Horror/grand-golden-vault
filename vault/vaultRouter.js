@@ -177,3 +177,6 @@ const VaultRouter = (() => {
   });
 
 })();
+
+// add route
+SLOTS: "/pages/slots.html",
