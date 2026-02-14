@@ -1,92 +1,50 @@
-import { shuffle } from "../core/rngEngine.js";
-import { debit, credit } from "../core/betEngine.js";
-import { saveBlackjackState, clearBlackjackState } from "../core/stateManager.js";
+/* ======================================================
+   BLACKJACK ENGINE — VAULT CONSUMER
+====================================================== */
 
-let deck = [];
-let player = [];
-let dealer = [];
-let bet = 0;
-let gameOver = true;
+const BlackjackEngine = (() => {
 
-function createDeck() {
-    const suits = ["♠","♥","♦","♣"];
-    const values = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
-    deck = [];
-    for (let s of suits)
-        for (let v of values)
-            deck.push(v+s);
-    deck = shuffle(deck);
-}
+  let active = false;
+  let bet = 0;
+  let result = "";
 
-function cardValue(card) {
-    const v = card.slice(0,-1);
-    if (v === "A") return 11;
-    if (["J","Q","K"].includes(v)) return 10;
-    return parseInt(v);
-}
+  function randomCard(){
+    return Math.floor(Math.random() * 10) + 1;
+  }
 
-function handValue(hand) {
-    let total = 0;
-    let aces = 0;
-    hand.forEach(c=>{
-        total += cardValue(c);
-        if (c[0] === "A") aces++;
-    });
-    while (total > 21 && aces--) total -= 10;
-    return total;
-}
+  return Object.freeze({
 
-export function startGame(amount) {
-    if (!gameOver) return;
+    startRound(amount){
+      if (active) throw new Error("Round already in progress");
 
-    debit(amount);
-    bet = amount;
+      VaultEngine.withdraw(amount, "BLACKJACK_BET");
+      bet = amount;
+      active = true;
 
-    createDeck();
-    player = [deck.pop(), deck.pop()];
-    dealer = [deck.pop(), deck.pop()];
-    gameOver = false;
+      const player = randomCard() + randomCard();
+      const dealer = randomCard() + randomCard();
 
-    saveBlackjackState({ deck, player, dealer, bet, gameOver });
+      if (player > dealer){
+        VaultEngine.deposit(bet * 2, "BLACKJACK_WIN");
+        result = "You win.";
+      } else if (player === dealer){
+        VaultEngine.deposit(bet, "BLACKJACK_PUSH");
+        result = "Push.";
+      } else {
+        result = "Dealer wins.";
+      }
 
-    return { player, dealer, bet };
-}
+      active = false;
+    },
 
-export function hit() {
-    if (gameOver) return;
-    player.push(deck.pop());
-    if (handValue(player) > 21) return endGame();
-    return { player, dealer, bet };
-}
+    finishRound(){
+      if (active) active = false;
+    },
 
-export function stand() {
-    if (gameOver) return;
-    while (handValue(dealer) < 17)
-        dealer.push(deck.pop());
-    return endGame();
-}
-
-function endGame() {
-    gameOver = true;
-
-    const playerTotal = handValue(player);
-    const dealerTotal = handValue(dealer);
-
-    let result;
-
-    if (playerTotal > 21) {
-        result = "lose";
-    } else if (dealerTotal > 21 || playerTotal > dealerTotal) {
-        credit(bet * 2);
-        result = "win";
-    } else if (playerTotal === dealerTotal) {
-        credit(bet);
-        result = "push";
-    } else {
-        result = "lose";
+    getStatus(){
+      return result || "Awaiting action.";
     }
 
-    clearBlackjackState();
+  });
 
-    return { player, dealer, result, bet };
-}
+})();
