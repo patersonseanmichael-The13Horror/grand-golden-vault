@@ -31,3 +31,48 @@ const VaultRouter = (() => {
   });
 
 })();
+
+/* ======================================================
+   VAULT ROUTER — PHASE B EXTENSION
+====================================================== */
+
+const VaultRouter = (() => {
+
+  const ROUTES = Object.freeze({
+    LOGIN: "/pages/login.html",
+    LOBBY: "/pages/lobby.html",
+
+    // Future (locked)
+    BLACKJACK: "/pages/blackjack.html",
+    ROULETTE: "/pages/roulette.html",
+    SLOTS: "/pages/slots.html",
+    POKER: "/pages/poker.html"
+  });
+
+  function go(path) {
+    window.location.replace(path);
+  }
+
+  return Object.freeze({
+
+    toLogin() {
+      go(ROUTES.LOGIN);
+    },
+
+    toLobby() {
+      go(ROUTES.LOBBY);
+    },
+
+    toGame(game) {
+      // Phase B lock — no game access yet
+      alert("This game is currently unavailable.");
+    },
+
+    logout() {
+      VaultAuth.destroy();
+      go(ROUTES.LOGIN);
+    }
+
+  });
+
+})();
