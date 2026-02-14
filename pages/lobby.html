@@ -7,13 +7,38 @@
 <body>
 
 <div class="vault-panel">
-  <h2>Vault Balance</h2>
-  <p id="balance"></p>
+  <h2>Private Vault Overview</h2>
+
+  <p><strong>Balance:</strong> <span id="balance"></span></p>
 
   <button onclick="deposit()">Deposit 100 GOLD</button>
   <button onclick="logout()">Logout</button>
 
-  <h3>Ledger</h3>
+  <h3 style="margin-top:32px;">Available Games</h3>
+
+  <div class="vault-grid">
+    <div class="vault-tile" onclick="locked()">
+      <h3>Blackjack</h3>
+      <p>Institutional table play</p>
+    </div>
+
+    <div class="vault-tile" onclick="locked()">
+      <h3>Roulette</h3>
+      <p>European wheel</p>
+    </div>
+
+    <div class="vault-tile" onclick="locked()">
+      <h3>Slots</h3>
+      <p>High-limit reels</p>
+    </div>
+
+    <div class="vault-tile" onclick="locked()">
+      <h3>Poker</h3>
+      <p>Private tables</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:32px;">Ledger</h3>
   <ul id="ledger"></ul>
 </div>
 
@@ -39,12 +64,16 @@ function render(){
 }
 
 function deposit(){
-  VaultEngine.deposit(100, "PHASE_A_TEST");
+  VaultEngine.deposit(100, "PHASE_B_TEST");
   render();
 }
 
 function logout(){
   VaultRouter.logout();
+}
+
+function locked(){
+  alert("Access restricted. This game is not yet available.");
 }
 
 render();
