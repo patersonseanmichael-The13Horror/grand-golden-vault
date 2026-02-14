@@ -165,6 +165,7 @@ const VaultRouter = (() => {
 
       if (game === "BLACKJACK") return go(ROUTES.BLACKJACK);
       if (game === "ROULETTE") return go(ROUTES.ROULETTE);
+       if (game === "SLOTS") return go(ROUTES.SLOTS);
 
       alert("This game is currently unavailable.");
     },
