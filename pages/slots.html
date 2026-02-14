@@ -1,1 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Golden Vault — Slots</title>
+  <link rel="stylesheet" href="/vault/vaultTheme.css">
+</head>
+<body>
 
+<div class="vault-panel">
+  <h2>Auric Serpent</h2>
+  <p><strong>Balance:</strong> <span id="balance"></span></p>
+
+  <div id="reels" style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:20px 0;text-align:center;font-size:1.4rem;">
+    <div>—</div><div>—</div><div>—</div><div>—</div><div>—</div>
+  </div>
+
+  <button onclick="spin()">Spin — 25 GOLD</button>
+
+  <p id="result"></p>
+
+  <button onclick="exit()">Return to Lobby</button>
+</div>
+
+<script src="/vault/vaultRouter.js"></script>
+<script src="/vault/vaultAuth.js"></script>
+<script src="/vault/vaultEngine.js"></script>
+<script src="/games/slots/auricSerpent.js"></script>
+
+<script>
+VaultAuth.enforce();
+
+function renderBalance(){
+  document.getElementById("balance").textContent =
+    VaultEngine.getBalance() + " GOLD";
+}
+
+function spin(){
+  try {
+    const outcome = AuricSerpent.spin(25);
+    document.getElementById("reels").innerHTML =
+      outcome.reels.map(r=>`<div>${r}</div>`).join("");
+    document.getElementById("result").textContent = outcome.message;
+    renderBalance();
+  } catch(e){
+    alert(e.message);
+  }
+}
+
+function exit(){
+  VaultRouter.toLobby();
+}
+
+renderBalance();
+</script>
+
+</body>
+</html>
