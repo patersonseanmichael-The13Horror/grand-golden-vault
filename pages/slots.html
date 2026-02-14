@@ -29,16 +29,34 @@
 <script>
 VaultAuth.enforce();
 
+let activeMachine = "AURIC";
+
 function renderBalance(){
   document.getElementById("balance").textContent =
     VaultEngine.getBalance() + " GOLD";
 }
 
+function selectMachine(id){
+  activeMachine = id;
+  document.getElementById("machineTitle").textContent =
+    id === "AURIC" ? "Auric Serpent" : "Gilded Prospector";
+  document.getElementById("reels").innerHTML =
+    "<div>—</div><div>—</div><div>—</div><div>—</div><div>—</div>";
+  document.getElementById("result").textContent = "";
+}
+
 function spin(){
   try {
-    const outcome = AuricSerpent.spin(25);
+    const engine =
+      activeMachine === "AURIC"
+        ? AuricSerpent
+        : GildedProspector;
+
+    const outcome = engine.spin(25);
+
     document.getElementById("reels").innerHTML =
       outcome.reels.map(r=>`<div>${r}</div>`).join("");
+
     document.getElementById("result").textContent = outcome.message;
     renderBalance();
   } catch(e){
