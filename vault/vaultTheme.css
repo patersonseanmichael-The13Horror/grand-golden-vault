@@ -1,1 +1,38 @@
+:root {
+  --gold: #d4af37;
+  --gold-muted: #bfa24a;
+  --black-deep: #080503;
+  --panel-dark: #120c08;
+  --border-gold: rgba(212,175,55,0.35);
+  --text-light: #eae6dc;
+}
 
+body {
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
+  background: var(--black-deep);
+  color: var(--text-light);
+}
+
+.vault-panel {
+  background: var(--panel-dark);
+  border: 1px solid var(--border-gold);
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+}
+
+button {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all .25s ease;
+}
+
+button:hover {
+  background: var(--gold);
+  color: #000;
+}
