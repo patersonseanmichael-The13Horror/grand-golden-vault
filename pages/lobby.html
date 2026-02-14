@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Golden Vault — Lobby</title>
+  <link rel="stylesheet" href="/vault/vaultTheme.css">
+</head>
+<body>
+
+<div class="vault-panel">
+  <h2>Vault Balance</h2>
+  <p id="balance"></p>
+
+  <button onclick="deposit()">Deposit 100 GOLD</button>
+  <button onclick="logout()">Logout</button>
+
+  <h3>Ledger</h3>
+  <ul id="ledger"></ul>
+</div>
+
+<script src="/vault/vaultRouter.js"></script>
+<script src="/vault/vaultAuth.js"></script>
+<script src="/vault/vaultEngine.js"></script>
+
+<script>
+VaultAuth.enforce();
+
+function render(){
+  document.getElementById("balance").textContent =
+    VaultEngine.getBalance() + " GOLD";
+
+  const ledger = document.getElementById("ledger");
+  ledger.innerHTML = "";
+
+  VaultEngine.getLedger().forEach(tx=>{
+    const li = document.createElement("li");
+    li.textContent = `${tx.type} — ${tx.amount} — ${tx.timestamp}`;
+    ledger.appendChild(li);
+  });
+}
+
+function deposit(){
+  VaultEngine.deposit(100, "PHASE_A_TEST");
+  render();
+}
+
+function logout(){
+  VaultRouter.logout();
+}
+
+render();
+</script>
+
+</body>
+</html>
