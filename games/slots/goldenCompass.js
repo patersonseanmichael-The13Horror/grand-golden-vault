@@ -1,47 +1,28 @@
-/* ======================================================
-   SLOT MACHINE 03 — GOLDEN COMPASS
-   5 REELS / 3 ROWS / CENTER PAYLINE
-====================================================== */
+(function () {
+  "use strict";
 
-const GoldenCompass = (() => {
+  const machine = {
+    id: "GOLDEN_COMPASS",
+    bet: 100,
+    reels: 5,
+    delay: 900,
 
-  const SYMBOLS = ["🧭","🗺️","🪙","⚓","💎","A","K","Q"];
-  const PAYOUTS = {
-    "🧭": 18,   // Compass (top symbol)
-    "💎": 14,
-    "🗺️": 9,
-    "⚓": 5
+    symbols: [
+      { id: "compass", weight: 3, payout: 15 },
+      { id: "map", weight: 4, payout: 12 },
+      { id: "anchor", weight: 6, payout: 8 },
+      { id: "coin", weight: 8, payout: 5 },
+      { id: "rope", weight: 10, payout: 3 }
+    ],
+
+    render(result, win) {
+      document.getElementById("slotDisplay").innerHTML =
+        result.map(s => `<div class="reel-symbol">${s.id}</div>`).join("");
+
+      document.getElementById("resultText").textContent =
+        win ? `COMPASS WIN: ${win} GOLD` : "CHART A NEW COURSE";
+    }
   };
 
-  function spinReel(){
-    return SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
-  }
-
-  function evaluate(line, bet){
-    const symbol = line[0];
-
-    if (line.every(s => s === symbol) && PAYOUTS[symbol]){
-      const win = bet * PAYOUTS[symbol];
-      VaultEngine.deposit(win, "SLOTS_WIN_GOLDEN_COMPASS");
-      return `True bearing! Five ${symbol} — ${win} GOLD`;
-    }
-
-    return "The compass spins… no discovery this time.";
-  }
-
-  return Object.freeze({
-
-    spin(bet){
-      if (bet <= 0) throw new Error("Invalid bet");
-
-      VaultEngine.withdraw(bet, "SLOTS_BET_GOLDEN_COMPASS");
-
-      const reels = Array.from({length:5}, spinReel);
-      const message = evaluate(reels, bet);
-
-      return { reels, message };
-    }
-
-  });
-
+  window.spinGoldenCompass = () => SlotCore.spin(machine);
 })();
