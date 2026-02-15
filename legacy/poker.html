@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Poker — Golden Vault</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+:root {
+  --gold: #d4af37;
+  --text-light: #eae6dc;
+  --bg-dark: #0b0704;
+  --panel: #140e09;
+  --card-width: 60px;
+  --card-height: 90px;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif;}
+body{
+  background: radial-gradient(circle at top,#1c130a,#080503 70%);
+  color: var(--text-light);
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+
+/* Vault Doors */
+.doors{position:fixed;inset:0;z-index:10;display:flex;pointer-events:none;}
+.door{width:50%;height:100%;background:linear-gradient(180deg,#1a120a,#090603);
+border-right:1px solid rgba(212,175,55,0.4);
+box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
+transform:translateX(0);transition: transform 2.6s cubic-bezier(.77,0,.18,1);}
+.door.right{border-right:none;border-left:1px solid rgba(212,175,55,0.4);}
+.doors.open .door.left{transform:translateX(-100%);}
+.doors.open .door.right{transform:translateX(100%);}
+
+/* Vault Content */
+.vault{
+  width:92%;max-width:500px;
+  background:linear-gradient(180deg,#160f09,#0b0704);
+  border:1px solid rgba(212,175,55,0.5);
+  border-radius:18px;padding:30px;
+  box-shadow:0 0 60px rgba(212,175,55,0.18),inset 0 0 30px rgba(0,0,0,0.6);
+  text-align:center;
+  opacity:0;transform:scale(0.96);transition:opacity 1.2s ease, transform 1.2s ease;
+}
+.vault.visible{opacity:1;transform:scale(1);}
+h1{color:var(--gold);margin-bottom:10px;}
+.balance{font-size:1.5rem;color:var(--gold);margin-bottom:15px;}
+.table{background:var(--panel);padding:20px;border-radius:12px;box-shadow:0 0 20px rgba(0,0,0,0.5);}
+.cards{display:flex;justify-content:center;margin:10px 0;gap:12px;}
+.card{width:var(--card-width);height:var(--card-height);background:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:1.2rem;color:#000;box-shadow:0 2px 6px rgba(0,0,0,0.5);}
+.buttons{margin-top:12px;display:flex;justify-content:center;gap:12px;}
+button{padding:10px 20px;border-radius:8px;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;transition:0.3s;}
+button:hover{background:rgba(212,175,55,0.1);box-shadow:0 0 12px rgba(212,175,55,0.3);}
+.exit-btn{margin-top:20px;}
+.message{margin-top:12px;font-size:1rem;height:24px;}
+</style>
+</head>
+<body>
+
+<!-- Vault Doors -->
+<div class="doors" id="doors">
+  <div class="door left"></div>
+  <div class="door right"></div>
+</div>
+
+<!-- Vault Content -->
+<div class="vault" id="vault">
+<h1>Poker — Golden Vault</h1>
+<div class="balance" id="balance">$1000</div>
+
+<div class="table">
+  <div>Dealer</div>
+  <div class="cards" id="dealer-cards"></div>
+
+  <div>Player</div>
+  <div class="cards" id="player-cards"></div>
+
+  <div class="buttons">
+    <button onclick="drawCards()">Draw</button>
+    <button onclick="holdCards()">Hold</button>
+  </div>
+
+  <div class="message" id="message"></div>
+</div>
+
+<button class="exit-btn" onclick="exitVault()">Exit Vault</button>
+</div>
+
+<script>
+const doors=document.getElementById('doors');
+const vault=document.getElementById('vault');
+const balanceEl=document.getElementById('balance');
+const playerCardsEl=document.getElementById('player-cards');
+const dealerCardsEl=document.getElementById('dealer-cards');
+const messageEl=document.getElementById('message');
+
+let balance=1000,bet=50;
+let deck=[],player=[],dealer=[];
+let gameOver=true;
+
+// Vault doors
+setTimeout(()=>doors.classList.add('open'),600);
+setTimeout(()=>vault.classList.add('visible'),2000);
+function exitVault(){vault.classList.remove('visible');setTimeout(()=>doors.classList.remove('open'),400);setTimeout(()=>window.location.href="members.html",2600);}
+
+// Deck and logic
+function createDeck(){const suits=["♠","♥","♦","♣"];const vals=["A","2","3","4","5","6","7","8","9","10","J","Q","K"];deck=[];for(let s of suits)for(let v of vals)deck.push(v+s);deck.sort(()=>Math.random()-0.5);}
+function drawCard(){return deck.pop();}
+function handValue(hand){let vals=[];for(let c of hand){let v=c.slice(0,-1);vals.push(isNaN(v)?(v=="A"?14:(v=="K"?13:(v=="Q"?12:11))):parseInt(v));}return vals.sort((a,b)=>b-a);}
+function evaluate(hand){let vals=handValue(hand);let counts={};vals.forEach(v=>counts[v]=(counts[v]||0)+1);let pairs=Object.values(counts).filter(v=>v==2).length;let three=Object.values(counts).filter(v=>v==3).length;if(three && pairs)return"Full House";if(three)return"Three of a Kind";if(pairs==2)return"Two Pair";if(pairs==1)return"Pair";return"High Card";}
+function startGame(){gameOver=false;createDeck();player=[drawCard(),drawCard(),drawCard(),drawCard(),drawCard()];dealer=[drawCard(),drawCard(),drawCard(),drawCard(),drawCard()];renderHands();}
+function renderHands(){playerCardsEl.innerHTML="";dealerCardsEl.innerHTML="";player.forEach(c=>{let d=document.createElement('div');d.className='card';d.textContent=c;playerCardsEl.appendChild(d);});dealer.forEach(c=>{let d=document.createElement('div');d.className='card';d.textContent=c;dealerCardsEl.appendChild(d);});}
+function drawCards(){if(gameOver){startGame();messageEl.textContent="";return;}player[0]=drawCard();player[1]=drawCard();renderHands();}
+function holdCards(){let playerRank=evaluate(player);let dealerRank=evaluate(dealer);let result="";const rankOrder=["High Card","Pair","Two Pair","Three of a Kind","Full House"];if(rankOrder.indexOf(playerRank)>rankOrder.indexOf(dealerRank)){result="You win!";balance+=bet;}else if(rankOrder.indexOf(playerRank)<rankOrder.indexOf(dealerRank)){result="You lose";balance-=bet;}else{result="Push";}balanceEl.textContent="$"+balance;messageEl.textContent=result;gameOver=true;renderHands();}
+</script>
+</body>
+</html>
