@@ -5,9 +5,11 @@
    (Firebase web config is not a secret).
 ====================================================== */
 
-window.GV_FIREBASE_CONFIG = window.GV_FIREBASE_CONFIG || {
-  apiKey: "PASTE_API_KEY",
-  authDomain: "PASTE_AUTH_DOMAIN",
-  projectId: "PASTE_PROJECT_ID",
-  appId: "PASTE_APP_ID",
+const firebaseConfig = {
+  apiKey: "AIzaSyA4bJmDnapnEFlGggYVIoq2lS3QwHHz4hE",
+  authDomain: "grand-golden-vault.firebaseapp.com",
+  projectId: "grand-golden-vault",
+  storageBucket: "grand-golden-vault.firebasestorage.app",
+  messagingSenderId: "969306014666",
+  appId: "1:969306014666:web:228839a8b7f36e9b808533"
 };
