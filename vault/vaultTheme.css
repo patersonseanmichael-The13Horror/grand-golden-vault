@@ -121,3 +121,28 @@ body::after{
   background: radial-gradient(circle at center, transparent 55%, rgba(0,0,0,0.55) 100%);
   opacity: 0.75;
 }
+
+/* =========================
+   PAGE SKINS (optional)
+========================= */
+
+body.skin-members{
+  background:
+    radial-gradient(circle at 15% 10%, rgba(212,175,55,0.10), transparent 45%),
+    radial-gradient(circle at 85% 20%, rgba(234,230,220,0.05), transparent 45%),
+    linear-gradient(180deg, #160f0a, #070403);
+}
+
+body.skin-slots{
+  background:
+    radial-gradient(circle at 25% 0%, rgba(212,175,55,0.12), transparent 48%),
+    radial-gradient(circle at 75% 10%, rgba(212,175,55,0.06), transparent 42%),
+    linear-gradient(180deg, #140d07, #070403);
+}
+
+body.skin-private{
+  background:
+    radial-gradient(circle at 30% 0%, rgba(212,175,55,0.14), transparent 50%),
+    radial-gradient(circle at 70% 15%, rgba(212,175,55,0.08), transparent 45%),
+    linear-gradient(180deg, #120b07, #050302);
+}
