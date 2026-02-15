@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Golden Vault — SLOT_NAME</title>
+
+<!-- 🔒 Anti deep-link (Slot lobby token required) -->
+<script>
+const active = sessionStorage.getItem("activeSlot");
+const entryTime = Number(sessionStorage.getItem("entryTime") || 0);
+const expired = !entryTime || (Date.now() - entryTime) > 10 * 60 * 1000;
+if (!active || expired) window.location.replace("./slotsLobby.html");
+</script>
+
+<link rel="stylesheet" href="../../vault/vaultTheme.css">
+<link rel="stylesheet" href="./slotShell.css">
+<link rel="stylesheet" href="./slotMotion.css">
+<link rel="stylesheet" href="../../ui/vaultTransition.css">
+</head>
+
+<body class="SLOT_THEME_CLASS">
+
+<div class="slot-shell">
+
+  <div class="slot-header">
+    <div>
+      <h1 class="slot-title">SLOT_NAME</h1>
+      <div class="slot-subtitle">Private floor • 5-Reel institutional play</div>
+    </div>
+
+    <div class="slot-metrics">
+      <div class="metric">BALANCE: <span id="balance">0</span> GOLD</div>
+      <div class="metric">BET: <span id="bet">0</span> GOLD</div>
+    </div>
+  </div>
+
+  <div class="reels" id="slotDisplay">
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+      </div>
+
+      <div class="controls">
+    <button onclick="SPIN_FN()">SPIN</button>
+    <button class="secondary" onclick="backToSlots()">Slots Lobby</button>
+    <button class="secondary" onclick="backToVault()">Vault</button>
+  </div>
+
+  <div class="status" id="resultText">Awaiting instruction…</div>
+
+</div>
+
+<script src="../../vault/vaultRouter.js"></script>
+<script src="../../vault/vaultAuth.js"></script>
+<script src="../../vault/vaultEngine.js"></script>
+  <script src="../../ui/vaultTransition.js"></script>
+
+<script src="./slotCore.js"></script>
+<script src="./slotAnimator.js"></script>
+  <script src="./slotRenderer.js"></script>
+
+<script src="./machines/MACHINE_FILE.js"></script>
+
+<script>
+VaultAuth.enforce();
+    if (window.VaultTransition) VaultTransition.playIfMarked();
+
+function renderMetrics(bet){
+  document.getElementById("balance").textContent = VaultEngine.getBalance();
+  document.getElementById("bet").textContent = bet;
+}
+
+function backToSlots(){
+  window.location.replace("./slotsLobby.html");
+}
+
+function backToVault(){
+  sessionStorage.removeItem("activeSlot");
+  sessionStorage.removeItem("entryTime");
+  VaultRouter.toLobby();
+}
+</script>
+
+</body>
+</html>
