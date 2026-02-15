@@ -26,6 +26,7 @@
 
   window.enterSlot = function (id) {
     sessionStorage.setItem("activeSlot", id);
+sessionStorage.setItem("entryTime", Date.now());
     window.location.href = `/games/slots/${id}.html`;
   };
 
