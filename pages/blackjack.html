@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Golden Vault — Blackjack</title>
+  <link rel="stylesheet" href="../vault/vaultTheme.css">
+</head>
+<body>
+
+<div class="vault-panel">
+  <h2>Blackjack Table</h2>
+
+  <p><strong>Balance:</strong> <span id="balance"></span></p>
+
+  <div style="margin:20px 0;">
+    <button onclick="placeBet()">Bet 50 GOLD</button>
+    <button onclick="stand()">Stand</button>
+  </div>
+
+  <p id="status">Place your bet to begin.</p>
+
+  <button onclick="exit()">Return to Lobby</button>
+</div>
+
+<script src="../vault/vaultRouter.js"></script>
+<script src="../vault/vaultAuth.js"></script>
+<script src="../vault/vaultEngine.js"></script>
+<script src="/games/blackjackEngine.js"></script>
+
+<script>
+VaultAuth.enforce();
+
+function renderBalance(){
+  document.getElementById("balance").textContent =
+    VaultEngine.getBalance() + " GOLD";
+}
+
+function placeBet(){
+  try {
+    BlackjackEngine.startRound(50);
+    document.getElementById("status").textContent =
+      BlackjackEngine.getStatus();
+    renderBalance();
+  } catch(e){
+    alert(e.message);
+  }
+}
+
+function stand(){
+  BlackjackEngine.finishRound();
+  document.getElementById("status").textContent =
+    BlackjackEngine.getStatus();
+  renderBalance();
+}
+
+function exit(){
+  VaultRouter.toLobby();
+}
+
+renderBalance();
+</script>
+
+</body>
+</html>
