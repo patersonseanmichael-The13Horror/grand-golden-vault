@@ -1,49 +1,37 @@
-/* ======================================================
-   SLOT MACHINE 01 — AURIC SERPENT
-   5 REELS / 3 ROWS / CENTER PAYLINE
-====================================================== */
+// AURIC SERPENT — SLOTCORE READY
 
-const AuricSerpent = (() => {
+(function () {
+  "use strict";
 
-  const SYMBOLS = ["🐉","🪙","🔔","🍀","💎","A","K","Q"];
-  const PAYOUTS = {
-    "🐉": 20,
-    "💎": 10,
-    "🪙": 6,
-    "🔔": 4,
-    "🍀": 3
+  const machine = {
+    id: "AURIC_SERPENT",
+    bet: 175,
+    reels: 5,
+    delay: 1000,
+
+    symbols: [
+      { id: "serpent", weight: 2, payout: 28, wild: true },
+      { id: "idol", weight: 3, payout: 22, scatter: true },
+      { id: "mask", weight: 4, payout: 16 },
+      { id: "gem", weight: 6, payout: 11 },
+      { id: "torch", weight: 8, payout: 6 },
+      { id: "coin", weight: 10, payout: 4 }
+    ],
+
+    render(result, win) {
+      const display = document.getElementById("slotDisplay");
+      const resultText = document.getElementById("resultText");
+
+      display.innerHTML = result
+        .map(s => `<div class="reel-symbol serpent">${s.id.toUpperCase()}</div>`)
+        .join("");
+
+      resultText.textContent = win
+        ? `THE SERPENT STRIKES: ${win} GOLD`
+        : `THE SERPENT WATCHES`;
+    }
   };
 
-  function spinReel(){
-    return SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
-  }
-
-  function evaluate(reels, bet){
-    const centerLine = reels;
-    const symbol = centerLine[0];
-
-    if (centerLine.every(s => s === symbol) && PAYOUTS[symbol]){
-      const win = bet * PAYOUTS[symbol];
-      VaultEngine.deposit(win, "SLOTS_WIN_AURIC_SERPENT");
-      return `Five ${symbol} — You win ${win} GOLD`;
-    }
-
-    return "No win this spin.";
-  }
-
-  return Object.freeze({
-
-    spin(bet){
-      if (bet <= 0) throw new Error("Invalid bet amount");
-
-      VaultEngine.withdraw(bet, "SLOTS_BET_AURIC_SERPENT");
-
-      const reels = Array.from({length:5}, spinReel);
-      const message = evaluate(reels, bet);
-
-      return { reels, message };
-    }
-
-  });
+  window.spinAuricSerpent = () => SlotCore.spin(machine);
 
 })();
