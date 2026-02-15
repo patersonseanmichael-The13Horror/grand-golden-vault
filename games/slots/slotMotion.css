@@ -1,0 +1,75 @@
+/* ============================
+   Golden Vault — Slot Motion
+   Premium reel animation pack
+============================ */
+
+/* Reel symbol styling enhancement */
+.reel-symbol {
+  position: relative;
+  overflow: hidden;
+  transform: translateZ(0);
+}
+
+/* Spin state: subtle blur + sheen */
+.reels.is-spinning .reel-symbol {
+  animation: gvSpinFlicker 0.16s linear infinite;
+  filter: blur(0.6px);
+  opacity: 0.92;
+}
+
+/* Staggered stop pulse */
+.reels.is-stopping .reel-symbol {
+  filter: blur(0px);
+  opacity: 1;
+}
+
+/* Gold sheen sweep (very subtle) */
+.reel-symbol::after {
+  content: "";
+  position: absolute;
+  top: -60%;
+  left: -120%;
+  width: 60%;
+  height: 220%;
+  transform: rotate(18deg);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(212,175,55,0.10),
+    transparent
+  );
+  pointer-events: none;
+  opacity: 0;
+}
+
+/* Sheen during spin only */
+.reels.is-spinning .reel-symbol::after {
+  opacity: 1;
+  animation: gvSheen 0.55s ease-in-out infinite;
+}
+
+/* Win highlight (institutional, not neon) */
+.reels.is-win .reel-symbol {
+  border-color: rgba(212,175,55,0.55);
+  box-shadow: 0 0 0 1px rgba(212,175,55,0.12), 0 18px 40px rgba(0,0,0,0.45);
+}
+
+/* Micro "settle" bounce on stop */
+.reels .reel-symbol.gv-settle {
+  animation: gvSettle 220ms ease-out 1;
+}
+
+@keyframes gvSpinFlicker {
+  0%   { transform: translateY(-1px); }
+  100% { transform: translateY(1px); }
+}
+
+@keyframes gvSheen {
+  0%   { left: -120%; }
+  100% { left: 160%; }
+}
+
+@keyframes gvSettle {
+  0%   { transform: translateY(-2px); }
+  100% { transform: translateY(0px); }
+}
