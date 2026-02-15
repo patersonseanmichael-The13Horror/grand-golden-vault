@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Golden Vault — Poker</title>
+  <link rel="stylesheet" href="../vault/vaultTheme.css">
+
+  <style>
+    :root{ --vault-bg-image: url('../images/vault-door-path.jpg'); --vault-bg-dim: 0.76; }
+
+    .wrap{ max-width:1100px; margin: 34px auto; padding:0 16px; color: var(--text-light); }
+    .head{ display:flex; justify-content:space-between; align-items:flex-end; gap:14px; flex-wrap:wrap; }
+    .title{ margin:0; text-transform:uppercase; letter-spacing:.12em; font-size:1.05rem; color: var(--gold); }
+    .sub{ margin:.35rem 0 0; opacity:.78; font-size:.9rem; }
+
+    .hud{ display:flex; gap:10px; flex-wrap:wrap; }
+    .hud .card{ border:1px solid rgba(212,175,55,.22); background: rgba(18,12,8,.72); padding:10px 14px; border-radius:14px; min-width:180px; }
+    .hud .label{ font-size:.72rem; letter-spacing:.10em; opacity:.7; }
+    .hud .value{ margin-top:2px; color: var(--gold); font-weight:800; letter-spacing:.05em; }
+
+    .felt{
+      margin-top:16px;
+      border-radius: 18px;
+      border: 1px solid rgba(212,175,55,.22);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(212,175,55,.10), transparent 40%),
+        radial-gradient(circle at 80% 0%, rgba(212,175,55,.06), transparent 45%),
+        linear-gradient(180deg, rgba(6,30,20,.92), rgba(3,18,11,.92));
+      box-shadow: 0 28px 90px rgba(0,0,0,.72);
+      overflow:hidden;
+      padding: 18px;
+    }
+
+    .row{ display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap; }
+    .hand{ display:flex; gap:10px; flex-wrap:wrap; }
+
+    .playing-card{
+      width: 74px; height: 104px;
+      border-radius: 12px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.02)),
+        rgba(8,5,3,.55);
+      border: 1px solid rgba(212,175,55,.22);
+      box-shadow: 0 16px 40px rgba(0,0,0,.55);
+      display:grid;
+      place-items:center;
+      position: relative;
+      overflow:hidden;
+    }
+
+    .playing-card .pip{ font-weight:900; letter-spacing:.06em; color: rgba(234,230,220,.92); }
+    .playing-card .corner{ position:absolute; top:8px; left:10px; font-size:.72rem; opacity:.78; }
+
+    .controls{ margin-top: 14px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
+
+    input{
+      background: rgba(8,5,3,.55);
+      border: 1px solid rgba(212,175,55,.22);
+      color: var(--text-light);
+      border-radius: 12px;
+      padding: 12px 12px;
+      outline:none;
+      width: 160px;
+    }
+
+    button{
+      border-radius: 12px;
+      padding: 12px 16px;
+      letter-spacing:.08em;
+      font-weight:900;
+      cursor:pointer;
+    }
+    button.primary{ background: var(--gold); border:1px solid var(--gold); color:#000; }
+    button.secondary{ background: transparent; border:1px solid rgba(212,175,55,.28); color: var(--text-light); }
+
+    .status{ margin-top:12px; padding: 12px 14px; border-radius: 14px; border:1px solid rgba(212,175,55,.18); background: rgba(8,5,3,.48); min-height: 24px; }
+  </style>
+</head>
+
+<body class="vault-bg">
+<div class="vault-vignette"></div>
+
+<div class="wrap">
+  <div class="head">
+    <div>
+      <h1 class="title">Poker</h1>
+      <div class="sub">Private draw • clean payouts • vault ledger.</div>
+    </div>
+
+    <div class="hud">
+      <div class="card">
+        <div class="label">BALANCE</div>
+        <div class="value"><span id="balance">0</span> GOLD</div>
+      </div>
+      <div class="card">
+        <div class="label">MODE</div>
+        <div class="value">5-CARD DRAW</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="felt">
+    <div class="row">
+      <div>
+        <div style="letter-spacing:.10em; opacity:.75; font-size:.75rem; text-transform:uppercase;">Dealer Hand</div>
+        <div class="hand" id="dealerHand"></div>
+      </div>
+    </div>
+
+    <div style="height:1px; background: rgba(212,175,55,.14); margin: 14px 0;"></div>
+
+    <div class="row">
+      <div>
+        <div style="letter-spacing:.10em; opacity:.75; font-size:.75rem; text-transform:uppercase;">Your Hand</div>
+        <div class="hand" id="playerHand"></div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+        <input id="bet" type="number" min="25" step="25" value="50" />
+        <button class="primary" id="dealBtn" onclick="deal()">DEAL</button>
+      </div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="secondary" onclick="exit()">Return to Lobby</button>
+      </div>
+    </div>
+
+    <div class="status" id="status">Awaiting instruction…</div>
+  </div>
+</div>
+
+<script src="../vault/vaultRouter.js"></script>
+<script src="../vault/vaultAuth.js"></script>
+<script src="../vault/vaultEngine.js"></script>
+<script src="../games/pokerEngine.js"></script>
+
+<script>
+  VaultAuth.enforce();
+
+  function renderBalance(){
+    document.getElementById('balance').textContent = VaultEngine.getBalance();
+  }
+
+  function cardEl(label){
+    const d = document.createElement('div');
+    d.className = 'playing-card';
+    d.innerHTML = `<div class="corner">${label}</div><div class="pip">${label}</div>`;
+    return d;
+  }
+
+  function deal(){
+    const bet = Number(document.getElementById('bet').value || 0);
+    if (VaultEngine.getBalance() < bet){ alert('Insufficient balance.'); return; }
+
+    let out;
+    try{ out = PokerEngine.play(bet); }
+    catch(e){ alert(e.message); return; }
+
+    const ph = document.getElementById('playerHand');
+    const dh = document.getElementById('dealerHand');
+    ph.innerHTML = ''; dh.innerHTML = '';
+
+    out.player.forEach(c => ph.appendChild(cardEl(c.label)));
+    out.dealer.forEach(c => dh.appendChild(cardEl(c.label)));
+
+    document.getElementById('status').textContent = `${out.outcome}` + (out.win ? ` (+${out.win} GOLD)` : '');
+    renderBalance();
+  }
+
+  function exit(){ VaultRouter.toLobby(); }
+
+  renderBalance();
+</script>
+
+</body>
+</html>
