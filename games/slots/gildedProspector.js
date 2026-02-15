@@ -1,47 +1,37 @@
-/* ======================================================
-   SLOT MACHINE 02 — GILDED PROSPECTOR
-   5 REELS / 3 ROWS / CENTER PAYLINE
-====================================================== */
+// GILDED PROSPECTOR — SLOTCORE READY
 
-const GildedProspector = (() => {
+(function () {
+  "use strict";
 
-  const SYMBOLS = ["⛏️","🧱","🪙","💰","⭐","A","K","Q"];
-  const PAYOUTS = {
-    "⛏️": 25,   // pickaxe (top symbol)
-    "💰": 15,
-    "🪙": 8,
-    "⭐": 5
+  const machine = {
+    id: "GILDED_PROSPECTOR",
+    bet: 125,
+    reels: 5,
+    delay: 950,
+
+    symbols: [
+      { id: "prospector", weight: 3, payout: 20, wild: true },
+      { id: "claim", weight: 4, payout: 18, scatter: true },
+      { id: "pickaxe", weight: 5, payout: 14 },
+      { id: "cart", weight: 6, payout: 10 },
+      { id: "nugget", weight: 8, payout: 6 },
+      { id: "boot", weight: 10, payout: 4 }
+    ],
+
+    render(result, win) {
+      const display = document.getElementById("slotDisplay");
+      const resultText = document.getElementById("resultText");
+
+      display.innerHTML = result
+        .map(s => `<div class="reel-symbol prospector">${s.id.toUpperCase()}</div>`)
+        .join("");
+
+      resultText.textContent = win
+        ? `CLAIM PAID: ${win} GOLD`
+        : `NO GOLD THIS DIG`;
+    }
   };
 
-  function spinReel(){
-    return SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
-  }
-
-  function evaluate(line, bet){
-    const symbol = line[0];
-
-    if (line.every(s => s === symbol) && PAYOUTS[symbol]){
-      const win = bet * PAYOUTS[symbol];
-      VaultEngine.deposit(win, "SLOTS_WIN_GILDED_PROSPECTOR");
-      return `Strike gold! Five ${symbol} — ${win} GOLD`;
-    }
-
-    return "No find this spin.";
-  }
-
-  return Object.freeze({
-
-    spin(bet){
-      if (bet <= 0) throw new Error("Invalid bet");
-
-      VaultEngine.withdraw(bet, "SLOTS_BET_GILDED_PROSPECTOR");
-
-      const reels = Array.from({length:5}, spinReel);
-      const message = evaluate(reels, bet);
-
-      return { reels, message };
-    }
-
-  });
+  window.spinGildedProspector = () => SlotCore.spin(machine);
 
 })();
