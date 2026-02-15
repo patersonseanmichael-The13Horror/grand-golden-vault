@@ -1,0 +1,87 @@
+body.vault {
+  margin: 0;
+  background: radial-gradient(circle at top, #1a120b, #070403);
+  color: #e6dcc8;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.lobby-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 30px;
+  border-bottom: 1px solid #3a2a18;
+}
+
+.lobby-header h1 {
+  letter-spacing: 2px;
+  font-size: 1.2rem;
+}
+
+.balance {
+  color: #d4af37;
+}
+
+.lobby-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 24px;
+  padding: 30px;
+}
+
+.slot-card {
+  background: linear-gradient(180deg, #140d07, #0a0603);
+  border: 1px solid #3b2a18;
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.slot-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0,0,0,.6);
+}
+
+.slot-card h2 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+}
+
+.slot-card span {
+  font-size: .85rem;
+  color: #b9aa8f;
+}
+
+.lobby-footer {
+  padding: 20px;
+  text-align: center;
+}
+
+button {
+  background: linear-gradient(180deg, #d4af37, #9f7c1d);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+
+.lobby-header .sub { opacity: .70; margin-top: 6px; font-size: .88rem; }
+
+.balance .line { text-align: right; line-height: 1.4; }
+
+.slot-card-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.badge{border:1px solid rgba(212,175,55,.28);border-radius:999px;padding:6px 10px;font-size:.75rem;opacity:.9}
+.slot-card-meta{margin-top:10px;font-size:.85rem;color:#b9aa8f;line-height:1.35}
+
+.slot-card.locked{opacity:.52;cursor:not-allowed}
+.slot-card.locked:hover{transform:none;box-shadow:none}
+.slot-card.locked .badge{border-color: rgba(212,175,55,.18);opacity:.8}
+
+
+/* ===== Tier + badges ===== */
+.controls-bar{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:18px 0 6px;}
+.searchbox{border:1px solid var(--border-gold);background:rgba(18,12,8,.7);color:var(--text-light);padding:10px 12px;border-radius:10px;min-width:220px;}
+.tier-pill{border:1px solid rgba(212,175,55,.35);background:rgba(18,12,8,.75);padding:8px 10px;border-radius:999px;color:var(--gold);font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;}
+.slot-card.locked{opacity:.45;cursor:not-allowed;position:relative;}
+.slot-card.locked:after{content:"LOCKED";position:absolute;top:14px;right:14px;border:1px solid rgba(212,175,55,.35);background:rgba(8,5,3,.65);color:var(--gold);padding:6px 8px;border-radius:999px;font-size:.72rem;letter-spacing:.08em;}
