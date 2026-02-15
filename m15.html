@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Golden Vault — Onyx Protocol</title>
+
+<!-- 🔒 Anti deep-link protection -->
+<script>
+const active = sessionStorage.getItem("activeSlot");
+const entryTime = Number(sessionStorage.getItem("entryTime") || 0);
+const expired = !entryTime || (Date.now() - entryTime) > 10 * 60 * 1000;
+const expected = "m15";
+
+if (!active || expired || active !== expected) {
+  window.location.replace("./slotsLobby.html");
+}
+</script>
+
+<link rel="stylesheet" href="../../vault/vaultTheme.css">
+<link rel="stylesheet" href="./slotShell.css">
+<link rel="stylesheet" href="./slotMotion.css">
+<link rel="stylesheet" href="../../ui/vaultTransition.css">
+</head>
+
+<body class="theme-lotus">
+  <div class="slot-shell">
+    <div class="slot-header">
+      <div>
+        <h1 class="slot-title">Onyx Protocol</h1>
+        <p class="slot-tag">Ultra-premium private reels.</p>
+      </div>
+
+      <div class="metrics">
+        <div class="metric">
+          <div class="label">BALANCE</div>
+          <div class="value"><span id="balance">0</span> GOLD</div>
+        </div>
+        <div class="metric">
+          <div class="label">BET</div>
+          <div class="value"><span id="bet">175</span> GOLD</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reels-frame">
+      <div class="reels" id="slotDisplay">
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+        <div class="reel-symbol">—</div>
+      </div>
+
+      <div class="controls">
+        <div class="actions">
+          <button class="primary" id="spinBtn" onclick="spinSlot()">SPIN</button>
+          <button class="secondary" onclick="backToSlots()">Slots Lobby</button>
+          <button class="secondary" onclick="backToVault()">Vault</button>
+        </div>
+      </div>
+
+      <div class="status" id="resultText">Awaiting instruction…</div>
+      <div class="fineprint">Private floor access enforced. Ledger entries are recorded at the vault level.</div>
+    </div>
+  </div>
+
+  <!-- CORE FILES -->
+  <script src="../../vault/vaultRouter.js"></script>
+  <script src="../../vault/vaultAuth.js"></script>
+  <script src="../../vault/vaultEngine.js"></script>
+  <script src="../../ui/vaultTransition.js"></script>
+
+  <!-- Slots Platform -->
+  <script src="./slotCore.js"></script>
+  <script src="./slotAnimator.js"></script>
+  <script src="./slotSymbols.js"></script>
+  <script src="./slotRenderer.js"></script>
+  <script src="./slotConfig.js"></script>
+
+  <!-- MACHINE -->
+  <script src="./machines/m15.js"></script>
+
+  <script>
+    VaultAuth.enforce();
+    if (window.VaultTransition) VaultTransition.playIfMarked();
+
+    function renderBalance() {
+      document.getElementById("balance").textContent = VaultEngine.getBalance();
+      document.getElementById("spinBtn").disabled = VaultEngine.getBalance() < 175;
+    }
+
+    function backToSlots() {
+      window.location.replace("./slotsLobby.html");
+    }
+
+    function backToVault() {
+      sessionStorage.removeItem("activeSlot");
+      sessionStorage.removeItem("entryTime");
+      VaultRouter.toLobby();
+    }
+
+    renderBalance();
+  </script>
+</body>
+</html>

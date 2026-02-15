@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Golden Vault — Slots Lobby</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../../vault/vaultTheme.css">
+  <link rel="stylesheet" href="./slotsLobby.css">
+</head>
+<body class="skin-slots">
+
+<header class="lobby-header">
+  <div>
+    <h1>PRIVATE SLOT FLOOR</h1>
+    <div class="sub">Institutional access • Tiered entry • Forward-only routing</div>
+  </div>
+  <div class="balance">
+    <div class="line">TIER: <span id="tier">STANDARD</span></div>
+    <div class="line">BALANCE: <span id="balance">0</span> GOLD</div>
+  </div>
+</header>
+
+
+<div class="controls-bar">
+  <div class="tier-pill">Tier: <span id="tierLabel">STANDARD</span></div>
+  <input class="searchbox" id="slotSearch" placeholder="Search machines…" />
+</div>
+
+<main class="lobby-grid" id="slotGrid"></main>
+
+<footer class="lobby-footer">
+  <button onclick="returnToVault()">RETURN TO VAULT</button>
+</footer>
+
+<script src="../../vault/vaultRouter.js"></script>
+<script src="../../vault/vaultAuth.js"></script>
+<script src="../../vault/vaultEngine.js"></script>
+  <script src="../../ui/vaultTransition.js"></script>
+<script src="./machines/catalog.js"></script>
+
+<script src="./slotConfig.js"></script>
+<script src="./slotsLobby.js"></script>
+</body>
+</html>

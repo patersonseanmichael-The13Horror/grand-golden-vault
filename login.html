@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Golden Vault — Private Access</title>
+  <link rel="stylesheet" href="../vault/vaultTheme.css">
+  <style>
+    .wrap{min-height:100vh;display:grid;place-items:center;padding:26px;background:transparent}
+    .card{width:min(560px,100%);border:1px solid var(--border-gold);background:rgba(18,12,8,.78);border-radius:16px;padding:22px;box-shadow:0 18px 60px rgba(0,0,0,.6)}
+    h1{margin:0;color:var(--gold);letter-spacing:.09em;text-transform:uppercase;font-size:1.05rem}
+    p{margin:10px 0 0;opacity:.82;line-height:1.45}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+    .row1{display:grid;grid-template-columns:1fr;gap:10px;margin-top:14px}
+    input{width:100%;padding:12px 12px;border-radius:12px;border:1px solid rgba(212,175,55,.25);background:rgba(8,5,3,.65);color:var(--text-light);outline:none}
+    input:focus{border-color:rgba(212,175,55,.55)}
+    .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    button{border:1px solid var(--border-gold);background:rgba(18,12,8,.55);color:var(--text-light);padding:12px 14px;border-radius:12px;cursor:pointer}
+    button.primary{border-color:var(--gold);background:var(--gold);color:#000;font-weight:800}
+    .note{margin-top:12px;font-size:.85rem;opacity:.7}
+    .msg{margin-top:12px;border:1px solid rgba(212,175,55,.18);background:rgba(8,5,3,.45);padding:12px;border-radius:12px;min-height:20px}
+    a{color:var(--gold);text-decoration:none}
+  </style>
+
+  <style>
+    :root{ --vault-bg-image: url('../images/bull-gold.jpg'); --vault-bg-dim: 0.6; }
+  </style>
+
+</head>
+<body class="vault-bg skin-private">
+<div class="vault-vignette"></div>
+  <div class="wrap">
+    <div class="card">
+      <h1>Private Vault Access</h1>
+      <p>Confidential entry. Elegant flow. Vault authority enforced.</p>
+
+      <div class="row">
+        <input id="email" type="email" placeholder="Email" autocomplete="email">
+        <input id="password" type="password" placeholder="Password" autocomplete="current-password">
+      </div>
+
+      <div class="btns">
+        <button class="primary" onclick="signin()">Sign in</button>
+        <button onclick="signup()">Create account</button>
+        <button onclick="guest()">Guest access</button>
+      </div>
+
+      <p style="margin-top:12px;opacity:.75;font-size:.85rem">By continuing you agree to the <a href="terms.html">Terms</a>.</p>
+
+      <div class="msg" id="msg"></div>
+
+      <div class="note" id="note"></div>
+    </div>
+  </div>
+
+  <!-- Firebase Compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
+
+  <script src="../vault/firebaseConfig.js"></script>
+  <script src="../vault/firebaseInit.js"></script>
+  <script src="../vault/firebaseAuth.js"></script>
+
+  <script src="../vault/vaultRouter.js"></script>
+  <script src="../vault/vaultAuth.js"></script>
+  <script src="../vault/vaultEngine.js"></script>
+
+  <script>
+    const msg = document.getElementById("msg");
+    const note = document.getElementById("note");
+
+    function setMsg(t){ msg.textContent = t || ""; }
+    function setNote(t){ note.innerHTML = t || ""; }
+
+    // If Firebase not configured, fall back to local session (still private-ish)
+    if (!(window.GVFirebase && GVFirebase.ready)) {
+      setNote('Firebase not configured yet. Paste your config in <code>vault/firebaseConfig.js</code> to enable real login. For now, Guest access will create a local session.');
+    } else {
+      setNote('Firebase enabled. Sign in for persistent private access.');
+    }
+
+    async function signin(){
+      try{
+        setMsg("Authenticating...");
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+        if (GVFirebase && GVFirebase.ready) {
+          await GVAuth.signIn(email, password);
+        } else {
+          VaultAuth.createSession("LOCAL_MEMBER", "STANDARD");
+        }
+        setMsg("Access granted.");
+        VaultRouter.toLobby();
+      }catch(e){
+        setMsg(e.message || String(e));
+      }
+    }
+
+    async function signup(){
+      try{
+        setMsg("Creating account...");
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+        if (!(GVFirebase && GVFirebase.ready)) {
+          setMsg("Firebase not configured. Add config first.");
+          return;
+        }
+        await GVAuth.signUp(email, password);
+        setMsg("Account created. Access granted.");
+        VaultRouter.toLobby();
+      }catch(e){
+        setMsg(e.message || String(e));
+      }
+    }
+
+    async function guest(){
+      try{
+        setMsg("Granting guest access...");
+        if (GVFirebase && GVFirebase.ready) {
+          await GVAuth.signInGuest();
+        } else {
+          VaultAuth.createSession("GUEST", "STANDARD");
+        }
+        setMsg("Access granted.");
+        VaultRouter.toLobby();
+      }catch(e){
+        setMsg(e.message || String(e));
+      }
+    }
+  </script>
+</body>
+</html>

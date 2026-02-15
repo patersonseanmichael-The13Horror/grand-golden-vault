@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Golden Vault — Roulette</title>
+  <link rel="stylesheet" href="../vault/vaultTheme.css">
+
+  <style>
+    :root{ --vault-bg-image: url('../images/roulette.jpg'); --vault-bg-dim: 0.72; }
+
+    .wrap{ max-width:1100px; margin: 34px auto; padding:0 16px; color: var(--text-light); }
+    .head{ display:flex; justify-content:space-between; align-items:flex-end; gap:14px; flex-wrap:wrap; }
+    .title{ margin:0; text-transform:uppercase; letter-spacing:.12em; font-size:1.05rem; color: var(--gold); }
+    .sub{ margin:.35rem 0 0; opacity:.78; font-size:.9rem; }
+
+    .hud{ display:flex; gap:10px; flex-wrap:wrap; }
+    .hud .card{ border:1px solid rgba(212,175,55,.22); background: rgba(18,12,8,.72); padding:10px 14px; border-radius:14px; min-width:180px; }
+    .hud .label{ font-size:.72rem; letter-spacing:.10em; opacity:.7; }
+    .hud .value{ margin-top:2px; color: var(--gold); font-weight:800; letter-spacing:.05em; }
+
+    .stage{
+      margin-top:16px;
+      border-radius: 18px;
+      border: 1px solid rgba(212,175,55,.22);
+      background: rgba(8,5,3,.52);
+      box-shadow: 0 28px 90px rgba(0,0,0,.72);
+      padding: 18px;
+      display:grid;
+      grid-template-columns: 1fr 360px;
+      gap: 18px;
+    }
+
+    @media(max-width: 900px){ .stage{ grid-template-columns:1fr; } }
+
+    .wheel-wrap{
+      border-radius: 18px;
+      border: 1px solid rgba(212,175,55,.18);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      padding: 16px;
+      display:grid;
+      place-items:center;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .wheel{
+      width: 280px; height: 280px;
+      border-radius: 50%;
+      position:relative;
+      box-shadow:
+        inset 0 0 0 6px rgba(212,175,55,.30),
+        inset 0 0 0 12px rgba(255,255,255,.04),
+        0 30px 80px rgba(0,0,0,.75);
+      background:
+        conic-gradient(
+          from 0deg,
+          #7a1d1d 0deg 18deg,
+          #141414 18deg 36deg,
+          #7a1d1d 36deg 54deg,
+          #141414 54deg 72deg,
+          #7a1d1d 72deg 90deg,
+          #141414 90deg 108deg,
+          #7a1d1d 108deg 126deg,
+          #141414 126deg 144deg,
+          #7a1d1d 144deg 162deg,
+          #141414 162deg 180deg,
+          #7a1d1d 180deg 198deg,
+          #141414 198deg 216deg,
+          #7a1d1d 216deg 234deg,
+          #141414 234deg 252deg,
+          #7a1d1d 252deg 270deg,
+          #141414 270deg 288deg,
+          #7a1d1d 288deg 306deg,
+          #141414 306deg 324deg,
+          #7a1d1d 324deg 342deg,
+          #141414 342deg 360deg
+        );
+      transform: rotate(0deg);
+    }
+
+    .hub{
+      position:absolute;
+      width: 86px; height: 86px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.10), rgba(0,0,0,.35));
+      box-shadow:
+        inset 0 0 0 2px rgba(212,175,55,.22),
+        0 18px 40px rgba(0,0,0,.55);
+      left: 50%; top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .pointer{
+      position:absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0; height: 0;
+      border-left: 14px solid transparent;
+      border-right: 14px solid transparent;
+      border-bottom: 26px solid rgba(212,175,55,.92);
+      filter: drop-shadow(0 12px 18px rgba(0,0,0,.6));
+    }
+
+    .ball{
+      position:absolute;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: rgba(234,230,220,.95);
+      box-shadow: 0 10px 16px rgba(0,0,0,.55);
+      top: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .controls{
+      border-radius: 18px;
+      border: 1px solid rgba(212,175,55,.18);
+      background: rgba(18,12,8,.60);
+      padding: 16px;
+    }
+
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .row + .row{ margin-top: 12px; }
+
+    select, input{
+      background: rgba(8,5,3,.55);
+      border: 1px solid rgba(212,175,55,.22);
+      color: var(--text-light);
+      border-radius: 12px;
+      padding: 12px 12px;
+      outline:none;
+      min-width: 140px;
+    }
+
+    button{
+      border-radius: 12px;
+      padding: 12px 16px;
+      letter-spacing:.08em;
+      font-weight:900;
+      cursor:pointer;
+    }
+    button.primary{ background: var(--gold); border:1px solid var(--gold); color:#000; }
+    button.secondary{ background: transparent; border:1px solid rgba(212,175,55,.28); color: var(--text-light); }
+    button:disabled{ opacity:.55; cursor:not-allowed; }
+
+    .status{
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border:1px solid rgba(212,175,55,.18);
+      background: rgba(8,5,3,.48);
+      min-height: 24px;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(212,175,55,.22);
+      background: rgba(8,5,3,.45);
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      font-size:.72rem;
+      opacity:.9;
+    }
+    .dot{ width:8px; height:8px; border-radius:999px; background: rgba(212,175,55,.9); }
+  </style>
+</head>
+
+<body class="vault-bg">
+<div class="vault-vignette"></div>
+
+<div class="wrap">
+  <div class="head">
+    <div>
+      <h1 class="title">Roulette</h1>
+      <div class="sub">Private wheel • clean odds • premium motion.</div>
+    </div>
+
+    <div class="hud">
+      <div class="card">
+        <div class="label">BALANCE</div>
+        <div class="value"><span id="balance">0</span> GOLD</div>
+      </div>
+      <div class="card">
+        <div class="label">STATUS</div>
+        <div class="value"><span id="mini">READY</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="wheel-wrap">
+      <div class="pointer"></div>
+      <div class="wheel" id="wheel">
+        <div class="hub"></div>
+      </div>
+      <div class="ball" id="ball"></div>
+    </div>
+
+    <div class="controls">
+      <div class="row">
+        <span class="badge"><span class="dot"></span> PRIVATE TABLE</span>
+      </div>
+
+      <div class="row">
+        <label style="opacity:.78; letter-spacing:.10em; text-transform:uppercase; font-size:.72rem;">Bet</label>
+        <input id="bet" type="number" min="10" step="10" value="50" />
+      </div>
+
+      <div class="row">
+        <label style="opacity:.78; letter-spacing:.10em; text-transform:uppercase; font-size:.72rem;">Choice</label>
+        <select id="choice">
+          <option value="RED">RED</option>
+          <option value="BLACK">BLACK</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <button class="primary" id="spinBtn" onclick="spin()">SPIN</button>
+        <button class="secondary" onclick="exit()">Return to Lobby</button>
+      </div>
+
+      <div class="status" id="status">Awaiting instruction…</div>
+    </div>
+  </div>
+</div>
+
+<script src="../vault/vaultRouter.js"></script>
+<script src="../vault/vaultAuth.js"></script>
+<script src="../vault/vaultEngine.js"></script>
+<script src="../games/rouletteEngine.js"></script>
+
+<script>
+  VaultAuth.enforce();
+
+  const wheel = document.getElementById('wheel');
+  const ball = document.getElementById('ball');
+  let spinning = false;
+  let rot = 0;
+
+  function renderBalance(){
+    document.getElementById('balance').textContent = VaultEngine.getBalance();
+  }
+
+  function setMini(t){ document.getElementById('mini').textContent = t; }
+
+  function easeOutCubic(t){ return 1 - Math.pow(1-t, 3); }
+
+  function animateTo(targetDeg, ms){
+    return new Promise((resolve)=>{
+      const start = performance.now();
+      const from = rot;
+      const delta = targetDeg - from;
+
+      function step(now){
+        const p = Math.min(1, (now-start)/ms);
+        const e = easeOutCubic(p);
+        rot = from + delta*e;
+        wheel.style.transform = `rotate(${rot}deg)`;
+        // ball lags a touch for realism
+        ball.style.transform = `translateX(-50%) rotate(${-rot*0.25}deg)`;
+        if (p < 1) requestAnimationFrame(step);
+        else resolve();
+      }
+      requestAnimationFrame(step);
+    });
+  }
+
+  async function spin(){
+    if (spinning) return;
+
+    const bet = Number(document.getElementById('bet').value || 0);
+    const choice = document.getElementById('choice').value;
+
+    if (!bet || bet < 10){ alert('Minimum bet is 10.'); return; }
+    if (VaultEngine.getBalance() < bet){ alert('Insufficient balance.'); return; }
+
+    spinning = true;
+    document.getElementById('spinBtn').disabled = true;
+    setMini('SPINNING');
+
+    let out;
+    try{
+      out = RouletteEngine.spinDetailed(bet, choice);
+    }catch(e){
+      spinning = false;
+      document.getElementById('spinBtn').disabled = false;
+      setMini('READY');
+      alert(e.message);
+      return;
+    }
+
+    // Target: red -> land in a red segment, black -> black segment
+    // We use a 20-segment wheel (18deg each).
+    const seg = 18;
+    const isRed = out.result === 'RED';
+
+    // choose one of the matching segments
+    const candidates = [];
+    for (let i=0;i<20;i++){
+      const red = i % 2 === 0; // our conic layout starts with red
+      if (red === isRed) candidates.push(i);
+    }
+    const pick = candidates[Math.floor(Math.random()*candidates.length)];
+
+    // land mid-segment under pointer
+    const landing = (pick*seg) + (seg/2);
+
+    // add several full spins
+    const target = rot + (360*5) + (360 - landing);
+
+    document.getElementById('status').textContent = 'Wheel in motion…';
+    await animateTo(target, 2600);
+
+    document.getElementById('status').textContent = out.message;
+    setMini(out.win ? 'WIN' : 'SETTLED');
+    renderBalance();
+
+    spinning = false;
+    document.getElementById('spinBtn').disabled = false;
+    setTimeout(()=>setMini('READY'), 1200);
+  }
+
+  function exit(){ VaultRouter.toLobby(); }
+
+  renderBalance();
+</script>
+
+</body>
+</html>

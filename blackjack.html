@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Golden Vault — Blackjack</title>
+  <link rel="stylesheet" href="../vault/vaultTheme.css">
+
+  <style>
+    :root{ --vault-bg-image: url('../images/vault-door-path.jpg'); --vault-bg-dim: 0.74; }
+
+    .table-shell{ max-width:1100px; margin: 34px auto; padding: 0 16px; color: var(--text-light); }
+
+    .table-header{ display:flex; justify-content:space-between; align-items:flex-end; gap:14px; flex-wrap:wrap; }
+    .table-title{ margin:0; letter-spacing:.12em; text-transform:uppercase; font-size:1.05rem; color: var(--gold); }
+    .table-sub{ margin:.35rem 0 0; opacity:.78; font-size:.9rem; }
+
+    .hud{ display:flex; gap:10px; flex-wrap:wrap; }
+    .hud .card{ border:1px solid rgba(212,175,55,.22); background: rgba(18,12,8,.72); padding:10px 14px; border-radius:14px; min-width:170px; }
+    .hud .label{ font-size:.72rem; letter-spacing:.10em; opacity:.7; }
+    .hud .value{ margin-top:2px; color: var(--gold); font-weight:800; letter-spacing:.05em; }
+
+    .felt{
+      margin-top:16px;
+      border-radius: 18px;
+      border: 1px solid rgba(212,175,55,.22);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(212,175,55,.10), transparent 40%),
+        radial-gradient(circle at 80% 0%, rgba(212,175,55,.06), transparent 45%),
+        linear-gradient(180deg, rgba(4,32,18,.92), rgba(3,18,11,.92));
+      box-shadow: 0 28px 90px rgba(0,0,0,.72);
+      overflow:hidden;
+      position: relative;
+    }
+
+    .felt::before{
+      content:"";
+      position:absolute; inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.06), transparent 35%),
+        radial-gradient(circle at 50% 110%, rgba(0,0,0,.65), transparent 55%);
+      opacity:.9;
+    }
+
+    .dealer-row, .player-row{ position:relative; padding: 18px 18px 16px; display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; }
+    .divider{ height:1px; background: rgba(212,175,55,.14); margin: 0 18px; }
+
+    .hand{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+
+    .playing-card{
+      width: 74px; height: 104px;
+      border-radius: 12px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.02)),
+        rgba(8,5,3,.55);
+      border: 1px solid rgba(212,175,55,.22);
+      box-shadow: 0 16px 40px rgba(0,0,0,.55);
+      display:grid;
+      place-items:center;
+      position: relative;
+      overflow:hidden;
+      transform: translateY(0);
+      animation: dealIn 240ms ease-out 1;
+    }
+
+    .playing-card .pip{ font-weight:900; color: rgba(234,230,220,.92); letter-spacing:.06em; }
+    .playing-card .corner{ position:absolute; top:8px; left:10px; font-size:.72rem; opacity:.78; }
+
+    .playing-card::after{
+      content:"";
+      position:absolute;
+      inset:-30% -60%;
+      transform: rotate(18deg);
+      background: linear-gradient(90deg, transparent, rgba(212,175,55,.10), transparent);
+      opacity:.75;
+      animation: sheen 1.2s ease-in-out infinite;
+    }
+
+    @keyframes sheen{ 0%{ transform: translateX(-30%) rotate(18deg);} 100%{ transform: translateX(30%) rotate(18deg);} }
+    @keyframes dealIn{ from{ transform: translateY(-6px); opacity:.0;} to{ transform: translateY(0); opacity:1;} }
+
+    .dealer{
+      display:flex; align-items:center; gap:12px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(8,5,3,.45);
+      border: 1px solid rgba(212,175,55,.18);
+    }
+
+    .dealer svg{ width:48px; height:48px; color: rgba(212,175,55,.92); filter: drop-shadow(0 10px 18px rgba(0,0,0,.55)); }
+    .dealer .name{ font-weight:800; letter-spacing:.10em; text-transform:uppercase; font-size:.78rem; color: var(--gold); }
+    .dealer .mood{ font-size:.82rem; opacity:.75; }
+
+    .controls{ padding: 14px 18px 18px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
+    .btns{ display:flex; gap:10px; flex-wrap:wrap; }
+
+    button{
+      border-radius: 12px;
+      padding: 12px 16px;
+      letter-spacing:.08em;
+      font-weight:900;
+      cursor:pointer;
+    }
+
+    button.primary{ background: var(--gold); border:1px solid var(--gold); color:#000; }
+    button.secondary{ background: transparent; border:1px solid rgba(212,175,55,.28); color: var(--text-light); }
+    button.secondary:hover{ border-color: rgba(212,175,55,.55); }
+    button:disabled{ opacity:.55; cursor:not-allowed; }
+
+    .status{ padding: 12px 14px; margin: 0 18px 18px; border-radius: 14px; border:1px solid rgba(212,175,55,.18); background: rgba(18,12,8,.62); }
+  </style>
+</head>
+
+<body class="vault-bg">
+<div class="vault-vignette"></div>
+
+<div class="table-shell">
+  <div class="table-header">
+    <div>
+      <h1 class="table-title">Blackjack</h1>
+      <div class="table-sub">Private table • premium dealing • ledger-backed.</div>
+    </div>
+
+    <div class="hud">
+      <div class="card">
+        <div class="label">BALANCE</div>
+        <div class="value"><span id="balance">0</span> GOLD</div>
+      </div>
+      <div class="card">
+        <div class="label">BET</div>
+        <div class="value"><span id="bet">50</span> GOLD</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="felt">
+    <div class="dealer-row">
+      <div class="dealer">
+        <!-- Minimal animated dealer icon -->
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <path d="M20 28c0-8 6-14 12-14s12 6 12 14" fill="none" stroke="currentColor" stroke-width="5" opacity=".9"/>
+          <path d="M18 50c2-10 8-16 14-16s12 6 14 16" fill="none" stroke="currentColor" stroke-width="5" opacity=".85"/>
+          <circle cx="26" cy="30" r="2" fill="currentColor"/>
+          <circle cx="38" cy="30" r="2" fill="currentColor"/>
+          <path d="M28 36c3 2 5 2 8 0" stroke="currentColor" stroke-width="3" fill="none" opacity=".75"/>
+        </svg>
+        <div>
+          <div class="name">Dealer</div>
+          <div class="mood" id="dealerMood">Awaiting bet…</div>
+        </div>
+      </div>
+
+      <div>
+        <div style="letter-spacing:.10em; opacity:.75; font-size:.75rem; text-transform:uppercase;">Dealer Hand</div>
+        <div class="hand" id="dealerHand"></div>
+      </div>
+
+      <div style="text-align:right">
+        <div style="letter-spacing:.10em; opacity:.75; font-size:.75rem; text-transform:uppercase;">Dealer Score</div>
+        <div style="font-weight:900; color:var(--gold);" id="dealerScore">?</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="player-row">
+      <div>
+        <div style="letter-spacing:.10em; opacity:.75; font-size:.75rem; text-transform:uppercase;">Your Hand</div>
+        <div class="hand" id="playerHand"></div>
+      </div>
+
+      <div style="text-align:right">
+        <div style="letter-spacing:.10em; opacity:.75; font-size:.75rem; text-transform:uppercase;">Your Score</div>
+        <div style="font-weight:900; color:var(--gold);" id="playerScore">0</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="btns">
+        <button class="primary" id="betBtn" onclick="placeBet()">BET 50</button>
+        <button class="secondary" id="hitBtn" onclick="hit()" disabled>HIT</button>
+        <button class="secondary" id="standBtn" onclick="stand()" disabled>STAND</button>
+      </div>
+
+      <div class="btns">
+        <button class="secondary" onclick="exit()">Return to Lobby</button>
+      </div>
+    </div>
+
+    <div class="status" id="status">Place your bet to begin.</div>
+  </div>
+</div>
+
+<script src="../vault/vaultRouter.js"></script>
+<script src="../vault/vaultAuth.js"></script>
+<script src="../vault/vaultEngine.js"></script>
+<script src="../games/blackjackEngine.js"></script>
+
+<script>
+  VaultAuth.enforce();
+
+  const BET = 50;
+
+  function cardEl(v){
+    const face = v === 1 ? "A" : (v === 10 ? "10" : String(v));
+    const d = document.createElement("div");
+    d.className = "playing-card";
+    d.innerHTML = `<div class="corner">${face}</div><div class="pip">${face}</div>`;
+    return d;
+  }
+
+  function render(){
+    const h = BlackjackEngine.getHands();
+
+    document.getElementById("balance").textContent = VaultEngine.getBalance();
+    document.getElementById("bet").textContent = BET;
+
+    const ph = document.getElementById("playerHand");
+    const dh = document.getElementById("dealerHand");
+    ph.innerHTML = "";
+    dh.innerHTML = "";
+
+    h.player.forEach(v => ph.appendChild(cardEl(v)));
+
+    // Show dealer second card face-down while active
+    if (h.active){
+      if (h.dealer[0] != null) dh.appendChild(cardEl(h.dealer[0]));
+      const back = document.createElement("div");
+      back.className = "playing-card";
+      back.innerHTML = `<div class="pip">◆</div>`;
+      dh.appendChild(back);
+    } else {
+      h.dealer.forEach(v => dh.appendChild(cardEl(v)));
+    }
+
+    document.getElementById("playerScore").textContent = h.playerScore;
+    document.getElementById("dealerScore").textContent = h.dealerScore;
+
+    const canBet = !h.active;
+    document.getElementById("betBtn").disabled = !canBet || VaultEngine.getBalance() < BET;
+    document.getElementById("hitBtn").disabled = !h.active;
+    document.getElementById("standBtn").disabled = !h.active;
+
+    document.getElementById("dealerMood").textContent = h.active ? "Dealing…" : "Table ready.";
+    document.getElementById("status").textContent = BlackjackEngine.getStatus();
+  }
+
+  function placeBet(){
+    try{
+      BlackjackEngine.startRound(BET);
+      render();
+    }catch(e){
+      alert(e.message);
+    }
+  }
+
+  function hit(){
+    try{
+      BlackjackEngine.hit();
+      render();
+    }catch(e){
+      alert(e.message);
+    }
+  }
+
+  function stand(){
+    try{
+      BlackjackEngine.stand();
+      render();
+    }catch(e){
+      alert(e.message);
+    }
+  }
+
+  function exit(){ VaultRouter.toLobby(); }
+
+  render();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,78 @@
+/* ============================
+   Golden Vault — Slot Motion
+   Premium reel animation pack (v2)
+============================ */
+
+.reel-symbol {
+  position: relative;
+  overflow: hidden;
+  transform: translateZ(0);
+}
+
+/* Spin: more physical motion (no heavy neon) */
+.reels.is-spinning .reel-symbol {
+  animation: gvReelSpin 0.11s linear infinite;
+  filter: blur(0.9px) saturate(1.05);
+  opacity: 0.94;
+}
+
+/* Stop state: crisp */
+.reels.is-stopping .reel-symbol {
+  filter: blur(0px);
+  opacity: 1;
+}
+
+/* Gold sheen sweep (subtle) */
+.reel-symbol::after {
+  content: "";
+  position: absolute;
+  top: -60%;
+  left: -120%;
+  width: 60%;
+  height: 220%;
+  transform: rotate(18deg);
+  background: linear-gradient(90deg, transparent, rgba(212,175,55,0.10), transparent);
+  pointer-events: none;
+  opacity: 0;
+}
+
+.reels.is-spinning .reel-symbol::after {
+  opacity: 1;
+  animation: gvSheen 0.55s ease-in-out infinite;
+}
+
+/* Win ambience */
+.reels.is-win .reel-symbol {
+  border-color: rgba(212,175,55,0.55);
+  box-shadow: 0 0 0 1px rgba(212,175,55,0.12), 0 18px 40px rgba(0,0,0,0.45);
+}
+
+/* Micro settle bounce */
+.reels .reel-symbol.gv-settle {
+  animation: gvSettle 220ms cubic-bezier(.2,.8,.2,1) 1;
+}
+
+/* Winning symbol highlights */
+.reel-symbol.gv-hit{
+  border-color: rgba(212,175,55,.55);
+  box-shadow: 0 0 0 1px rgba(212,175,55,.14), 0 10px 26px rgba(0,0,0,.55);
+}
+.reel-symbol.gv-hit-strong{
+  box-shadow: 0 0 0 1px rgba(212,175,55,.18), 0 18px 44px rgba(0,0,0,.62);
+}
+
+@keyframes gvReelSpin {
+  0%   { transform: translateY(-2px) scale(1.01); filter: blur(1.0px) brightness(1.02); }
+  100% { transform: translateY( 2px) scale(0.99); filter: blur(0.85px) brightness(0.98); }
+}
+
+@keyframes gvSheen {
+  0%   { left: -120%; }
+  100% { left: 160%; }
+}
+
+@keyframes gvSettle {
+  0%   { transform: translateY(-3px); }
+  60%  { transform: translateY(1px); }
+  100% { transform: translateY(0px); }
+}
