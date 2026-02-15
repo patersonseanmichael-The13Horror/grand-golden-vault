@@ -1,5 +1,3 @@
-// OBSIDIAN CROWN — SLOT MACHINE 06 (CORE-READY)
-
 (function () {
   "use strict";
 
@@ -19,19 +17,14 @@
     ],
 
     render(result, win) {
-      const display = document.getElementById("slotDisplay");
-      const resultText = document.getElementById("resultText");
-
-      display.innerHTML = result.map(s =>
-        `<div class="reel-symbol obsidian">${s.id.toUpperCase()}</div>`
+      slotDisplay.innerHTML = result.map(s =>
+        `<div class="reel-symbol obsidian">${s.id}</div>`
       ).join("");
 
-      resultText.textContent = win > 0
-        ? `THE CROWN REWARDS ${win} GOLD`
-        : `THE CROWN REMAINS SILENT`;
+      resultText.textContent =
+        win ? `THE CROWN REWARDS ${win} GOLD` : "THE CROWN IS SILENT";
     }
   };
 
   window.spinObsidianCrown = () => SlotCore.spin(machine);
-
 })();
