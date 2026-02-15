@@ -15,22 +15,35 @@
     spinning: false,
 
     spin(machine) {
-      if (this.spinning) return;
-      if (VaultEngine.getBalance() < machine.bet) return;
+  if (this.spinning) return;
+  if (VaultEngine.getBalance() < machine.bet) return;
 
-      this.spinning = true;
-      VaultEngine.adjustBalance(-machine.bet);
+  this.spinning = true;
 
-      const result = this.spinReels(machine.reels, machine.symbols);
-      const win = this.calculateWin(result, machine.symbols);
+  // Start premium motion immediately
+  const anim = window.SlotAnimator?.animateSpin
+    ? window.SlotAnimator.animateSpin({ duration: machine.delay || 1000, stopStagger: 85 })
+    : Promise.resolve();
 
-      setTimeout(() => {
-        if (win > 0) VaultEngine.adjustBalance(win);
-        machine.render(result, win);
-        this.spinning = false;
-      }, machine.delay || 1000);
-    },
+  VaultEngine.adjustBalance(-machine.bet);
 
+  const result = this.spinReels(machine.reels, machine.symbols);
+  const win = this.calculateWin(result, machine.symbols);
+
+  Promise.resolve(anim).then(() => {
+    if (win > 0) VaultEngine.adjustBalance(win);
+
+    // Render final result after motion completes
+    machine.render(result, win);
+
+    // Win glow
+    if (window.SlotAnimator?.markWin) {
+      window.SlotAnimator.markWin(win > 0);
+    }
+
+    this.spinning = false;
+  });
+},
     spinReels(reels, symbols) {
       return Array.from({ length: reels }, () => {
         const pool = [];
