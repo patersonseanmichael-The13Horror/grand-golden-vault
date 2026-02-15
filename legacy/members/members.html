@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Golden Vault — Members Lobby</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="members.css">
+</head>
+<body class="vault-page" style="background: url('images/emerald-bull.jpg') center/cover no-repeat;">
+
+<!-- PARTICLES -->
+<div class="particles" id="particles"></div>
+
+<!-- VAULT DOORS -->
+<div class="doors" id="doors">
+  <div class="door left"></div>
+  <div class="door right"></div>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="wallet">Wallet: <span id="topWallet">0</span> GOLD</div>
+  <div class="vip">VIP: Gold</div>
+</div>
+
+<!-- VAULT LOBBY -->
+<div class="vault" id="vault">
+  <h1>Golden Vault — Casino Lobby</h1>
+
+  <!-- Wallet & Ledger -->
+  <div class="wallet-section">
+    <h3>Member Info</h3>
+    <p>ID: <span id="vaultId"></span></p>
+    <p>Name: <span id="vaultName"></span></p>
+    <p>Balance: <span id="vaultBalance"></span></p>
+    <p>Tier: <span id="vaultTier"></span></p>
+    <button id="depositBtn">Deposit GOLD</button>
+  </div>
+
+  <div class="ledger-section">
+    <h3>Ledger</h3>
+    <div id="ledger"></div>
+  </div>
+
+  <!-- Game Cards -->
+  <div class="game-cards">
+    <div class="card" data-url="blackjack.html">🂡<br>Blackjack</div>
+    <div class="card" data-url="roulette.html">🎰<br>Roulette</div>
+    <div class="card" data-url="poker.html">🃏<br>Poker</div>
+    <div class="card" id="openSlotsCard">🎰<br>Platinum Slots</div>
+  </div>
+
+  <!-- SLOTS SECTION -->
+  <div id="slots-section" style="display:none;">
+    <div id="game-container"></div>
+    <div id="ui-panel">
+      <button id="spinBtn">Spin</button>
+      <button id="autoSpinBtn">AutoSpin</button>
+      <button id="doubleUpBtn">Double Up</button>
+      <span>Balance: $<span id="balance">1000</span></span>
+      <button id="closeSlotsBtn" class="exit-slots-btn">Back to Vault</button>
+    </div>
+  </div>
+
+  <!-- VIP Progress -->
+  <div class="vip-section">
+    <h3>VIP Progress</h3>
+    <div class="vip-progress">
+      <div class="vip-progress-inner" id="vipBar"></div>
+    </div>
+  </div>
+
+  <!-- Live Feed -->
+  <div class="live-feed" id="feedBox"></div>
+
+  <!-- Exit Button -->
+  <button class="exit-btn" id="exitVaultBtn">Exit Vault</button>
+</div>
+
+<!-- FIREBASE AUTH -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA4bJmDnapnEFlGggYVIoq2lS3QwHHz4hE",
+  authDomain: "grand-golden-vault.firebaseapp.com",
+  projectId: "grand-golden-vault",
+  storageBucket: "grand-golden-vault.firebasestorage.app",
+  messagingSenderId: "969306014666",
+  appId: "1:969306014666:web:228839a8b7f36e9b808533"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+onAuthStateChanged(auth, (user) => {
+  if(!user || !user.emailVerified){
+    window.location.href = "login.html";
+  }
+});
+</script>
+
+<!-- MEMBERS LOGIC -->
+<script type="module" src="members.js"></script>
+
+<!-- THREE.JS & GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r153/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/gsap.min.js"></script>
+<script type="module" src="slots.js"></script>
+
+</body>
+</html>
