@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Golden Vault — Members</title>
+  <link rel="stylesheet" href="../vault/vaultTheme.css">
+  <style>
+    .wrap{max-width:1100px;margin:28px auto;padding:0 16px}
+    .top{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+    .brand h1{margin:0;color:var(--gold);letter-spacing:.08em;font-size:1.1rem;text-transform:uppercase}
+    .brand p{margin:6px 0 0;opacity:.8}
+    .chips{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+    .chip{border:1px solid var(--border-gold);background:rgba(18,12,8,.72);padding:10px 12px;border-radius:12px;min-width:170px;text-align:right}
+    .chip .k{font-size:.75rem;opacity:.7}
+    .chip .v{color:var(--gold);font-weight:700;letter-spacing:.03em}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:18px}
+    .tile{border:1px solid var(--border-gold);background:linear-gradient(180deg,#140e09,#080503);border-radius:14px;padding:18px;box-shadow:0 16px 50px rgba(0,0,0,.55);cursor:pointer;transition:transform .2s ease, box-shadow .2s ease}
+    .tile:hover{transform:translateY(-3px);box-shadow:0 20px 60px rgba(0,0,0,.65)}
+    .tile h2{margin:0 0 8px;color:var(--gold);letter-spacing:.04em;font-size:1rem}
+    .tile p{margin:0;opacity:.82;font-size:.9rem;line-height:1.35}
+    .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+    .btn{border:1px solid var(--border-gold);background:rgba(18,12,8,.6);color:var(--text-light);padding:10px 14px;border-radius:12px;cursor:pointer}
+    .btn:hover{border-color:rgba(212,175,55,.55)}
+    .btn.primary{border-color:var(--gold);background:var(--gold);color:#000;font-weight:800}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <h1>Private Members Index</h1>
+        <p>Institutional access to the Golden Vault floor.</p>
+      </div>
+      <div class="chips">
+        <div class="chip">
+          <div class="k">Balance</div>
+          <div class="v"><span id="bal">0</span> GOLD</div>
+        </div>
+        <div class="chip">
+          <div class="k">Tier</div>
+          <div class="v" id="tier">STANDARD</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="tile" onclick="go('BLACKJACK')">
+        <h2>Blackjack</h2>
+        <p>Formal table play. Vault-controlled balance and ledger entries.</p>
+      </div>
+      <div class="tile" onclick="go('ROULETTE')">
+        <h2>Roulette</h2>
+        <p>Institutional wheel. Clean betting flow. No sideways navigation.</p>
+      </div>
+      <div class="tile" onclick="goSlots()">
+        <h2>Slots</h2>
+        <p>VIP reel floor with tiered access, premium motion, and controlled entry.</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <button class="btn primary" onclick="deposit()">Deposit 1000</button>
+      <button class="btn" onclick="resetVault()">Reset Vault</button>
+      <button class="btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <!-- Firebase (optional but recommended) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
+
+  <script src="../vault/firebaseConfig.js"></script>
+  <script src="../vault/firebaseInit.js"></script>
+  <script src="../vault/firebaseAuth.js"></script>
+
+  <script src="../vault/vaultRouter.js"></script>
+  <script src="../vault/vaultAuth.js"></script>
+  <script src="../vault/vaultEngine.js"></script>
+
+  <script>
+    // Enforce: Firebase if configured, else local session.
+    function enforceAccess(){
+      if (window.GVFirebase && GVFirebase.ready && window.GVAuth) {
+        GVAuth.onAuthStateChanged(function(user){
+          if (!user) { VaultRouter.toLogin(); return; }
+          // Ensure local session exists
+          try {
+            const s = VaultAuth.getSession && VaultAuth.getSession();
+            if (!s) VaultAuth.createSession(user.uid, GVAuth.getTier());
+          } catch(_) {}
+          render();
+        });
+        return;
+      }
+      // local-only
+      VaultAuth.enforce();
+      render();
+    }
+
+    function render(){
+      document.getElementById("bal").textContent = VaultEngine.getBalance();
+      let t = "STANDARD";
+      try {
+        t = (VaultAuth.getSession() && VaultAuth.getSession().tier) || (GVAuth && GVAuth.getTier()) || "STANDARD";
+      } catch(_) {}
+      document.getElementById("tier").textContent = t;
+    }
+
+    function go(game){
+      VaultRouter.toGame(game);
+    }
+    function goSlots(){
+      VaultRouter.toGame("SLOTS");
+    }
+
+    function deposit(){
+      VaultEngine.deposit(1000, "MEMBERS_DEPOSIT");
+      render();
+    }
+    function resetVault(){
+      if (confirm("Reset vault balance and ledger?")) {
+        VaultEngine.resetVault();
+        render();
+      }
+    }
+    async function logout(){
+      if (window.GVAuth && GVFirebase && GVFirebase.ready) {
+        await GVAuth.signOut();
+      } else {
+        VaultAuth.destroy();
+      }
+      VaultRouter.toLogin();
+    }
+
+    enforceAccess();
+  </script>
+</body>
+</html>
