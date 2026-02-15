@@ -1,29 +1,161 @@
-(function () {
-  "use strict";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Golden Vault — Imperial Lotus</title>
 
-  const machine = {
-    id: "IMPERIAL_LOTUS",
-    bet: 100,
-    reels: 5,
+<!-- 🔒 Anti deep-link protection -->
+<script>
+const active = sessionStorage.getItem("activeSlot");
+const entryTime = Number(sessionStorage.getItem("entryTime") || 0);
+const expired = !entryTime || (Date.now() - entryTime) > 10 * 60 * 1000;
 
-    symbols: [
-      { id: "lotus", weight: 2, payout: 20, scatter: true },
-      { id: "dragon", weight: 3, payout: 15, wild: true },
-      { id: "envelope", weight: 5, payout: 10 },
-      { id: "coin", weight: 6, payout: 8 },
-      { id: "lantern", weight: 8, payout: 5 },
-      { id: "jade", weight: 10, payout: 3 }
-    ],
+if (!active || expired) {
+  window.location.replace("/games/slotsLobby.html");
+}
+</script>
 
-    render(result, win) {
-      slotDisplay.innerHTML = result.map(s =>
-        `<div class="reel-symbol">${s.id}</div>`
-      ).join("");
+<link rel="stylesheet" href="/vault/vaultTheme.css">
 
-      resultText.textContent =
-        win ? `LOTUS PAYS ${win} GOLD` : "THE LOTUS WAITS";
-    }
-  };
+<style>
+body{margin:0;font-family:Inter,system-ui,sans-serif}
 
-  window.spinImperialLotus = () => SlotCore.spin(machine);
-})();
+.slot-shell{max-width:1000px;margin:30px auto;padding:0 15px}
+
+.slot-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px;
+}
+
+.slot-title{
+  color:var(--gold);
+  letter-spacing:.08em;
+  font-weight:600;
+}
+
+.metric{
+  border:1px solid var(--border-gold);
+  padding:10px 14px;
+  border-radius:10px;
+  background:#120c08;
+  margin-left:10px;
+}
+
+.metric span{color:var(--gold)}
+
+.reels{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:12px;
+  border:1px solid var(--border-gold);
+  padding:18px;
+  border-radius:14px;
+  background:linear-gradient(#140e09,#080503);
+}
+
+.reel-symbol{
+  border:1px solid rgba(212,175,55,.2);
+  border-radius:10px;
+  padding:18px;
+  text-align:center;
+  font-weight:600;
+  background:#0c0805;
+}
+
+.controls{
+  margin-top:15px;
+  display:flex;
+  gap:10px;
+}
+
+button{
+  border:1px solid var(--gold);
+  background:var(--gold);
+  color:#000;
+  padding:12px 18px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:700;
+}
+
+button.secondary{
+  background:transparent;
+  color:var(--text-light);
+}
+
+.status{
+  margin-top:12px;
+  padding:12px;
+  border:1px solid rgba(212,175,55,.2);
+  border-radius:10px;
+  background:#120c08;
+}
+</style>
+</head>
+
+<body>
+
+<div class="slot-shell">
+
+<div class="slot-header">
+  <h1 class="slot-title">Imperial Lotus</h1>
+
+  <div style="display:flex">
+    <div class="metric">BALANCE: <span id="balance">0</span> GOLD</div>
+    <div class="metric">BET: <span id="bet">100</span> GOLD</div>
+  </div>
+</div>
+
+<div class="reels" id="slotDisplay">
+  <div class="reel-symbol">—</div>
+  <div class="reel-symbol">—</div>
+  <div class="reel-symbol">—</div>
+  <div class="reel-symbol">—</div>
+  <div class="reel-symbol">—</div>
+</div>
+
+<div class="controls">
+  <button onclick="spinImperialLotus()">SPIN</button>
+  <button class="secondary" onclick="backToSlots()">Slots Lobby</button>
+  <button class="secondary" onclick="backToVault()">Vault</button>
+</div>
+
+<div class="status" id="resultText">Awaiting instruction…</div>
+
+</div>
+
+<!-- CORE FILES -->
+<script src="/vault/vaultRouter.js"></script>
+<script src="/vault/vaultAuth.js"></script>
+<script src="/vault/vaultEngine.js"></script>
+<script src="/games/slots/slotCore.js"></script>
+
+<!-- MACHINE -->
+<script src="/games/slots/imperialLotus.js"></script>
+
+<script>
+VaultAuth.enforce();
+
+function renderMetrics(){
+  document.getElementById("balance").textContent =
+    VaultEngine.getBalance();
+}
+
+function backToSlots(){
+  window.location.replace("/games/slotsLobby.html");
+}
+
+function backToVault(){
+  sessionStorage.removeItem("activeSlot");
+  sessionStorage.removeItem("entryTime");
+  VaultRouter.toLobby();
+}
+
+renderMetrics();
+</script>
+
+</body>
+</html>
