@@ -1,6 +1,6 @@
 import VaultShell from "@/components/VaultShell";
 import HeroBackdrop from "@/components/HeroBackdrop";
-import AdvancedSlotMachine from "@/components/AdvancedSlotMachine";
+import VerticalSlotMachine from "@/components/VerticalSlotMachine";
 import fs from "fs";
 import path from "path";
 
@@ -37,6 +37,7 @@ export default async function SlotMachinePage({ params }: { params: Promise<{ id
   cfg.symbolWeights = cfg.symbolWeights || {};
   cfg.wildSymbol = cfg.wildSymbol || 'CROWN';
   cfg.scatterSymbol = cfg.scatterSymbol || 'GEM';
+  
   return (
     <VaultShell>
       <section className="relative px-6 md:px-10 pt-12 pb-16">
@@ -46,7 +47,7 @@ export default async function SlotMachinePage({ params }: { params: Promise<{ id
           <h1 className="mt-4 text-4xl font-semibold text-gold animate-shimmer">{cfg.name}</h1>
           <p className="mt-4 text-white/70 max-w-2xl">
             Premium Vegas-style slot machine with {cfg.paylines || 20} paylines, {cfg.rtp || 96}% RTP, and {cfg.volatility || 'medium'} volatility. 
-            Features wild symbols, scatter bonuses, and progressive jackpots.
+            Features wild symbols, scatter bonuses, progressive jackpots, and Hold & Win mechanics.
           </p>
           
           {/* Machine Stats */}
@@ -70,7 +71,7 @@ export default async function SlotMachinePage({ params }: { params: Promise<{ id
           </div>
 
           <div className="mt-10">
-            <AdvancedSlotMachine cfg={cfg} />
+            <VerticalSlotMachine cfg={cfg} />
           </div>
 
           {/* Paytable */}
@@ -104,9 +105,10 @@ export default async function SlotMachinePage({ params }: { params: Promise<{ id
           {cfg.bonusFeatures && (
             <div className="mt-6 rounded-3xl border border-purple-500/20 bg-purple-950/20 p-6">
               <h2 className="text-2xl font-semibold text-purple-300 mb-4">Bonus Features</h2>
+              
               {cfg.bonusFeatures.freeSpins && (
-                <div className="rounded-2xl border border-purple-500/10 bg-black/20 p-4">
-                  <div className="text-lg font-semibold text-purple-300">Free Spins</div>
+                <div className="mb-4 rounded-2xl border border-purple-500/10 bg-black/20 p-4">
+                  <div className="text-lg font-semibold text-purple-300">🎰 Free Spins</div>
                   <p className="mt-2 text-sm text-purple-200/70">
                     Land {cfg.bonusFeatures.freeSpins.minScatters}+ {cfg.bonusFeatures.freeSpins.triggerSymbol} symbols anywhere to trigger free spins!
                   </p>
@@ -119,8 +121,47 @@ export default async function SlotMachinePage({ params }: { params: Promise<{ id
                   </div>
                 </div>
               )}
+
+              {cfg.bonusFeatures.holdAndWin && (
+                <div className="rounded-2xl border border-purple-500/10 bg-black/20 p-4">
+                  <div className="text-lg font-semibold text-purple-300">🎯 Hold & Win</div>
+                  <p className="mt-2 text-sm text-purple-200/70">
+                    Land {cfg.bonusFeatures.holdAndWin.minSymbols}+ {cfg.bonusFeatures.holdAndWin.triggerSymbol} symbols to trigger Hold & Win feature with {cfg.bonusFeatures.holdAndWin.respins} respins!
+                  </p>
+                  <p className="mt-2 text-xs text-purple-300/60">
+                    During Hold & Win, trigger symbols are held in place while other positions respin. Landing new trigger symbols resets the respin counter.
+                  </p>
+                </div>
+              )}
             </div>
           )}
+
+          {/* How to Play */}
+          <div className="mt-6 rounded-3xl border border-cyan-500/20 bg-cyan-950/10 p-6">
+            <h2 className="text-2xl font-semibold text-cyan-300 mb-4">How to Play</h2>
+            <div className="space-y-3 text-sm text-cyan-200/70">
+              <div className="flex items-start gap-3">
+                <span className="text-cyan-400 font-bold">1.</span>
+                <p>Set your bet amount using the + and - buttons</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-cyan-400 font-bold">2.</span>
+                <p>Click SPIN to start - watch symbols scroll vertically from top to bottom</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-cyan-400 font-bold">3.</span>
+                <p>Use HOLD buttons above reels to lock specific reels for the next spin</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-cyan-400 font-bold">4.</span>
+                <p>Match symbols on paylines to win - check the paytable below for winning combinations</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-cyan-400 font-bold">5.</span>
+                <p>Trigger bonus features for massive wins and free spins!</p>
+              </div>
+            </div>
+          </div>
 
           {/* Disclaimer */}
           <div className="mt-8 rounded-2xl border border-red-500/20 bg-red-950/10 p-4 text-xs text-red-300/70">
