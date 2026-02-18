@@ -1,0 +1,9 @@
+.winFlash{
+  animation: winFlash 1.2s ease;
+}
+
+@keyframes winFlash{
+  0%{filter:brightness(1)}
+  40%{filter:brightness(2)}
+  100%{filter:brightness(1)}
+}
