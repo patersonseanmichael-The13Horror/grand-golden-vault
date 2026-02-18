@@ -1,0 +1,23 @@
+.tableWrap{
+  position:relative;
+  border-radius:22px;
+  overflow:hidden;
+  border:1px solid rgba(212,175,55,0.22);
+  background:
+    radial-gradient(circle at 30% 15%, rgba(255,255,255,0.08), transparent 40%),
+    radial-gradient(circle at 70% 0%, rgba(212,175,55,0.10), transparent 42%),
+    linear-gradient(180deg, rgba(0,0,0,0.38), rgba(0,0,0,0.20));
+  box-shadow: 0 26px 80px rgba(0,0,0,0.70);
+  padding:18px;
+  min-height:420px;
+}
+.felt{
+  border-radius:18px;
+  padding:16px;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,0.08), transparent 45%),
+    linear-gradient(180deg, rgba(10,40,24,0.95), rgba(7,22,15,0.92));
+  border:1px solid rgba(212,175,55,0.16);
+}
+.tableHeader{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.tableTitle{font-weight:900;letter-spacing:0.6px}
