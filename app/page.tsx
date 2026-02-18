@@ -17,8 +17,8 @@ export default function LandingPage() {
         <div className="max-w-5xl mx-auto">
           <div className="text-xs tracking-[0.35em] uppercase text-white/55">Private Access • Members Only</div>
           <h1 className="mt-4 text-4xl md:text-6xl leading-tight font-semibold">
-            The Velvet Vault
-            <span className="block text-white/70 font-light mt-2">Digital E-Lounge</span>
+            <span className="text-gold animate-shimmer">The Velvet Vault</span>
+            <span className="block text-white/70 font-light mt-2">Premium VIP Gaming Lounge</span>
           </h1>
 
           <p className="mt-8 max-w-2xl text-lg md:text-xl text-white/70 leading-relaxed">
@@ -32,17 +32,17 @@ export default function LandingPage() {
           </div>
 
           <div className="mt-12 grid md:grid-cols-3 gap-4">
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-vv-soft">
-              <div className="text-xs tracking-[0.25em] uppercase text-white/60">Heritage Standard</div>
-              <div className="mt-3 text-white/70 leading-relaxed">Designed for restraint, precision, and quiet prestige—never spectacle.</div>
+            <div className="rounded-3xl border border-amber-500/20 bg-gradient-to-br from-amber-900/10 to-purple-900/10 p-6 shadow-vv-glow backdrop-blur-md hover:shadow-vv-glow transition-all duration-300">
+              <div className="text-xs tracking-[0.25em] uppercase text-amber-500/80">🎰 Premium Slots</div>
+              <div className="mt-3 text-white/80 leading-relaxed">25 exclusive machines with Vegas-style mechanics, RTP controls, and progressive jackpots.</div>
             </div>
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-vv-soft">
-              <div className="text-xs tracking-[0.25em] uppercase text-white/60">Discreet Progression</div>
-              <div className="mt-3 text-white/70 leading-relaxed">Tiered recognition and refined privileges—earned, not advertised.</div>
+            <div className="rounded-3xl border border-amber-500/20 bg-gradient-to-br from-amber-900/10 to-purple-900/10 p-6 shadow-vv-glow backdrop-blur-md hover:shadow-vv-glow transition-all duration-300">
+              <div className="text-xs tracking-[0.25em] uppercase text-amber-500/80">💎 VIP Tiers</div>
+              <div className="mt-3 text-white/80 leading-relaxed">Exclusive membership levels with enhanced rewards, bonuses, and personalized service.</div>
             </div>
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-vv-soft">
-              <div className="text-xs tracking-[0.25em] uppercase text-white/60">Controlled Access</div>
-              <div className="mt-3 text-white/70 leading-relaxed">Membership environments with defined conduct, protections, and boundaries.</div>
+            <div className="rounded-3xl border border-amber-500/20 bg-gradient-to-br from-amber-900/10 to-purple-900/10 p-6 shadow-vv-glow backdrop-blur-md hover:shadow-vv-glow transition-all duration-300">
+              <div className="text-xs tracking-[0.25em] uppercase text-amber-500/80">🔒 Secure Gaming</div>
+              <div className="mt-3 text-white/80 leading-relaxed">Bank-grade security, responsible gambling tools, and certified fair play systems.</div>
             </div>
           </div>
         </div>
