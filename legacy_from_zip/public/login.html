@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login — Grand Golden Vault</title>
+  <link rel="stylesheet" href="css/vault.base.css">
+  <link rel="stylesheet" href="css/vault.cinematic.css">
+  <link rel="stylesheet" href="css/bot.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo">GRAND GOLDEN VAULT</div>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="members.html">Members</a>
+      <a href="casino.html">Casino</a>
+      <a href="slots.html">Slots</a>
+      <a href="blackjack.html">Blackjack</a>
+      <a href="roulette.html">Roulette</a>
+      <a href="poker.html">Poker</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+<section class="card" style="max-width:520px">
+  <div class="h1">Member Login</div>
+  <p class="sub">Pre‑launch access. Use Firebase Auth when enabled.</p>
+  <div class="glowline"></div>
+  <form id="loginForm" class="row" style="flex-direction:column">
+    <input id="email" class="botInput" placeholder="Email" />
+    <input id="password" class="botInput" placeholder="Password" type="password" />
+    <button class="btn" type="submit">Login</button>
+    <a class="muted" href="signup.html">Create an account</a>
+  </form>
+  <p id="msg" class="muted" style="margin-top:12px"></p>
+</section>
+
+  </main>
+
+  <button class="btn botOpen" id="botOpen" aria-label="Open Vault Dealer">VD</button>
+  <section class="botPanel" id="botPanel">
+    <div class="botHeader">
+      <b>Vault Dealer</b>
+      <span class="muted">Institutional Assistant</span>
+    </div>
+    <div class="botLog" id="botLog">
+      <p class="ai">Vault Dealer: Discretion confirmed. Ask for guidance, rules, or navigation.</p>
+    </div>
+    <form class="botForm" id="botForm">
+      <input class="botInput" id="botInput" placeholder="Speak discreetly…" autocomplete="off" />
+      <button class="btn" type="submit">Send</button>
+    </form>
+  </section>
+
+<script type="module">
+  import { initBot } from "./js/bot/bot.ui.js";
+  import { CONFIG } from "./js/core/config.js";
+  initBot();
+  const msg = document.getElementById("msg");
+  document.getElementById("loginForm").addEventListener("submit", async (e)=>{
+    e.preventDefault();
+    msg.textContent = "";
+    if(!CONFIG.useFirebase){
+      msg.textContent = "Firebase disabled (CONFIG.useFirebase=false). Redirecting to Members…";
+      setTimeout(()=> window.location.href="members.html", 600);
+      return;
+    }
+    await import("./js/firebase/firebase.init.js");
+    const { login } = await import("./js/firebase/auth.js");
+    try{
+      await login(document.getElementById("email").value, document.getElementById("password").value);
+      window.location.href = "members.html";
+    }catch{
+      msg.textContent = "Login failed. Check credentials or enable email verification.";
+    }
+  });
+</script>
+
+</body>
+</html>
