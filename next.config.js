@@ -4,8 +4,6 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  basePath: '/grand-golden-vault',
-  assetPrefix: '/grand-golden-vault/',
 };
 
 export default nextConfig;
