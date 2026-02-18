@@ -1,0 +1,132 @@
+body.fxTick .btn{filter:brightness(1.08)}
+.shake{animation:shake .35s ease}
+@keyframes shake{
+  0%{transform:translateX(0)}
+  20%{transform:translateX(-6px)}
+  40%{transform:translateX(5px)}
+  60%{transform:translateX(-4px)}
+  80%{transform:translateX(3px)}
+  100%{transform:translateX(0)}
+}
+body.pulseGold::before{
+  content:"";
+  position:fixed; inset:-40%;
+  background:radial-gradient(circle at center, rgba(212,175,55,0.18), transparent 55%);
+  animation:pulse 0.8s ease;
+  pointer-events:none;
+  z-index:5;
+}
+@keyframes pulse{
+  from{transform:scale(0.95); opacity:0.0}
+  30%{opacity:1}
+  to{transform:scale(1.08); opacity:0}
+}
+.winFlash{ animation: winFlash 1.2s ease; }
+@keyframes winFlash{
+  0%{filter:brightness(1)}
+  40%{filter:brightness(2)}
+  100%{filter:brightness(1)}
+}
+
+
+/* ------------------------------
+   HERO (Homepage)
+------------------------------ */
+.hero{
+  position:relative;
+  min-height: calc(100vh - 84px);
+  padding: 120px 20px 80px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+.heroMedia{
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(212,175,55,0.18), transparent 52%),
+    radial-gradient(circle at 70% 0%, rgba(255,255,255,0.08), transparent 40%),
+    linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.70)),
+    url("../assets/images/taurus-hero.png") center/cover no-repeat;
+  filter:saturate(1.1) contrast(1.05);
+  opacity:0.9;
+}
+.heroMedia::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(0,0,0,0.10), rgba(0,0,0,0.78));
+  pointer-events:none;
+}
+.heroContent{
+  position:relative;
+  max-width: 920px;
+}
+.heroKicker{
+  display:inline-flex;
+  gap:10px;
+  align-items:center;
+  justify-content:center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border:1px solid rgba(212,175,55,0.25);
+  background: rgba(0,0,0,0.22);
+  letter-spacing: 0.12em;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+}
+.heroTitle{
+  margin: 18px 0 10px;
+  font-family: Cinzel, serif;
+  letter-spacing: 0.08em;
+  font-weight: 800;
+  font-size: clamp(2.1rem, 5vw, 3.7rem);
+  text-shadow: 0 14px 40px rgba(0,0,0,0.65);
+}
+.heroSub{
+  margin: 0 auto;
+  max-width: 52ch;
+  font-size: 1.04rem;
+  line-height: 1.55;
+  color: rgba(238,231,214,0.92);
+}
+.heroActions{
+  margin-top: 22px;
+  display:flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content:center;
+}
+@media (max-width: 520px){
+  .hero{ padding-top: 96px; }
+  .heroActions .btn{ width: 100%; justify-content:center; }
+}
+
+
+/* ------------------------------
+   BANNERS
+------------------------------ */
+.banner{
+  position:relative;
+  margin: 18px auto 0;
+  border-top:1px solid rgba(212,175,55,0.18);
+  border-bottom:1px solid rgba(212,175,55,0.18);
+  overflow:hidden;
+}
+.bannerMedia{
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0.20), rgba(0,0,0,0.78)),
+    url("../assets/images/members.jpg") center/cover no-repeat;
+  filter: saturate(1.05) contrast(1.05);
+  opacity:0.85;
+}
+.bannerContent{
+  position:relative;
+  padding: 34px 0;
+}
+.banner .h1{ margin: 10px 0 6px; }
+.banner .sub{ max-width: 70ch; }
