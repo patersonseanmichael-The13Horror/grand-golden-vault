@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Grand Golden Vault — Home</title>
+  <link rel="stylesheet" href="css/vault.base.css">
+  <link rel="stylesheet" href="css/vault.cinematic.css">
+  <link rel="stylesheet" href="css/bot.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo">GRAND GOLDEN VAULT</div>
+    <div class="taurusIntro">
+  THE ANCIENT TAURUS WATCHES YOUR FORTUNE
+</div>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="members.html">Members</a>
+      <a href="casino.html">Casino</a>
+      <a href="slots.html">Slots</a>
+      <a href="blackjack.html">Blackjack</a>
+      <a href="roulette.html">Roulette</a>
+      <a href="poker.html">Poker</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <section class="hero" id="hero">
+  <div class="heroMedia" id="heroMedia" aria-hidden="true"></div>
+
+  <div class="heroContent">
+    <div class="heroKicker">INSTITUTIONAL • DISCREET • $AUD</div>
+    <h1 class="heroTitle">GRAND GOLDEN VAULT</h1>
+    <p class="heroSub">
+      Wealth. Power. Discretion. Opportunity. Led by the Ancient Taurus of mystic fortune.
+    </p>
+
+    <div class="heroActions">
+      <a class="btn" href="signup.html">Apply for Membership</a>
+      <a class="btn" href="login.html">Member Login</a>
+      <a class="btn" href="casino.html">Enter Casino Floor</a>
+    </div>
+  </div>
+</section>
+<section class="card">
+  <div class="h1">Institutional Pre‑Launch Trial</div>
+  <p class="sub">Wealth. Power. Discretion. Opportunity. Currency display is <b>$AUD</b>. Entertainment only.</p>
+  <div class="glowline"></div>
+  <div class="row">
+    <a class="btn" href="signup.html">Apply for Membership</a>
+    <a class="btn" href="login.html">Member Login</a>
+    <a class="btn" href="casino.html">Enter Casino Floor</a>
+  </div>
+</section>
+
+  </main>
+
+  <button class="btn botOpen" id="botOpen" aria-label="Open Vault Dealer">VD</button>
+  <section class="botPanel" id="botPanel">
+    <div class="botHeader">
+      <b>Vault Dealer</b>
+      <span class="muted">Institutional Assistant</span>
+    </div>
+    <div class="botLog" id="botLog">
+      <p class="ai">Vault Dealer: Discretion confirmed. Ask for guidance, rules, or navigation.</p>
+    </div>
+    <form class="botForm" id="botForm">
+      <input class="botInput" id="botInput" placeholder="Speak discreetly…" autocomplete="off" />
+      <button class="btn" type="submit">Send</button>
+    </form>
+  </section>
+
+<script type="module">
+  import { initBot } from "./js/bot/bot.ui.js";
+  import { Security } from "./js/core/security.js";
+
+  Security.sessionCheck();
+  Security.touch();
+
+  // keep session alive while user interacts
+  ["click","keydown","mousemove","touchstart"].forEach(evt =>
+    window.addEventListener(evt, Security.touch, { passive:true })
+  );
+
+  initBot();
+</script>
+</body>
+</html>
