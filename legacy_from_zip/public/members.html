@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Members — Grand Golden Vault</title>
+  <link rel="stylesheet" href="css/vault.base.css">
+  <link rel="stylesheet" href="css/vault.cinematic.css">
+  <link rel="stylesheet" href="css/bot.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo">GRAND GOLDEN VAULT</div>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="members.html">Members</a>
+      <a href="casino.html">Casino</a>
+      <a href="slots.html">Slots</a>
+      <a href="blackjack.html">Blackjack</a>
+      <a href="roulette.html">Roulette</a>
+      <a href="poker.html">Poker</a>
+    </nav>
+  </header>
+
+  <section class="banner" id="membersBanner" aria-label="Members Banner">
+    <div class="bannerMedia" aria-hidden="true"></div>
+    <div class="bannerContent wrap">
+      <div class="pill">Members Area</div>
+      <div class="h1">Welcome back to the Vault</div>
+      <div class="sub">Your wallet, ledger, tiers, and casino access — secured behind the Taurus seal.</div>
+    </div>
+  </section>
+
+
+  <main class="wrap">
+<section class="card">
+  <div class="h1">Members Ledger</div>
+  <p class="sub">Institutional wallet + activity ledger. Entertainment currency in <b>$AUD</b>.</p>
+  <div class="glowline"></div>
+  <div class="row">
+    <div class="pill"><span class="muted">Vault ID</span> <b id="vaultId"></b></div>
+    <div class="pill"><span class="muted">Member</span> <b id="vaultName"></b></div>
+    <div class="pill"><span class="muted">Tier</span> <b id="vaultTier"></b></div>
+    <div class="pill"><span class="muted">Balance</span> <b class="value" id="vaultBalance"></b></div>
+  </div>
+  <div class="glowline"></div>
+  <div id="ledger" class="row" style="flex-direction:column"></div>
+</section>
+
+  </main>
+
+  <button class="btn botOpen" id="botOpen" aria-label="Open Vault Dealer">VD</button>
+  <section class="botPanel" id="botPanel">
+    <div class="botHeader">
+      <b>Vault Dealer</b>
+      <span class="muted">Institutional Assistant</span>
+    </div>
+    <div class="botLog" id="botLog">
+      <p class="ai">Vault Dealer: Discretion confirmed. Ask for guidance, rules, or navigation.</p>
+    </div>
+    <form class="botForm" id="botForm">
+      <input class="botInput" id="botInput" placeholder="Speak discreetly…" autocomplete="off" />
+      <button class="btn" type="submit">Send</button>
+    </form>
+  </section>
+
+<script type="module">
+  import { initBot } from "./js/bot/bot.ui.js";
+  import { initSlots } from "./js/games/slots.ui.js";
+  import { Security } from "./js/core/security.js";
+
+  Security.sessionCheck();
+  Security.touch();
+
+  // keep session alive while user interacts
+  ["click","keydown","mousemove","touchstart"].forEach(evt =>
+    window.addEventListener(evt, Security.touch, { passive:true })
+  );
+
+  initBot();
+  initSlots();
+</script>
+
+</body>
+</html>
