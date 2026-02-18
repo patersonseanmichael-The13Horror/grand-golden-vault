@@ -1,0 +1,43 @@
+.botOpen{
+  position:fixed; right:18px; bottom:18px; z-index:30;
+  width:54px; height:54px; border-radius:18px;
+  display:flex; align-items:center; justify-content:center;
+}
+.botPanel{
+  position:fixed; right:18px; bottom:82px; z-index:30;
+  width:min(380px, calc(100vw - 36px));
+  max-height:60vh;
+  display:none;
+  flex-direction:column;
+  border-radius:18px;
+  overflow:hidden;
+  border:1px solid rgba(212,175,55,0.25);
+  background:rgba(10,6,3,0.92);
+  backdrop-filter: blur(10px);
+  box-shadow:0 24px 90px rgba(0,0,0,0.75);
+}
+.botPanel.open{display:flex}
+.botHeader{
+  padding:12px 14px;
+  border-bottom:1px solid rgba(212,175,55,0.18);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.botHeader b{letter-spacing:0.4px}
+.botLog{padding:12px 14px;overflow:auto;display:flex;flex-direction:column;gap:10px}
+.botLog p{
+  margin:0;padding:10px 12px;border-radius:14px;
+  border:1px solid rgba(212,175,55,0.12);
+  background:rgba(0,0,0,0.25);
+  font-size:13px;line-height:1.35;
+}
+.botLog p.me{border-color: rgba(212,175,55,0.20); background: rgba(212,175,55,0.10)}
+.botForm{display:flex;gap:10px;padding:12px 14px;border-top:1px solid rgba(212,175,55,0.18)}
+.botInput{
+  flex:1;border-radius:14px;border:1px solid rgba(212,175,55,0.20);
+  background:rgba(0,0,0,0.35);color:var(--text);padding:10px 12px;outline:none;
+}
+
+
+/* Make sure the closed panel never eats clicks */
+#botPanel{ pointer-events: none; }
+#botPanel.open{ pointer-events: auto; }
