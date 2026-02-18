@@ -42,7 +42,7 @@ export default function LandingPage() {
             </div>
             <div className="rounded-3xl border border-amber-500/20 bg-gradient-to-br from-amber-900/10 to-purple-900/10 p-6 shadow-vv-glow backdrop-blur-md hover:shadow-vv-glow transition-all duration-300">
               <div className="text-xs tracking-[0.25em] uppercase text-amber-500/80">🔒 Secure Gaming</div>
-              <div className="mt-3 text-white/80 leading-relaxed">Bank-grade security, responsible gambling tools, and certified fair play systems.</div>
+              <div className="mt-3 text-white/80 leading-relaxed">Bank-grade security, responsible gaming tools, and certified fair play systems.</div>
             </div>
           </div>
         </div>

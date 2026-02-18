@@ -167,7 +167,7 @@ export default async function SlotMachinePage({ params }: { params: Promise<{ id
           <div className="mt-8 rounded-2xl border border-red-500/20 bg-red-950/10 p-4 text-xs text-red-300/70">
             <strong>Demo Mode:</strong> This is a demonstration using client-side RNG for visual purposes only. 
             For real-money wagering, all outcomes must be validated server-side with certified RNG, proper licensing, 
-            age verification, and responsible gambling controls.
+            age verification, and responsible gaming controls.
           </div>
         </div>
       </section>

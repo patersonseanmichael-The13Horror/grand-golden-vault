@@ -85,7 +85,7 @@ This repository is a **visual and user experience foundation only**. The slot ma
 
 -   Server-side RNG with tamper-proof validation and logs.
 -   Jurisdiction and age verification.
--   Responsible gambling controls (e.g., limits, cooldowns, self-exclusion).
+-   Responsible gaming controls (e.g., limits, cooldowns, self-exclusion).
 -   Audited and secure deposit and withdrawal logic.
 
 ---
