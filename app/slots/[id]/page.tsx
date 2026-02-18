@@ -4,8 +4,19 @@ import AdvancedSlotMachine from "@/components/AdvancedSlotMachine";
 import fs from "fs";
 import path from "path";
 
-export default function SlotMachinePage({ params }: { params: { id: string } }) {
-  const file = path.join(process.cwd(), "slots", `slot_${params.id}.json`);
+export async function generateStaticParams() {
+  const slotsDir = path.join(process.cwd(), "slots");
+  const files = fs.readdirSync(slotsDir);
+  return files
+    .filter(file => file.startsWith('slot_') && file.endsWith('.json'))
+    .map(file => ({
+      id: file.replace('slot_', '').replace('.json', '')
+    }));
+}
+
+export default async function SlotMachinePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const file = path.join(process.cwd(), "slots", `slot_${id}.json`);
   if (!fs.existsSync(file)) {
     return (
       <VaultShell>
@@ -19,6 +30,13 @@ export default function SlotMachinePage({ params }: { params: { id: string } }) 
   }
 
   const cfg = JSON.parse(fs.readFileSync(file, "utf-8"));
+  // Add defaults for missing properties
+  cfg.paylines = cfg.paylines || 20;
+  cfg.rtp = cfg.rtp || 96;
+  cfg.volatility = cfg.volatility || 'medium';
+  cfg.symbolWeights = cfg.symbolWeights || {};
+  cfg.wildSymbol = cfg.wildSymbol || 'CROWN';
+  cfg.scatterSymbol = cfg.scatterSymbol || 'GEM';
   return (
     <VaultShell>
       <section className="relative px-6 md:px-10 pt-12 pb-16">
@@ -27,7 +45,7 @@ export default function SlotMachinePage({ params }: { params: { id: string } }) 
           <div className="text-xs tracking-[0.35em] uppercase text-white/55">Machine {cfg.id}</div>
           <h1 className="mt-4 text-4xl font-semibold text-gold animate-shimmer">{cfg.name}</h1>
           <p className="mt-4 text-white/70 max-w-2xl">
-            Premium Vegas-style slot machine with {cfg.paylines} paylines, {cfg.rtp}% RTP, and {cfg.volatility} volatility. 
+            Premium Vegas-style slot machine with {cfg.paylines || 20} paylines, {cfg.rtp || 96}% RTP, and {cfg.volatility || 'medium'} volatility. 
             Features wild symbols, scatter bonuses, and progressive jackpots.
           </p>
           
