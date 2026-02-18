@@ -8,6 +8,7 @@ import VipTiers from "@/components/VipTiers";
 import GameGallery from "@/components/GameGallery";
 import LuxeButton from "@/components/LuxeButton";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import WelcomeBonusModal from "@/components/WelcomeBonusModal";
 import { useAuth } from "@/lib/AuthContext";
 
 export default function Members() {
@@ -19,6 +20,7 @@ export default function Members() {
 
   return (
     <ProtectedRoute>
+      <WelcomeBonusModal />
       <VaultShell 
         rightAction={
           <div className="flex gap-3">
