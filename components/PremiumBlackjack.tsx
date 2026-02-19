@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useSharedWallet } from "@/lib/useSharedWallet";
 
 type Card = {
   suit: string;
@@ -39,7 +40,7 @@ const handValue = (cards: Card[]) => {
 };
 
 export default function PremiumBlackjack() {
-  const [balance, setBalance] = useState(10000);
+  const { balance, credit, debit } = useSharedWallet();
   const [bet, setBet] = useState(100);
   const [shoe, setShoe] = useState<Card[]>([]);
   const [playerCards, setPlayerCards] = useState<Card[]>([]);
@@ -63,7 +64,7 @@ export default function PremiumBlackjack() {
 
     setStage("dealing");
     setMessage("Valentino is concentrating... cards incoming.");
-    setBalance((prev) => prev - bet);
+    if (!debit(bet)) return;
     setRevealHoleCard(false);
 
     await new Promise((r) => setTimeout(r, 250));
@@ -98,12 +99,12 @@ export default function PremiumBlackjack() {
     if (p > 21) {
       setMessage("Bust. Valentino takes the hand.");
     } else if (d > 21 || p > d) {
-      const blackjackBonus = p === 21 && pCards.length === 2 ? 1.5 : 1;
+      const blackjackBonus = p === 21 && pCards.length === 2 ? 1.2 : 1;
       const win = Math.round(currentBet * (1 + blackjackBonus));
-      setBalance((prev) => prev + win);
+      credit(win);
       setMessage(`You win ${win.toLocaleString()} AUD against Valentino.`);
     } else if (p === d) {
-      setBalance((prev) => prev + currentBet);
+      credit(currentBet);
       setMessage("Push. Wager returned.");
     } else {
       setMessage("Valentino wins this round.");
@@ -136,7 +137,7 @@ export default function PremiumBlackjack() {
     setRevealHoleCard(true);
     setMessage("Valentino reveals the hole card and draws...");
 
-    while (handValue(dealer) < 17 && deck.length > 0) {
+    while (handValue(dealer) < 18 && deck.length > 0) {
       await new Promise((r) => setTimeout(r, 350));
       const [card, next] = draw(deck);
       dealer = [...dealer, card];
@@ -150,7 +151,7 @@ export default function PremiumBlackjack() {
 
   const doubleDown = async () => {
     if (stage !== "playing" || playerCards.length !== 2 || balance < bet || shoe.length === 0) return;
-    setBalance((prev) => prev - bet);
+    if (!debit(bet)) return;
     const [card, next] = draw(shoe);
     const nextPlayer = [...playerCards, card];
     setPlayerCards(nextPlayer);
@@ -190,7 +191,7 @@ export default function PremiumBlackjack() {
       <div className="mb-5 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/35 p-4">
         <div>
           <p className="text-xs uppercase tracking-[0.25em] text-amber-300/70">Balance</p>
-          <p className="text-2xl font-bold text-amber-300">{balance.toLocaleString()} AUD</p>
+          <p className="text-2xl font-bold text-amber-300">{balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} AUD</p>
         </div>
         <div className="rounded-2xl border border-purple-400/30 bg-purple-950/20 px-4 py-3">
           <p className="text-xs uppercase tracking-[0.25em] text-purple-200/70">AI Dealer</p>
@@ -207,7 +208,7 @@ export default function PremiumBlackjack() {
         </div>
         <div className="mb-3 flex items-center gap-3">
           <div className={`h-12 w-12 rounded-full bg-gradient-to-br from-amber-300 to-amber-600 ${stage === "dealer" ? "animate-bounce" : "animate-pulse"}`} />
-          <p className="text-sm text-white/80">Valentino monitors every hand with high concentration.</p>
+          <p className="text-sm text-white/80">Valentino monitors every hand with high concentration. VIP rail lights animate during active dealing.</p>
         </div>
         <div className="flex gap-3">
           {dealerCards.map((c, i) => renderCard(c, i, !revealHoleCard && i === 1))}

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSharedWallet } from "@/lib/useSharedWallet";
 
 type Card = {
   suit: string;
@@ -22,8 +23,9 @@ const SUITS = ["♠", "♥", "♦", "♣"];
 const RANKS = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"];
 
 export default function PremiumPoker() {
+  const { balance, setExactBalance } = useSharedWallet();
   const [players, setPlayers] = useState<Player[]>([
-    { id: 0, name: "You", chips: 10000, cards: [], bet: 0, folded: false, isAI: false },
+    { id: 0, name: "You", chips: balance, cards: [], bet: 0, folded: false, isAI: false },
     { id: 1, name: "Player 2", chips: 10000, cards: [], bet: 0, folded: false, isAI: true },
     { id: 2, name: "Player 3", chips: 10000, cards: [], bet: 0, folded: false, isAI: true },
     { id: 3, name: "Player 4", chips: 10000, cards: [], bet: 0, folded: false, isAI: true },
@@ -37,6 +39,16 @@ export default function PremiumPoker() {
   const [message, setMessage] = useState("");
   const [raiseAmount, setRaiseAmount] = useState(100);
 
+
+
+  useEffect(() => {
+    setPlayers((prev) => prev.map((p) => (p.id === 0 ? { ...p, chips: balance } : p)));
+  }, [balance]);
+
+  useEffect(() => {
+    const you = players.find((p) => p.id === 0);
+    if (you) setExactBalance(you.chips);
+  }, [players, setExactBalance]);
   const createDeck = (): Card[] => {
     const newDeck: Card[] = [];
     for (const suit of SUITS) {
@@ -54,12 +66,6 @@ export default function PremiumPoker() {
   const startNewHand = () => {
     let newDeck = createDeck();
     const newPlayers: Player[] = players.map((p) => ({ ...p, cards: [], bet: 0, folded: false }));
-    const newPlayers: Player[] = players.map((p) => ({
-      ...p,
-      cards: [] as Card[],
-      bet: 0,
-      folded: false,
-    }));
     
     // Deal 2 cards to each player
     for (let i = 0; i < 2; i++) {
@@ -276,6 +282,7 @@ export default function PremiumPoker() {
         <div className="inline-block rounded-2xl border-2 border-amber-500/40 bg-gradient-to-br from-amber-950/60 to-yellow-900/60 px-8 py-4 shadow-lg shadow-amber-500/30">
           <div className="text-xs uppercase tracking-wider text-amber-500/60">Pot</div>
           <div className="text-4xl font-bold text-amber-400">${pot.toLocaleString()}</div>
+          <div className="text-xs text-white/70 mt-1">Shared Wallet: ${balance.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
         </div>
         {message && (
           <div className="mt-4 text-lg text-white font-semibold">{message}</div>

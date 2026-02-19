@@ -1,24 +1,21 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { getActiveRtp } from "@/lib/rtpPhase";
 import { performSpin, VEGAS_PAYLINES, type SpinResult, type SlotConfig } from "@/engine/advancedSlotEngine";
 import LuxeButton from "@/components/LuxeButton";
 import Image from "next/image";
-import { useAuth } from "@/lib/AuthContext";
+import { useSharedWallet } from "@/lib/useSharedWallet";
 
 interface SlotMachineProps {
   cfg: any;
 }
 
-const STARTING_BALANCE = 10000;
 
 export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
-  const { user } = useAuth();
-  const storageKey = useMemo(() => `vv.wallet.${user?.uid ?? "guest"}`, [user?.uid]);
+  const { balance, credit, debit } = useSharedWallet();
 
   const [bet, setBet] = useState<number>(cfg.minBet);
-  const [balance, setBalance] = useState<number>(STARTING_BALANCE);
   const [spinning, setSpinning] = useState(false);
   const [spinResult, setSpinResult] = useState<SpinResult | null>(null);
   const [animatingWin, setAnimatingWin] = useState(false);
@@ -26,19 +23,6 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
   const [holdAndWinActive, setHoldAndWinActive] = useState(false);
   const [holdAndWinPositions, setHoldAndWinPositions] = useState<boolean[][]>([]);
 
-  useEffect(() => {
-    const saved = window.localStorage.getItem(storageKey);
-    if (!saved) {
-      setBalance(STARTING_BALANCE);
-      return;
-    }
-    const parsed = Number(saved);
-    if (Number.isFinite(parsed) && parsed >= 0) setBalance(parsed);
-  }, [storageKey]);
-
-  useEffect(() => {
-    window.localStorage.setItem(storageKey, String(balance));
-  }, [balance, storageKey]);
 
   const activeRtp = getActiveRtp(cfg.rtp || 96, cfg.rtpProfile);
 
@@ -91,7 +75,10 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
     setAnimatingWin(false);
 
     if (!isFreeSpin) {
-      setBalance((prev) => prev - bet);
+      if (!debit(bet)) {
+        setSpinning(false);
+        return;
+      }
     } else {
       setFreeSpinsRemaining((prev) => Math.max(0, prev - 1));
     }
@@ -103,7 +90,7 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
     setSpinning(false);
 
     if (result.totalWin > 0) {
-      setBalance((prev) => prev + result.totalWin);
+      credit(result.totalWin);
       setAnimatingWin(true);
       setTimeout(() => setAnimatingWin(false), 3000);
     }
@@ -129,12 +116,12 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
     : [0, 1, 2].map(() => [0, 1, 2, 3, 4].map(() => cfg.symbols[0]));
 
   return (
-    <div className="rounded-3xl border-2 border-amber-500/30 bg-gradient-to-b from-black/60 via-black/40 to-black/60 p-8 shadow-2xl backdrop-blur-md">
+    <div className="rounded-3xl border-2 border-amber-500/30 bg-gradient-to-b from-black/70 via-[#120d22]/80 to-black/70 p-8 shadow-2xl shadow-amber-700/20 backdrop-blur-md">
       <div className="mb-6 rounded-2xl border border-amber-500/20 bg-black/40 p-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
           <div>
             <div className="text-xs uppercase tracking-wider text-amber-500/60">Balance</div>
-            <div className="mt-1 text-2xl font-bold text-amber-400">{balance.toLocaleString()} AUD</div>
+            <div className="mt-1 text-2xl font-bold text-amber-400">{balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} AUD</div>
           </div>
           <div>
             <div className="text-xs uppercase tracking-wider text-amber-500/60">Bet</div>
@@ -153,14 +140,14 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
         </div>
       </div>
 
-      <div className="mb-4 rounded-2xl border border-white/10 bg-black/25 p-4">
+      <div className="mb-4 rounded-2xl border border-white/10 bg-black/25 p-4 ring-1 ring-amber-400/20">
         <div className="grid grid-cols-5 gap-3">
           {[0, 1, 2, 3, 4].map((colIdx) => (
             <div key={colIdx} className="space-y-3">
               {[0, 1, 2].map((rowIdx) => (
-                <div key={`${rowIdx}-${colIdx}`} className={`relative aspect-square overflow-hidden rounded-2xl border-2 ${holdAndWinPositions[colIdx]?.[rowIdx] ? "border-purple-400 bg-purple-500/20" : "border-amber-500/30 bg-gradient-to-br from-purple-950/30 to-black"}`}>
+                <div key={`${rowIdx}-${colIdx}`} className={`group relative aspect-square overflow-hidden rounded-2xl border-2 transition-all duration-300 ${holdAndWinPositions[colIdx]?.[rowIdx] ? "border-purple-400 bg-purple-500/25 shadow-[0_0_22px_rgba(168,85,247,0.45)]" : "border-amber-500/30 bg-gradient-to-br from-purple-950/30 to-black"}`}>
                   <div className="relative h-full w-full p-2">
-                    <Image src={getSymbolImage(grid[rowIdx][colIdx])} alt={grid[rowIdx][colIdx]} fill className="object-contain drop-shadow-2xl" />
+                    <Image src={getSymbolImage(grid[rowIdx][colIdx])} alt={grid[rowIdx][colIdx]} fill className={`object-contain drop-shadow-2xl transition-transform duration-500 ${spinning ? "scale-110 animate-pulse" : "group-hover:scale-105"}`} />
                     <div className="absolute bottom-1 left-1/2 -translate-x-1/2 rounded bg-black/60 px-2 py-0.5 text-[10px] font-bold text-amber-300">
                       {grid[rowIdx][colIdx]}
                     </div>
