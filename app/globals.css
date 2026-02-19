@@ -55,7 +55,7 @@ body {
   }
 
   .animate-spin-slow {
-    animation: spin-slow 0.5s linear infinite;
+    animation: spin-slow 2.5s linear infinite;
   }
 
   @keyframes shimmer {
@@ -136,5 +136,16 @@ body {
 
   .border-gold-gradient {
     border-image: linear-gradient(135deg, #d4af37 0%, #f4e5a1 50%, #d4af37 100%) 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-floaty,
+  .animate-spin-slow,
+  .animate-shimmer,
+  .animate-glow-pulse,
+  .animate-jackpot,
+  .animate-coin-flip {
+    animation: none !important;
   }
 }
