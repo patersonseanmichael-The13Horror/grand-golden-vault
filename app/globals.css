@@ -6,10 +6,15 @@
   --foreground-rgb: 255, 255, 255;
   --background-start-rgb: 10, 5, 20;
   --background-end-rgb: 20, 10, 30;
+  --vv-bg: #07070a;
+  --vv-ink: #e9e6df;
+  --vv-muted: #b8b2a6;
+  --vv-gold: #c9a45c;
+  --vv-gold-2: #8a6a2f;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
+  color: var(--vv-ink);
   background: linear-gradient(
       to bottom,
       transparent,
