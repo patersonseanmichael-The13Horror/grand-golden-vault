@@ -22,6 +22,8 @@ This project implements the following security measures:
 - **CodeQL Analysis:** Automated code scanning for security issues.
 - **Regular Updates:** We keep dependencies up to date to minimize security risks.
 
+- Firebase client configuration now requires `NEXT_PUBLIC_FIREBASE_*` environment variables and will fail fast when missing, preventing accidental fallback to stale embedded defaults.
+
 ## Best Practices
 
 When contributing to this project, please follow these security best practices:
@@ -30,3 +32,8 @@ When contributing to this project, please follow these security best practices:
 - Use environment variables for configuration.
 - Keep dependencies up to date.
 - Follow secure coding practices.
+
+
+## Security Headers
+
+Runtime security headers are enforced via `vercel.json` for all routes, including a baseline Content Security Policy, clickjacking protection, MIME sniffing protection, and strict referrer policy.

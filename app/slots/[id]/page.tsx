@@ -1,6 +1,7 @@
 import VaultShell from "@/components/VaultShell";
 import HeroBackdrop from "@/components/HeroBackdrop";
 import VerticalSlotMachine from "@/components/VerticalSlotMachine";
+import LuxeButton from "@/components/LuxeButton";
 import fs from "fs";
 import path from "path";
 
@@ -19,7 +20,9 @@ export default async function SlotMachinePage({ params }: { params: Promise<{ id
   const file = path.join(process.cwd(), "slots", `slot_${id}.json`);
   if (!fs.existsSync(file)) {
     return (
-      <VaultShell>
+      <VaultShell
+      rightAction={<LuxeButton href="/members" label="Back to Members" />}
+    >
         <section className="px-6 md:px-10 pt-12 pb-16">
           <div className="max-w-3xl mx-auto">
             <h1 className="text-3xl font-semibold">Machine not found</h1>
@@ -39,7 +42,9 @@ export default async function SlotMachinePage({ params }: { params: Promise<{ id
   cfg.scatterSymbol = cfg.scatterSymbol || 'GEM';
   
   return (
-    <VaultShell>
+    <VaultShell
+      rightAction={<LuxeButton href="/members" label="Back to Members" />}
+    >
       <section className="relative px-6 md:px-10 pt-12 pb-16">
         <HeroBackdrop src="/assets/images/treasure-floor.jpg" alt="Treasure Floor" />
         <div className="max-w-6xl mx-auto">
@@ -47,7 +52,7 @@ export default async function SlotMachinePage({ params }: { params: Promise<{ id
           <h1 className="mt-4 text-4xl font-semibold text-gold animate-shimmer">{cfg.name}</h1>
           <p className="mt-4 text-white/70 max-w-2xl">
             Premium Vegas-style slot machine with {cfg.paylines || 20} paylines, {cfg.rtp || 96}% RTP, and {cfg.volatility || 'medium'} volatility. 
-            Features wild symbols, scatter bonuses, progressive jackpots, and Hold & Win mechanics.
+            Each machine includes themed symbols, card symbols down to TEN, 8 free spins on feature trigger, and Hold & Win during free spins. Launch RTP is set very-low to low, then shifts to medium-high after day 10.
           </p>
           
           {/* Machine Stats */}
@@ -142,7 +147,7 @@ export default async function SlotMachinePage({ params }: { params: Promise<{ id
             <div className="space-y-3 text-sm text-cyan-200/70">
               <div className="flex items-start gap-3">
                 <span className="text-cyan-400 font-bold">1.</span>
-                <p>Set your bet amount using the + and - buttons</p>
+                <p>Set your bet amount (0.10 to 250.00 AUD) using the + and - buttons</p>
               </div>
               <div className="flex items-start gap-3">
                 <span className="text-cyan-400 font-bold">2.</span>
@@ -158,7 +163,7 @@ export default async function SlotMachinePage({ params }: { params: Promise<{ id
               </div>
               <div className="flex items-start gap-3">
                 <span className="text-cyan-400 font-bold">5.</span>
-                <p>Trigger bonus features for massive wins and free spins!</p>
+                <p>Trigger 8 free spins and activate Hold & Win only during free spins!</p>
               </div>
             </div>
           </div>
