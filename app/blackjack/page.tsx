@@ -26,7 +26,7 @@ export default function BlackjackPage() {
               <div className="space-y-3 text-sm text-cyan-200/70">
                 <div className="flex items-start gap-3">
                   <span className="text-cyan-400 font-bold">1.</span>
-                  <p>Set your bet amount and click "Deal Cards"</p>
+                  <p>Set your bet amount and click &quot;Deal Cards&quot;</p>
                 </div>
                 <div className="flex items-start gap-3">
                   <span className="text-cyan-400 font-bold">2.</span>

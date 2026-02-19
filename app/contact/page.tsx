@@ -129,7 +129,7 @@ export default function ContactPage() {
               <div>
                 <h3 className="text-lg font-semibold text-white mb-2">How long does manual approval take?</h3>
                 <p className="text-white/70 text-sm">
-                  Deposit approvals are typically processed within 24-48 hours during business days. You'll receive an email confirmation once your deposit and bonus are credited.
+                  Deposit approvals are typically processed within 24-48 hours during business days. You&apos;ll receive an email confirmation once your deposit and bonus are credited.
                 </p>
               </div>
 
