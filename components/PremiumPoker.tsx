@@ -54,6 +54,12 @@ export default function PremiumPoker() {
   const startNewHand = () => {
     let newDeck = createDeck();
     const newPlayers: Player[] = players.map((p) => ({ ...p, cards: [], bet: 0, folded: false }));
+    const newPlayers: Player[] = players.map((p) => ({
+      ...p,
+      cards: [] as Card[],
+      bet: 0,
+      folded: false,
+    }));
     
     // Deal 2 cards to each player
     for (let i = 0; i < 2; i++) {

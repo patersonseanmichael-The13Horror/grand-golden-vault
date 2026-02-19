@@ -4,5 +4,6 @@
     "no-console": "warn",
     "no-unused-vars": "off",
     "react/no-unescaped-entities": "off"
+    "no-unused-vars": "off"
   }
 }
