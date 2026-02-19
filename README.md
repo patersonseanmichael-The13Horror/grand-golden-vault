@@ -1,4 +1,4 @@
-# The Velvet Vault: A Luxurious Web Experience
+# The-Velvet-Vault: A Luxurious Web Experience
 
 **Immersive wealth, Luxurious Entertainment, Versatile Navigation, High Class - Antique.**
 
