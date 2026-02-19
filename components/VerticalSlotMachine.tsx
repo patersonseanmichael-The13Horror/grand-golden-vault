@@ -1,25 +1,21 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { getActiveRtp } from "@/lib/rtpPhase";
 import { performSpin, VEGAS_PAYLINES, type SpinResult, type SlotConfig } from "@/engine/advancedSlotEngine";
 import LuxeButton from "@/components/LuxeButton";
 import Image from "next/image";
-import { useAuth } from "@/lib/AuthContext";
+import { useSharedWallet } from "@/lib/useSharedWallet";
 
 interface SlotMachineProps {
   cfg: any;
 }
 
-const STARTING_BALANCE = 10000;
-const MONEY_DECIMALS = 2;
 
 export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
-  const { user } = useAuth();
-  const storageKey = useMemo(() => `vv.wallet.${user?.uid ?? "guest"}`, [user?.uid]);
+  const { balance, credit, debit } = useSharedWallet();
 
   const [bet, setBet] = useState<number>(cfg.minBet);
-  const [balance, setBalance] = useState<number>(STARTING_BALANCE);
   const [spinning, setSpinning] = useState(false);
   const [spinResult, setSpinResult] = useState<SpinResult | null>(null);
   const [animatingWin, setAnimatingWin] = useState(false);
@@ -27,19 +23,6 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
   const [holdAndWinActive, setHoldAndWinActive] = useState(false);
   const [holdAndWinPositions, setHoldAndWinPositions] = useState<boolean[][]>([]);
 
-  useEffect(() => {
-    const saved = window.localStorage.getItem(storageKey);
-    if (!saved) {
-      setBalance(STARTING_BALANCE);
-      return;
-    }
-    const parsed = Number(saved);
-    if (Number.isFinite(parsed) && parsed >= 0) setBalance(+parsed.toFixed(MONEY_DECIMALS));
-  }, [storageKey]);
-
-  useEffect(() => {
-    window.localStorage.setItem(storageKey, String(+balance.toFixed(MONEY_DECIMALS)));
-  }, [balance, storageKey]);
 
   const activeRtp = getActiveRtp(cfg.rtp || 96, cfg.rtpProfile);
 
@@ -92,7 +75,10 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
     setAnimatingWin(false);
 
     if (!isFreeSpin) {
-      setBalance((prev) => +(prev - bet).toFixed(MONEY_DECIMALS));
+      if (!debit(bet)) {
+        setSpinning(false);
+        return;
+      }
     } else {
       setFreeSpinsRemaining((prev) => Math.max(0, prev - 1));
     }
@@ -104,7 +90,7 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
     setSpinning(false);
 
     if (result.totalWin > 0) {
-      setBalance((prev) => +(prev + result.totalWin).toFixed(MONEY_DECIMALS));
+      credit(result.totalWin);
       setAnimatingWin(true);
       setTimeout(() => setAnimatingWin(false), 3000);
     }

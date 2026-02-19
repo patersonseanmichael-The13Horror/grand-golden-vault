@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useAuth } from "@/lib/AuthContext";
+import { useSharedWallet } from "@/lib/useSharedWallet";
 import { defaultDepositLedger, getVipTierForDeposits, type DepositLedger } from "@/lib/loyalty";
 
 interface DepositModalProps {
@@ -16,7 +17,7 @@ const MAX_RECEIPT_MB = 5;
 export default function DepositModal({ isOpen, onClose }: DepositModalProps) {
   const { user } = useAuth();
   const depositStorageKey = useMemo(() => `vv.deposits.${user?.uid ?? "guest"}`, [user?.uid]);
-  const walletStorageKey = useMemo(() => `vv.wallet.${user?.uid ?? "guest"}`, [user?.uid]);
+  const { credit } = useSharedWallet();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [amount, setAmount] = useState<number>(MIN_DEPOSIT);
@@ -56,12 +57,6 @@ export default function DepositModal({ isOpen, onClose }: DepositModalProps) {
     }
   };
 
-  const creditWallet = (delta: number) => {
-    const current = Number(window.localStorage.getItem(walletStorageKey) || 10000);
-    const safeCurrent = Number.isFinite(current) && current >= 0 ? current : 10000;
-    window.localStorage.setItem(walletStorageKey, String(+(safeCurrent + delta).toFixed(2)));
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -92,7 +87,7 @@ export default function DepositModal({ isOpen, onClose }: DepositModalProps) {
       };
 
       window.localStorage.setItem(depositStorageKey, JSON.stringify(nextLedger));
-      creditWallet(amount);
+      credit(amount);
 
       const tier = getVipTierForDeposits(nextLedger.totalDeposited);
       alert(
