@@ -1,6 +1,7 @@
 import VaultShell from "@/components/VaultShell";
 import HeroBackdrop from "@/components/HeroBackdrop";
 import Link from "next/link";
+import LuxeButton from "@/components/LuxeButton";
 import fs from "fs";
 import path from "path";
 
@@ -52,7 +53,9 @@ export default function SlotsGallery() {
   };
 
   return (
-    <VaultShell>
+    <VaultShell
+      rightAction={<LuxeButton href="/members" label="Back to Members" />}
+    >
       <section className="relative px-6 md:px-10 pt-12 pb-16">
         <HeroBackdrop src="/assets/images/jackpot-core.jpg" alt="Slots" />
         <div className="max-w-6xl mx-auto">

@@ -9,10 +9,9 @@ export default function BlackjackPage() {
         <HeroBackdrop src="/assets/images/treasure-floor.jpg" alt="Blackjack" />
         <div className="max-w-6xl mx-auto">
           <div className="text-xs tracking-[0.35em] uppercase text-white/55">Table Games</div>
-          <h1 className="mt-4 text-4xl md:text-5xl font-semibold text-gold animate-shimmer">Premium Blackjack</h1>
+          <h1 className="mt-4 text-4xl md:text-5xl font-semibold text-gold animate-shimmer">Premium Blackjack • Valentino AI Table</h1>
           <p className="mt-4 text-white/70 max-w-3xl">
-            Play classic Las Vegas Blackjack with authentic casino rules. Features include split, double down, 
-            insurance, and multi-hand capability. Dealer stands on 17, blackjack pays 3:2.
+            Enter a premium Las Vegas felt with animated dealer flow. Valentino (AI) plays hard with high-roller concentration while you manage precision hit/stand/double decisions.
           </p>
 
           <div className="mt-10">

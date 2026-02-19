@@ -39,6 +39,8 @@ export default function Members() {
               <span>Wallet</span>
             </button>
             <LuxeButton href="/slots" label="Slots" variant="gold" />
+            <LuxeButton href="/bonus" label="Bonus" variant="ghost" />
+            <LuxeButton href="/check-in" label="Check-In" variant="ghost" />
             <button
               onClick={handleLogout}
               className="px-4 py-2 rounded-full border border-white/20 bg-white/5 text-white/70 hover:bg-white/10 transition-all text-sm"

@@ -10,7 +10,7 @@ export default function Page() {
           <div className="text-xs tracking-[0.35em] uppercase text-white/55">Game Room</div>
           <h1 className="mt-4 text-4xl font-semibold">Dice Verera</h1>
           <p className="mt-6 text-white/70 leading-relaxed">
-            Placeholder room. Implement rules + UX to match Velvet Vault standards.
+            Placeholder room. Implement rules + UX to match Grand Golden Vault standards.
           </p>
         </div>
       </section>
