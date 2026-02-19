@@ -5,7 +5,7 @@
   "reels": 5,
   "rows": 3,
   "paylines": 30,
-  "rtp": 97.2,
+  "rtp": 82.5,
   "volatility": "high",
   "symbolWeights": {
     "DRAGON": 1,
@@ -101,5 +101,13 @@
   "featureRules": {
     "holdAndWinOnlyInFreeSpins": true,
     "freeSpinsDoNotDeductBalance": true
+  },
+  "rtpProfile": {
+    "launchDate": "2026-02-20T00:00:00Z",
+    "switchAfterDays": 10,
+    "launchBand": "very-low-to-low",
+    "launchRtp": 82.5,
+    "postLaunchBand": "medium-to-high",
+    "postLaunchRtp": 96.2
   }
 }

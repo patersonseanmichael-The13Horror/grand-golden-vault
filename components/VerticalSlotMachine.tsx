@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { getActiveRtp } from "@/lib/rtpPhase";
 import { performSpin, VEGAS_PAYLINES, type SpinResult, type SlotConfig } from "@/engine/advancedSlotEngine";
 import LuxeButton from "@/components/LuxeButton";
 import Image from "next/image";
@@ -39,12 +40,14 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
     window.localStorage.setItem(storageKey, String(balance));
   }, [balance, storageKey]);
 
+  const activeRtp = getActiveRtp(cfg.rtp || 96, cfg.rtpProfile);
+
   const slotConfig: SlotConfig = {
     symbols: cfg.symbols,
     symbolWeights: cfg.symbolWeights || {},
     payTable: cfg.payTable,
     paylines: VEGAS_PAYLINES,
-    rtp: cfg.rtp || 96,
+    rtp: activeRtp,
     volatility: cfg.volatility || "medium",
     wildSymbol: cfg.wildSymbol,
     scatterSymbol: cfg.scatterSymbol,
@@ -192,6 +195,10 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
         </div>
 
         <LuxeButton label={spinning ? "SPINNING..." : freeSpinsRemaining > 0 ? `FREE SPIN (${freeSpinsRemaining})` : "SPIN"} variant="gold" onClick={runSpin} disabled={spinning || (freeSpinsRemaining === 0 && balance < bet)} />
+      </div>
+
+      <div className="mt-3 text-center text-xs text-amber-300/70">
+        RTP Phase: {cfg.rtpProfile?.launchBand || "standard"} now → {cfg.rtpProfile?.postLaunchBand || "standard"} after {cfg.rtpProfile?.switchAfterDays || 10} days. Active RTP: {activeRtp.toFixed(1)}%
       </div>
     </div>
   );

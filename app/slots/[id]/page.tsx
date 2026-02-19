@@ -52,7 +52,7 @@ export default async function SlotMachinePage({ params }: { params: Promise<{ id
           <h1 className="mt-4 text-4xl font-semibold text-gold animate-shimmer">{cfg.name}</h1>
           <p className="mt-4 text-white/70 max-w-2xl">
             Premium Vegas-style slot machine with {cfg.paylines || 20} paylines, {cfg.rtp || 96}% RTP, and {cfg.volatility || 'medium'} volatility. 
-            Each machine includes themed symbols, card symbols down to TEN, 8 free spins on feature trigger, and Hold & Win during free spins.
+            Each machine includes themed symbols, card symbols down to TEN, 8 free spins on feature trigger, and Hold & Win during free spins. Launch RTP is set very-low to low, then shifts to medium-high after day 10.
           </p>
           
           {/* Machine Stats */}

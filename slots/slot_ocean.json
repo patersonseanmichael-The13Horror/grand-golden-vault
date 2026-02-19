@@ -5,7 +5,7 @@
   "reels": 5,
   "rows": 3,
   "paylines": 20,
-  "rtp": 96.5,
+  "rtp": 86.5,
   "volatility": "medium",
   "symbolWeights": {
     "MERMAID": 1,
@@ -101,5 +101,13 @@
   "featureRules": {
     "holdAndWinOnlyInFreeSpins": true,
     "freeSpinsDoNotDeductBalance": true
+  },
+  "rtpProfile": {
+    "launchDate": "2026-02-20T00:00:00Z",
+    "switchAfterDays": 10,
+    "launchBand": "very-low-to-low",
+    "launchRtp": 86.5,
+    "postLaunchBand": "medium-to-high",
+    "postLaunchRtp": 94.6
   }
 }

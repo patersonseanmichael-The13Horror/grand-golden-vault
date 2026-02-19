@@ -65,7 +65,7 @@
       "5": 60
     }
   },
-  "rtp": 96.0,
+  "rtp": 86.0,
   "volatility": "medium",
   "wildSymbol": "CROWN",
   "scatterSymbol": "GEM",
@@ -99,5 +99,13 @@
   "featureRules": {
     "holdAndWinOnlyInFreeSpins": true,
     "freeSpinsDoNotDeductBalance": true
+  },
+  "rtpProfile": {
+    "launchDate": "2026-02-20T00:00:00Z",
+    "switchAfterDays": 10,
+    "launchBand": "very-low-to-low",
+    "launchRtp": 86.0,
+    "postLaunchBand": "medium-to-high",
+    "postLaunchRtp": 94.8
   }
 }

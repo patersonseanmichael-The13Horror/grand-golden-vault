@@ -152,6 +152,14 @@ export function performSpin(config: SlotConfig, bet: number): SpinResult {
   wins.forEach(win => {
     totalWin += win.payout * bet;
   });
+
+  // RTP pressure control: lower RTP suppresses a portion of winning outcomes.
+  // Note: this is still a client-side demo mechanic, not regulated wagering logic.
+  const rtpChance = Math.max(0, Math.min(1, (config.rtp || 96) / 100));
+  if (totalWin > 0 && Math.random() > rtpChance) {
+    totalWin = 0;
+    wins.length = 0;
+  }
   
   // Check for bonus/scatter triggers
   let bonusTriggered = false;
