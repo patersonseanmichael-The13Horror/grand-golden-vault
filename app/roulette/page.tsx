@@ -9,10 +9,9 @@ export default function RoulettePage() {
         <HeroBackdrop src="/assets/images/treasure-floor.jpg" alt="Roulette" />
         <div className="max-w-7xl mx-auto">
           <div className="text-xs tracking-[0.35em] uppercase text-white/55">Table Games</div>
-          <h1 className="mt-4 text-4xl md:text-5xl font-semibold text-gold animate-shimmer">European Roulette</h1>
+          <h1 className="mt-4 text-4xl md:text-5xl font-semibold text-gold animate-shimmer">European Roulette • Valentino AI</h1>
           <p className="mt-4 text-white/70 max-w-3xl">
-            Experience the elegance of European Roulette with a single zero wheel, authentic Las Vegas betting options, 
-            and premium graphics. Place your bets on numbers, colors, odds/evens, or dozens for a chance at big wins.
+            Experience a premium Las Vegas roulette layout with Valentino as AI croupier. Animated wheel tempo and high-roller pacing run throughout every spin.
           </p>
 
           <div className="mt-10">

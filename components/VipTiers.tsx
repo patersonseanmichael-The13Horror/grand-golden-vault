@@ -1,4 +1,4 @@
-import { vipTiers } from "@/lib/vipTiers";
+import { vipTiers } from "@/lib/loyalty";
 
 export default function VipTiers() {
   return (
@@ -13,6 +13,7 @@ export default function VipTiers() {
             </div>
             <ul className="mt-3 text-sm text-white/65 list-disc pl-5 space-y-1">
               {t.perks.map((p) => <li key={p}>{p}</li>)}
+            <li className="list-none pt-2 text-amber-300/80">Deposit band: ${t.minDeposit.toLocaleString()} - {Number.isFinite(t.maxDeposit) ? `$${t.maxDeposit.toLocaleString()}` : "No cap"}</li>
             </ul>
           </div>
         ))}

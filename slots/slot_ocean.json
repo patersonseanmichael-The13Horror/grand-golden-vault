@@ -5,75 +5,80 @@
   "reels": 5,
   "rows": 3,
   "paylines": 20,
-  "rtp": 96.5,
+  "rtp": 86.5,
   "volatility": "medium",
   "symbolWeights": {
     "MERMAID": 1,
     "PEARL": 2,
-    "DOLPHIN": 3,
+    "TRIDENT": 3,
     "SHELL": 4,
-    "CORAL": 5,
-    "ACE": 8,
-    "KING": 10,
-    "QUEEN": 12
+    "ACE": 7,
+    "KING": 9,
+    "QUEEN": 11,
+    "JACK": 13,
+    "TEN": 16
   },
   "wildSymbol": "MERMAID",
   "scatterSymbol": "PEARL",
   "symbols": [
     "MERMAID",
     "PEARL",
-    "DOLPHIN",
+    "TRIDENT",
     "SHELL",
-    "CORAL",
     "ACE",
     "KING",
-    "QUEEN"
+    "QUEEN",
+    "JACK",
+    "TEN"
   ],
   "baseJackpot": 150000,
   "vipProgressive": true,
-  "minBet": 5,
-  "maxBet": 500,
+  "minBet": 0.1,
+  "maxBet": 250,
   "payTable": {
     "MERMAID": {
-      "2": 8,
-      "3": 40,
-      "4": 150,
-      "5": 800
+      "3": 70,
+      "4": 220,
+      "5": 950
     },
     "PEARL": {
-      "2": 5,
-      "3": 25,
-      "4": 100,
-      "5": 400
+      "3": 28,
+      "4": 90,
+      "5": 380
     },
-    "DOLPHIN": {
+    "TRIDENT": {
       "3": 18,
-      "4": 70,
-      "5": 250
+      "4": 65,
+      "5": 260
     },
     "SHELL": {
       "3": 15,
       "4": 50,
-      "5": 180
-    },
-    "CORAL": {
-      "3": 12,
-      "4": 40,
-      "5": 120
+      "5": 210
     },
     "ACE": {
-      "3": 10,
-      "4": 30,
-      "5": 100
+      "3": 11,
+      "4": 36,
+      "5": 160
     },
     "KING": {
-      "3": 8,
-      "4": 25,
-      "5": 80
+      "3": 9,
+      "4": 30,
+      "5": 130
     },
     "QUEEN": {
-      "3": 6,
-      "4": 20,
+      "3": 7,
+      "4": 24,
+      "5": 100
+    },
+    "JACK": {
+      "3": 5,
+      "4": 18,
+      "5": 80
+    },
+    "TEN": {
+      "3": 4,
+      "4": 14,
       "5": 60
     }
   },
@@ -82,15 +87,27 @@
       "triggerSymbol": "PEARL",
       "minScatters": 3,
       "awards": {
-        "3": 12,
-        "4": 18,
-        "5": 25
+        "3": 8,
+        "4": 8,
+        "5": 8
       }
     },
     "holdAndWin": {
       "triggerSymbol": "SHELL",
-      "minSymbols": 6,
+      "minSymbols": 5,
       "respins": 3
     }
+  },
+  "featureRules": {
+    "holdAndWinOnlyInFreeSpins": true,
+    "freeSpinsDoNotDeductBalance": true
+  },
+  "rtpProfile": {
+    "launchDate": "2026-02-20T00:00:00Z",
+    "switchAfterDays": 10,
+    "launchBand": "very-low-to-low",
+    "launchRtp": 86.5,
+    "postLaunchBand": "medium-to-high",
+    "postLaunchRtp": 94.6
   }
 }

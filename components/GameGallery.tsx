@@ -5,6 +5,8 @@ const games = [
   { name: "Blackjack", href: "/blackjack", note: "Classic Vegas rules with split, double down, and insurance." },
   { name: "Roulette", href: "/roulette", note: "European wheel with authentic betting board and payouts." },
   { name: "Poker", href: "/poker", note: "Texas Hold'em with AI opponents and strategic gameplay." },
+  { name: "Bonus Vault", href: "/bonus", note: "Claim rotating promotions and member-only event rewards." },
+  { name: "Loyalty Check-In", href: "/check-in", note: "Track daily streaks and monitor VIP progress from deposits." },
 ];
 
 export default function GameGallery() {

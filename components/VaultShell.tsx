@@ -14,7 +14,7 @@ export default function VaultShell({
         <Link href="/" className="group inline-flex items-baseline gap-3">
           <div className="h-9 w-9 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md shadow-vv-soft" />
           <div>
-            <div className="text-sm tracking-[0.22em] uppercase text-white/70">The Velvet Vault</div>
+            <div className="text-sm tracking-[0.22em] uppercase text-white/70">Grand Golden Vault</div>
             <div className="text-xs tracking-[0.30em] uppercase text-white/45">Digital E-Lounge</div>
           </div>
         </Link>

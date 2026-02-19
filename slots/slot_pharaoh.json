@@ -5,77 +5,81 @@
   "reels": 5,
   "rows": 3,
   "paylines": 25,
-  "rtp": 96.8,
+  "rtp": 84.0,
   "volatility": "high",
   "symbolWeights": {
     "PHARAOH": 1,
-    "CLEOPATRA": 2,
+    "PYRAMID": 2,
     "SCARAB": 3,
     "ANKH": 4,
-    "PYRAMID": 5,
-    "ACE": 8,
-    "KING": 10,
-    "QUEEN": 12
+    "ACE": 7,
+    "KING": 9,
+    "QUEEN": 11,
+    "JACK": 13,
+    "TEN": 16
   },
   "wildSymbol": "PHARAOH",
   "scatterSymbol": "PYRAMID",
   "symbols": [
     "PHARAOH",
-    "CLEOPATRA",
+    "PYRAMID",
     "SCARAB",
     "ANKH",
-    "PYRAMID",
     "ACE",
     "KING",
-    "QUEEN"
+    "QUEEN",
+    "JACK",
+    "TEN"
   ],
   "baseJackpot": 250000,
   "vipProgressive": true,
-  "minBet": 10,
-  "maxBet": 1000,
+  "minBet": 0.1,
+  "maxBet": 250,
   "payTable": {
     "PHARAOH": {
-      "2": 10,
-      "3": 50,
-      "4": 200,
+      "3": 75,
+      "4": 240,
       "5": 1000
     },
-    "CLEOPATRA": {
-      "2": 5,
+    "PYRAMID": {
       "3": 30,
-      "4": 120,
-      "5": 500
+      "4": 95,
+      "5": 400
     },
     "SCARAB": {
       "3": 20,
-      "4": 80,
-      "5": 300
+      "4": 70,
+      "5": 280
     },
     "ANKH": {
-      "3": 15,
-      "4": 60,
-      "5": 200
-    },
-    "PYRAMID": {
-      "2": 3,
-      "3": 25,
-      "4": 100,
-      "5": 400
+      "3": 16,
+      "4": 55,
+      "5": 220
     },
     "ACE": {
-      "3": 10,
+      "3": 12,
       "4": 40,
-      "5": 150
+      "5": 170
     },
     "KING": {
-      "3": 8,
-      "4": 30,
-      "5": 100
+      "3": 10,
+      "4": 32,
+      "5": 140
     },
     "QUEEN": {
+      "3": 8,
+      "4": 26,
+      "5": 110
+    },
+    "JACK": {
       "3": 6,
-      "4": 25,
-      "5": 80
+      "4": 20,
+      "5": 85
+    },
+    "TEN": {
+      "3": 4,
+      "4": 15,
+      "5": 65
     }
   },
   "bonusFeatures": {
@@ -83,15 +87,27 @@
       "triggerSymbol": "PYRAMID",
       "minScatters": 3,
       "awards": {
-        "3": 15,
-        "4": 20,
-        "5": 30
+        "3": 8,
+        "4": 8,
+        "5": 8
       }
     },
     "holdAndWin": {
       "triggerSymbol": "SCARAB",
-      "minSymbols": 6,
+      "minSymbols": 5,
       "respins": 3
     }
+  },
+  "featureRules": {
+    "holdAndWinOnlyInFreeSpins": true,
+    "freeSpinsDoNotDeductBalance": true
+  },
+  "rtpProfile": {
+    "launchDate": "2026-02-20T00:00:00Z",
+    "switchAfterDays": 10,
+    "launchBand": "very-low-to-low",
+    "launchRtp": 84.0,
+    "postLaunchBand": "medium-to-high",
+    "postLaunchRtp": 95.7
   }
 }
