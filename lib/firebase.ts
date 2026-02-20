@@ -16,6 +16,9 @@ const missingFirebaseVars = Object.entries(firebaseConfig)
   .map(([key]) => key);
 
 export const isFirebaseConfigured = missingFirebaseVars.length === 0;
+export const firebaseConfigError = isFirebaseConfigured
+  ? null
+  : `Missing required Firebase environment variables: ${missingFirebaseVars.join(", ")}.`;
 
 let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
@@ -24,7 +27,7 @@ let db: Firestore | null = null;
 const assertFirebaseConfig = () => {
   if (!isFirebaseConfigured) {
     throw new Error(
-      `Missing required Firebase environment variables: ${missingFirebaseVars.join(", ")}. Please configure NEXT_PUBLIC_FIREBASE_* values.`
+      `${firebaseConfigError} Please configure NEXT_PUBLIC_FIREBASE_* values.`
     );
   }
 };

@@ -1,40 +1,158 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { getIdTokenResult } from "firebase/auth";
+import { useAuth } from "@/lib/AuthContext";
 
-const SAFE_TOPICS = ["nav", "navigation", "deposit", "wallet", "bonus", "check-in", "slots", "roulette", "blackjack", "poker"];
+const ROUTE_HELP: Record<string, string> = {
+  members: "Members hub: /members",
+  slots: "Slots: /slots",
+  blackjack: "Blackjack: /blackjack",
+  roulette: "Roulette: /roulette",
+  poker: "Poker: /poker",
+  bonus: "Bonus vault: /bonus",
+  "check-in": "Daily check-in: /check-in",
+  login: "Login: /login",
+  register: "Register: /register",
+  contact: "Contact: /contact",
+};
+
+const BLOCKED_TERMS = [
+  "deposit",
+  "wallet",
+  "payment",
+  "bank",
+  "credit card",
+  "password",
+  "email",
+  "account",
+  "strategy",
+  "winning",
+  "jackpot",
+  "prompt",
+  "system",
+  "bypass",
+  "ignore",
+];
+
+const ADMIN_TERMS = ["admin", "security", "protocol", "audit", "logs", "status"];
 
 export default function OllamaConcierge() {
+  const { user } = useAuth();
   const [input, setInput] = useState("");
-  const [reply, setReply] = useState("Ask about navigation or deposit support. Public access is restricted to safe help topics.");
+  const [reply, setReply] = useState("Navigation-only concierge active. Ask where to find pages like Slots, Bonus, Check-In, or Login.");
+  const [lockedUntil, setLockedUntil] = useState(0);
+  const [hasAdminClaim, setHasAdminClaim] = useState(false);
+  const [adminCheckLoading, setAdminCheckLoading] = useState(false);
+
+  const configuredAdminUid = (process.env.NEXT_PUBLIC_CONCIERGE_ADMIN_UID || "").trim();
+  const configuredAdminEmail = (process.env.NEXT_PUBLIC_CONCIERGE_ADMIN_EMAIL || "").trim().toLowerCase();
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const checkAdmin = async () => {
+      if (!user) {
+        setHasAdminClaim(false);
+        return;
+      }
+      setAdminCheckLoading(true);
+      try {
+        const token = await getIdTokenResult(user, true);
+        if (!cancelled) {
+          setHasAdminClaim(token.claims.conciergeAdmin === true);
+        }
+      } catch {
+        if (!cancelled) {
+          setHasAdminClaim(false);
+        }
+      } finally {
+        if (!cancelled) {
+          setAdminCheckLoading(false);
+        }
+      }
+    };
+
+    checkAdmin();
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
+
+  const isStrictAdmin = useMemo(() => {
+    if (!user) return false;
+    if (!configuredAdminUid || !configuredAdminEmail) return false;
+    const uidMatch = user.uid === configuredAdminUid;
+    const emailMatch = (user.email || "").toLowerCase() === configuredAdminEmail;
+    return uidMatch && emailMatch && hasAdminClaim;
+  }, [configuredAdminEmail, configuredAdminUid, hasAdminClaim, user]);
 
   const handleAsk = () => {
     const normalized = input.toLowerCase().trim();
     if (!normalized) return;
+    const now = Date.now();
 
-    const allowed = SAFE_TOPICS.some((t) => normalized.includes(t));
-    if (!allowed) {
-      setReply("Access restricted: Valentino Concierge only supports navigation and deposit assistance.");
+    if (now < lockedUntil) {
+      setReply("Rate limit active. Wait a moment, then ask one short navigation question.");
       return;
     }
 
-    if (normalized.includes("deposit") || normalized.includes("wallet")) {
-      setReply("Deposit flow: Members → Wallet button → enter $5-$500 → upload receipt → submit. Wallet sync is shared across all games.");
+    if (normalized.length > 180) {
+      setReply("Request rejected. Keep navigation questions under 180 characters.");
+      setLockedUntil(now + 2500);
       return;
     }
 
-    setReply("Navigation: Members is the hub. Games: /slots, /blackjack, /roulette, /poker. Loyalty: /bonus and /check-in.");
+    const asksAdmin = ADMIN_TERMS.some((term) => normalized.includes(term));
+    if (asksAdmin) {
+      if (!isStrictAdmin) {
+        setReply("Restricted. Admin features are locked to the configured owner account only.");
+        setLockedUntil(now + 3000);
+        return;
+      }
+
+      setReply("Admin panel status: concierge guardrails active, navigation-only mode enforced, and blocked-topic filters online.");
+      setLockedUntil(now + 1500);
+      return;
+    }
+
+    const blocked = BLOCKED_TERMS.some((term) => normalized.includes(term));
+    if (blocked) {
+      setReply("Restricted. This concierge only provides page navigation help for visitors.");
+      setLockedUntil(now + 2500);
+      return;
+    }
+
+    const matchedRoute = Object.keys(ROUTE_HELP).find((key) => normalized.includes(key));
+    if (!matchedRoute) {
+      setReply("Navigation-only mode: ask where to find pages like Members, Slots, Bonus, Check-In, Login, or Contact.");
+      setLockedUntil(now + 2000);
+      return;
+    }
+
+    setReply(`Navigation help: ${ROUTE_HELP[matchedRoute]}.`);
+    setLockedUntil(now + 1200);
   };
 
   return (
     <div className="rounded-3xl border border-white/10 bg-black/35 backdrop-blur-md p-6 shadow-vv-soft">
       <div className="text-xs tracking-[0.30em] uppercase text-white/60">Concierge (Ollama Guard)</div>
-      <p className="mt-3 text-white/70 leading-relaxed">Restricted assistant onboard. Scope: safe navigation and deposit only.</p>
+      <p className="mt-3 text-white/70 leading-relaxed">Restricted assistant onboard. Scope: visitor navigation only.</p>
+      <div className="mt-2 text-[11px] text-white/45">
+        Admin Mode: {adminCheckLoading ? "checking..." : isStrictAdmin ? "owner-verified" : "locked"}
+      </div>
       <div className="mt-4 flex flex-col gap-2 sm:flex-row">
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask about nav or deposit"
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              handleAsk();
+            }
+          }}
+          maxLength={180}
+          placeholder="Ask where to find a page"
           className="flex-1 rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm text-white"
         />
         <button onClick={handleAsk} className="rounded-xl bg-amber-500 px-4 py-2 text-sm font-semibold text-black">Ask</button>

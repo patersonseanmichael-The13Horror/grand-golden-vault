@@ -25,6 +25,20 @@ const resolveBaseSymbol = (symbol: string): string => {
   return base && base.length > 0 ? base : normalized;
 };
 
+const resolveSymbolNamespace = (symbol: string): string => {
+  const normalized = symbol.trim().toUpperCase();
+  if (!normalized.includes("__")) return "DEFAULT";
+  return normalized.split("__")[0] || "DEFAULT";
+};
+
+const namespaceHue = (namespace: string): number => {
+  let hash = 0;
+  for (let i = 0; i < namespace.length; i++) {
+    hash = (hash * 31 + namespace.charCodeAt(i)) % 360;
+  }
+  return hash;
+};
+
 export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
   const { balance, credit, debit } = useSharedWallet();
 
@@ -54,6 +68,10 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
 
   const getSymbolImage = (symbol: string) => {
     const key = resolveBaseSymbol(symbol);
+    const custom = cfg?.symbolVisuals?.[symbol];
+    if (typeof custom === "string" && custom.trim().length > 0) {
+      return custom;
+    }
     const symbolMap: Record<string, string> = {
       CROWN: "/assets/symbols/crown.png",
       GEM: "/assets/symbols/gem.png",
@@ -80,6 +98,17 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
     };
 
     return symbolMap[key] || "/assets/symbols/crown.png";
+  };
+
+  const getSymbolStyle = (symbol: string) => {
+    const namespace = resolveSymbolNamespace(symbol);
+    const hue = namespaceHue(namespace);
+    return {
+      borderColor: `hsla(${hue}, 75%, 62%, 0.45)`,
+      boxShadow: `0 0 18px hsla(${hue}, 72%, 58%, 0.22)`,
+      imageFilter: `hue-rotate(${hue}deg) saturate(1.22)`,
+      tagColor: `hsla(${hue}, 82%, 70%, 0.9)`,
+    };
   };
 
   const previewGrid = useMemo(() => [0, 1, 2].map(() => [0, 1, 2, 3, 4].map((c) => cfg.symbols[(c + 2) % cfg.symbols.length])), [cfg.symbols]);
@@ -163,6 +192,7 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
             <div key={colIdx} className="space-y-3">
               {[0, 1, 2].map((rowIdx) => {
                 const symbol = grid[rowIdx][colIdx];
+                const visual = getSymbolStyle(symbol);
                 return (
                   <div
                     key={`${rowIdx}-${colIdx}`}
@@ -171,6 +201,7 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
                         ? "border-purple-300 bg-purple-500/20 shadow-[0_0_28px_rgba(168,85,247,0.45)]"
                         : "border-amber-300/30 bg-gradient-to-br from-black to-amber-950/30"
                     }`}
+                    style={holdAndWinPositions[colIdx]?.[rowIdx] ? undefined : { borderColor: visual.borderColor, boxShadow: visual.boxShadow }}
                   >
                     <div
                       className={`absolute inset-2 rounded-full border border-white/10 ${spinning ? "animate-spin" : ""}`}
@@ -182,9 +213,10 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
                         alt={symbol}
                         fill
                         className={`object-contain drop-shadow-2xl transition-transform duration-500 ${spinning ? "scale-110" : "group-hover:scale-105"}`}
+                        style={{ filter: visual.imageFilter }}
                       />
-                      <div className="absolute bottom-1 left-1/2 -translate-x-1/2 rounded bg-black/60 px-2 py-0.5 text-[10px] font-bold text-amber-300">
-                        {symbol}
+                      <div className="absolute bottom-1 left-1/2 -translate-x-1/2 rounded bg-black/60 px-2 py-0.5 text-[10px] font-bold" style={{ color: visual.tagColor }}>
+                        {resolveBaseSymbol(symbol)}
                       </div>
                     </div>
                   </div>

@@ -32,7 +32,7 @@ export default function JackpotTicker() {
 
   return (
     <div className="border-y border-white/10 bg-black/30 backdrop-blur-md">
-      <div className="px-6 md:px-10 py-2 overflow-hidden">
+      <div className="vv-page-wrap py-2 overflow-hidden">
         <div className="whitespace-nowrap animate-marquee text-xs tracking-[0.22em] uppercase text-white/70">
           {line}<span className="mx-8 text-white/35">◆</span>{line}
         </div>
@@ -40,4 +40,3 @@ export default function JackpotTicker() {
     </div>
   );
 }
-

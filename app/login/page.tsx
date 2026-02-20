@@ -12,7 +12,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, firebaseReady, firebaseError } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -42,9 +42,9 @@ export default function Login() {
               Sign in to continue your session, access member rooms, and manage your account controls.
             </p>
 
-            {error && (
+            {(firebaseError || error) && (
               <div className="mt-5 rounded-2xl border border-red-400/45 bg-red-950/40 px-4 py-3 text-red-200">
-                {error}
+                {firebaseError || error}
               </div>
             )}
 
@@ -59,6 +59,7 @@ export default function Login() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  disabled={!firebaseReady}
                   className="vv-input"
                   placeholder="your@email.com"
                 />
@@ -74,6 +75,7 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  disabled={!firebaseReady}
                   className="vv-input"
                   placeholder="••••••••"
                 />
@@ -82,10 +84,10 @@ export default function Login() {
               <div className="mt-8 flex flex-wrap gap-3 items-center">
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || !firebaseReady}
                   className="vv-button min-w-[170px] flex-1 rounded-2xl border border-[rgba(231,197,123,0.72)] bg-[linear-gradient(165deg,#f4dc9f_0%,#cda45f_45%,#a37e3e_100%)] px-6 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-[#1e1608] shadow-[0_10px_26px_rgba(185,146,78,0.4)] transition duration-200 hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {loading ? "Logging in..." : "Enter"}
+                  {!firebaseReady ? "Auth Offline" : loading ? "Logging in..." : "Enter"}
                 </button>
                 <LuxeButton href="/register" label="Register" />
               </div>

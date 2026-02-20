@@ -14,7 +14,7 @@ export default function Register() {
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { signup } = useAuth();
+  const { signup, firebaseReady, firebaseError } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -66,9 +66,9 @@ export default function Register() {
               Open your account to access member rooms, tiered benefits, and personalized lounge services.
             </p>
 
-            {error && (
+            {(firebaseError || error) && (
               <div className="mt-5 rounded-2xl border border-red-400/45 bg-red-950/40 px-4 py-3 text-red-200">
-                {error}
+                {firebaseError || error}
               </div>
             )}
 
@@ -83,6 +83,7 @@ export default function Register() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  disabled={!firebaseReady}
                   className="vv-input"
                   placeholder="your@email.com"
                 />
@@ -98,6 +99,7 @@ export default function Register() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  disabled={!firebaseReady}
                   className="vv-input"
                   placeholder="Minimum 6 characters"
                 />
@@ -113,6 +115,7 @@ export default function Register() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
+                  disabled={!firebaseReady}
                   className="vv-input"
                   placeholder="Re-enter password"
                 />
@@ -124,6 +127,7 @@ export default function Register() {
                   type="checkbox"
                   checked={agreedToTerms}
                   onChange={(e) => setAgreedToTerms(e.target.checked)}
+                  disabled={!firebaseReady}
                   className="mt-1 h-4 w-4 rounded border-white/20 bg-black/30 text-amber-500 focus:ring-amber-500/50"
                 />
                 <label htmlFor="terms" className="text-sm text-white/72">
@@ -146,10 +150,10 @@ export default function Register() {
               <div className="mt-8 flex flex-wrap gap-3 items-center">
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || !firebaseReady}
                   className="vv-button min-w-[170px] flex-1 rounded-2xl border border-[rgba(231,197,123,0.72)] bg-[linear-gradient(165deg,#f4dc9f_0%,#cda45f_45%,#a37e3e_100%)] px-6 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-[#1e1608] shadow-[0_10px_26px_rgba(185,146,78,0.4)] transition duration-200 hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {loading ? "Creating Account..." : "Register"}
+                  {!firebaseReady ? "Auth Offline" : loading ? "Creating Account..." : "Register"}
                 </button>
                 <LuxeButton href="/login" label="Login" />
               </div>

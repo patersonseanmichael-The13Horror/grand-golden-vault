@@ -21,5 +21,9 @@ export default function BrisbaneClock() {
     });
     return dtf.format(now);
   }, [now]);
-  return <div className="text-xs tracking-[0.25em] uppercase text-white/55">{formatted} • QLD (AEST)</div>;
+  return (
+    <div className="rounded-full border border-white/14 bg-black/28 px-4 py-2 text-[10px] tracking-[0.24em] uppercase text-white/66">
+      {formatted} • QLD (AEST)
+    </div>
+  );
 }
