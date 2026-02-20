@@ -50,10 +50,6 @@ export default function RoulettePage() {
                   <span className="text-purple-300 font-semibold">35:1</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Dozens (1-12, 13-24, 25-36)</span>
-                  <span className="text-purple-300 font-semibold">2:1</span>
-                </div>
-                <div className="flex justify-between">
                   <span>Red / Black</span>
                   <span className="text-purple-300 font-semibold">1:1</span>
                 </div>
