@@ -17,6 +17,14 @@ const THEME_STYLES: Record<string, string> = {
   "underwater-adventure": "from-cyan-950/80 via-blue-900/35 to-black border-cyan-300/45",
 };
 
+const resolveBaseSymbol = (symbol: string): string => {
+  const normalized = symbol.trim().toUpperCase();
+  if (!normalized) return "CROWN";
+  // Symbols may be namespaced (e.g. OBSIDIAN__CROWN); map to canonical key for image lookup.
+  const base = normalized.split("__").pop();
+  return base && base.length > 0 ? base : normalized;
+};
+
 export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
   const { balance, credit, debit } = useSharedWallet();
 
