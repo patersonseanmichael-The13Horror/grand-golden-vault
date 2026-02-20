@@ -151,8 +151,8 @@ export default function PremiumRoulette() {
             ))}
           </div>
         </div>
-      )}
 
+      </div>
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <button onClick={spin} disabled={spinning || bets.length === 0} className="rounded-xl bg-emerald-500 px-4 py-2 font-bold text-black disabled:opacity-50">{spinning ? "SPINNING..." : "SPIN"}</button>
         <button onClick={clearBets} disabled={spinning || bets.length === 0} className="rounded-xl border border-red-400/40 bg-red-950/30 px-4 py-2 text-red-200 disabled:opacity-50">Clear</button>
