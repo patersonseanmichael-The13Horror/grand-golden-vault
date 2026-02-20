@@ -57,21 +57,6 @@ export default function DepositModal({ isOpen, onClose }: DepositModalProps) {
     }
   };
 
-  const readDepositLedger = (): DepositLedger => {
-    const raw = window.localStorage.getItem(depositStorageKey);
-    if (!raw) return defaultDepositLedger;
-
-    try {
-      const parsed = JSON.parse(raw) as DepositLedger;
-      if (!Array.isArray(parsed.deposits) || typeof parsed.totalDeposited !== "number") {
-        return defaultDepositLedger;
-      }
-      return parsed;
-    } catch {
-      return defaultDepositLedger;
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
