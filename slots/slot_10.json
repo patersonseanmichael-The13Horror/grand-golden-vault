@@ -4,62 +4,62 @@
   "reels": 5,
   "rows": 3,
   "symbols": [
-    "CROWN",
-    "GEM",
-    "VAULT",
-    "RING",
-    "ACE",
-    "KING",
-    "QUEEN",
-    "JACK",
-    "TEN"
+    "CRIMSON__CROWN",
+    "CRIMSON__GEM",
+    "CRIMSON__VAULT",
+    "CRIMSON__RING",
+    "CRIMSON__ACE",
+    "CRIMSON__KING",
+    "CRIMSON__QUEEN",
+    "CRIMSON__JACK",
+    "CRIMSON__TEN"
   ],
   "baseJackpot": 145000,
   "vipProgressive": true,
   "minBet": 0.1,
-  "maxBet": 250,
+  "maxBet": 500,
   "payTable": {
-    "CROWN": {
+    "CRIMSON__CROWN": {
       "3": 65,
       "4": 200,
       "5": 800
     },
-    "GEM": {
+    "CRIMSON__GEM": {
       "3": 25,
       "4": 80,
       "5": 320
     },
-    "VAULT": {
+    "CRIMSON__VAULT": {
       "3": 16,
       "4": 55,
       "5": 210
     },
-    "RING": {
+    "CRIMSON__RING": {
       "3": 14,
       "4": 45,
       "5": 180
     },
-    "ACE": {
+    "CRIMSON__ACE": {
       "3": 10,
       "4": 35,
       "5": 150
     },
-    "KING": {
+    "CRIMSON__KING": {
       "3": 8,
       "4": 28,
       "5": 120
     },
-    "QUEEN": {
+    "CRIMSON__QUEEN": {
       "3": 6,
       "4": 22,
       "5": 95
     },
-    "JACK": {
+    "CRIMSON__JACK": {
       "3": 5,
       "4": 18,
       "5": 75
     },
-    "TEN": {
+    "CRIMSON__TEN": {
       "3": 4,
       "4": 14,
       "5": 60
@@ -67,22 +67,22 @@
   },
   "rtp": 86.0,
   "volatility": "medium",
-  "wildSymbol": "CROWN",
-  "scatterSymbol": "GEM",
+  "wildSymbol": "CRIMSON__CROWN",
+  "scatterSymbol": "CRIMSON__GEM",
   "symbolWeights": {
-    "CROWN": 1,
-    "GEM": 2,
-    "VAULT": 3,
-    "RING": 4,
-    "ACE": 7,
-    "KING": 9,
-    "QUEEN": 11,
-    "JACK": 13,
-    "TEN": 16
+    "CRIMSON__CROWN": 1,
+    "CRIMSON__GEM": 2,
+    "CRIMSON__VAULT": 3,
+    "CRIMSON__RING": 4,
+    "CRIMSON__ACE": 7,
+    "CRIMSON__KING": 9,
+    "CRIMSON__QUEEN": 11,
+    "CRIMSON__JACK": 13,
+    "CRIMSON__TEN": 16
   },
   "bonusFeatures": {
     "freeSpins": {
-      "triggerSymbol": "GEM",
+      "triggerSymbol": "CRIMSON__GEM",
       "minScatters": 3,
       "awards": {
         "3": 8,
@@ -91,7 +91,7 @@
       }
     },
     "holdAndWin": {
-      "triggerSymbol": "VAULT",
+      "triggerSymbol": "CRIMSON__VAULT",
       "minSymbols": 5,
       "respins": 3
     }
@@ -105,7 +105,7 @@
     "switchAfterDays": 10,
     "launchBand": "very-low-to-low",
     "launchRtp": 86.0,
-    "postLaunchBand": "medium-to-high",
-    "postLaunchRtp": 94.8
+    "postLaunchBand": "low-to-medium",
+    "postLaunchRtp": 94.0
   }
 }

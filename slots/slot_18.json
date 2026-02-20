@@ -4,62 +4,62 @@
   "reels": 5,
   "rows": 3,
   "symbols": [
-    "CROWN",
-    "GEM",
-    "VAULT",
-    "RING",
-    "ACE",
-    "KING",
-    "QUEEN",
-    "JACK",
-    "TEN"
+    "PAVILION__CROWN",
+    "PAVILION__GEM",
+    "PAVILION__VAULT",
+    "PAVILION__RING",
+    "PAVILION__ACE",
+    "PAVILION__KING",
+    "PAVILION__QUEEN",
+    "PAVILION__JACK",
+    "PAVILION__TEN"
   ],
   "baseJackpot": 185000,
   "vipProgressive": true,
   "minBet": 0.1,
-  "maxBet": 250,
+  "maxBet": 500,
   "payTable": {
-    "CROWN": {
+    "PAVILION__CROWN": {
       "3": 65,
       "4": 200,
       "5": 800
     },
-    "GEM": {
+    "PAVILION__GEM": {
       "3": 25,
       "4": 80,
       "5": 320
     },
-    "VAULT": {
+    "PAVILION__VAULT": {
       "3": 16,
       "4": 55,
       "5": 210
     },
-    "RING": {
+    "PAVILION__RING": {
       "3": 14,
       "4": 45,
       "5": 180
     },
-    "ACE": {
+    "PAVILION__ACE": {
       "3": 10,
       "4": 35,
       "5": 150
     },
-    "KING": {
+    "PAVILION__KING": {
       "3": 8,
       "4": 28,
       "5": 120
     },
-    "QUEEN": {
+    "PAVILION__QUEEN": {
       "3": 6,
       "4": 22,
       "5": 95
     },
-    "JACK": {
+    "PAVILION__JACK": {
       "3": 5,
       "4": 18,
       "5": 75
     },
-    "TEN": {
+    "PAVILION__TEN": {
       "3": 4,
       "4": 14,
       "5": 60
@@ -67,22 +67,22 @@
   },
   "rtp": 86.0,
   "volatility": "medium",
-  "wildSymbol": "CROWN",
-  "scatterSymbol": "GEM",
+  "wildSymbol": "PAVILION__CROWN",
+  "scatterSymbol": "PAVILION__GEM",
   "symbolWeights": {
-    "CROWN": 1,
-    "GEM": 2,
-    "VAULT": 3,
-    "RING": 4,
-    "ACE": 7,
-    "KING": 9,
-    "QUEEN": 11,
-    "JACK": 13,
-    "TEN": 16
+    "PAVILION__CROWN": 1,
+    "PAVILION__GEM": 2,
+    "PAVILION__VAULT": 3,
+    "PAVILION__RING": 4,
+    "PAVILION__ACE": 7,
+    "PAVILION__KING": 9,
+    "PAVILION__QUEEN": 11,
+    "PAVILION__JACK": 13,
+    "PAVILION__TEN": 16
   },
   "bonusFeatures": {
     "freeSpins": {
-      "triggerSymbol": "GEM",
+      "triggerSymbol": "PAVILION__GEM",
       "minScatters": 3,
       "awards": {
         "3": 8,
@@ -91,7 +91,7 @@
       }
     },
     "holdAndWin": {
-      "triggerSymbol": "VAULT",
+      "triggerSymbol": "PAVILION__VAULT",
       "minSymbols": 5,
       "respins": 3
     }
@@ -105,7 +105,7 @@
     "switchAfterDays": 10,
     "launchBand": "very-low-to-low",
     "launchRtp": 86.0,
-    "postLaunchBand": "medium-to-high",
-    "postLaunchRtp": 94.8
+    "postLaunchBand": "low-to-medium",
+    "postLaunchRtp": 94.0
   }
 }
