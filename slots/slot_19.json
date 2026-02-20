@@ -17,7 +17,7 @@
   "baseJackpot": 190000,
   "vipProgressive": true,
   "minBet": 0.1,
-  "maxBet": 250,
+  "maxBet": 500,
   "payTable": {
     "CROWN": {
       "3": 65,
@@ -105,7 +105,7 @@
     "switchAfterDays": 10,
     "launchBand": "very-low-to-low",
     "launchRtp": 86.0,
-    "postLaunchBand": "medium-to-high",
-    "postLaunchRtp": 94.8
+    "postLaunchBand": "low-to-medium",
+    "postLaunchRtp": 94.0
   }
 }
