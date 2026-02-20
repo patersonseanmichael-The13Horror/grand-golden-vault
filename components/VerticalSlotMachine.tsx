@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { getActiveRtp } from "@/lib/rtpPhase";
 import { performSpin, VEGAS_PAYLINES, type SpinResult, type SlotConfig } from "@/engine/advancedSlotEngine";
 import LuxeButton from "@/components/LuxeButton";
@@ -11,6 +11,11 @@ interface SlotMachineProps {
   cfg: any;
 }
 
+const THEME_STYLES: Record<string, string> = {
+  "ancient-egypt": "from-amber-950/80 via-yellow-900/35 to-black border-amber-300/40",
+  "fantasy-dragon": "from-red-950/80 via-orange-900/35 to-black border-red-300/45",
+  "underwater-adventure": "from-cyan-950/80 via-blue-900/35 to-black border-cyan-300/45",
+};
 
 export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
   const { balance, credit, debit } = useSharedWallet();
@@ -22,7 +27,6 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
   const [freeSpinsRemaining, setFreeSpinsRemaining] = useState(0);
   const [holdAndWinActive, setHoldAndWinActive] = useState(false);
   const [holdAndWinPositions, setHoldAndWinPositions] = useState<boolean[][]>([]);
-
 
   const activeRtp = getActiveRtp(cfg.rtp || 96, cfg.rtpProfile);
 
@@ -37,6 +41,8 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
     scatterSymbol: cfg.scatterSymbol,
     bonusSymbol: cfg.bonusSymbol,
   };
+
+  const shellTheme = THEME_STYLES[cfg.theme as string] || "from-[#080808] via-[#1c1408]/50 to-black border-amber-400/40";
 
   const getSymbolImage = (symbol: string) => {
     const symbolMap: Record<string, string> = {
@@ -67,6 +73,8 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
     return symbolMap[symbol] || "/assets/symbols/crown.png";
   };
 
+  const previewGrid = useMemo(() => [0, 1, 2].map(() => [0, 1, 2, 3, 4].map((c) => cfg.symbols[(c + 2) % cfg.symbols.length])), [cfg.symbols]);
+
   const runSpin = async () => {
     const isFreeSpin = freeSpinsRemaining > 0;
     if (spinning || (!isFreeSpin && balance < bet)) return;
@@ -83,7 +91,7 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
       setFreeSpinsRemaining((prev) => Math.max(0, prev - 1));
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 1800));
+    await new Promise((resolve) => setTimeout(resolve, 1600));
 
     const result = performSpin(slotConfig, bet);
     setSpinResult(result);
@@ -92,7 +100,7 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
     if (result.totalWin > 0) {
       credit(result.totalWin);
       setAnimatingWin(true);
-      setTimeout(() => setAnimatingWin(false), 3000);
+      setTimeout(() => setAnimatingWin(false), 2600);
     }
 
     if (result.bonusTriggered && result.freeSpinsAwarded > 0) {
@@ -113,15 +121,15 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
 
   const grid = spinResult
     ? [0, 1, 2].map((r) => [0, 1, 2, 3, 4].map((c) => spinResult.reels[c][r]))
-    : [0, 1, 2].map(() => [0, 1, 2, 3, 4].map(() => cfg.symbols[0]));
+    : previewGrid;
 
   return (
-    <div className="rounded-3xl border-2 border-amber-500/30 bg-gradient-to-b from-black/70 via-[#120d22]/80 to-black/70 p-8 shadow-2xl shadow-amber-700/20 backdrop-blur-md">
-      <div className="mb-6 rounded-2xl border border-amber-500/20 bg-black/40 p-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+    <div className={`rounded-3xl border-2 bg-gradient-to-b p-8 shadow-2xl shadow-amber-700/20 backdrop-blur-md ${shellTheme}`}>
+      <div className="mb-6 rounded-2xl border border-amber-500/20 bg-black/45 p-4">
+        <div className="grid grid-cols-2 gap-4 text-center md:grid-cols-4">
           <div>
             <div className="text-xs uppercase tracking-wider text-amber-500/60">Balance</div>
-            <div className="mt-1 text-2xl font-bold text-amber-400">{balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} AUD</div>
+            <div className="mt-1 text-2xl font-bold text-amber-300">{balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} AUD</div>
           </div>
           <div>
             <div className="text-xs uppercase tracking-wider text-amber-500/60">Bet</div>
@@ -133,27 +141,46 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
           </div>
           <div>
             <div className="text-xs uppercase tracking-wider text-amber-500/60">Status</div>
-            <div className={`mt-1 text-xl font-bold ${animatingWin ? "text-emerald-400" : "text-white"}`}>
-              {animatingWin ? "WIN" : spinning ? "SPINNING" : "READY"}
+            <div className={`mt-1 text-xl font-bold ${animatingWin ? "text-emerald-300" : spinning ? "text-amber-200" : "text-white"}`}>
+              {animatingWin ? "MEGA WIN" : spinning ? "SPINNING" : "READY"}
             </div>
           </div>
         </div>
       </div>
 
-      <div className="mb-4 rounded-2xl border border-white/10 bg-black/25 p-4 ring-1 ring-amber-400/20">
+      <div className="mb-4 rounded-2xl border border-white/10 bg-black/30 p-4 ring-1 ring-amber-300/20">
         <div className="grid grid-cols-5 gap-3">
           {[0, 1, 2, 3, 4].map((colIdx) => (
             <div key={colIdx} className="space-y-3">
-              {[0, 1, 2].map((rowIdx) => (
-                <div key={`${rowIdx}-${colIdx}`} className={`group relative aspect-square overflow-hidden rounded-2xl border-2 transition-all duration-300 ${holdAndWinPositions[colIdx]?.[rowIdx] ? "border-purple-400 bg-purple-500/25 shadow-[0_0_22px_rgba(168,85,247,0.45)]" : "border-amber-500/30 bg-gradient-to-br from-purple-950/30 to-black"}`}>
-                  <div className="relative h-full w-full p-2">
-                    <Image src={getSymbolImage(grid[rowIdx][colIdx])} alt={grid[rowIdx][colIdx]} fill className={`object-contain drop-shadow-2xl transition-transform duration-500 ${spinning ? "scale-110 animate-pulse" : "group-hover:scale-105"}`} />
-                    <div className="absolute bottom-1 left-1/2 -translate-x-1/2 rounded bg-black/60 px-2 py-0.5 text-[10px] font-bold text-amber-300">
-                      {grid[rowIdx][colIdx]}
+              {[0, 1, 2].map((rowIdx) => {
+                const symbol = grid[rowIdx][colIdx];
+                return (
+                  <div
+                    key={`${rowIdx}-${colIdx}`}
+                    className={`group relative aspect-square overflow-hidden rounded-full border-2 transition-all duration-300 ${
+                      holdAndWinPositions[colIdx]?.[rowIdx]
+                        ? "border-purple-300 bg-purple-500/20 shadow-[0_0_28px_rgba(168,85,247,0.45)]"
+                        : "border-amber-300/30 bg-gradient-to-br from-black to-amber-950/30"
+                    }`}
+                  >
+                    <div
+                      className={`absolute inset-2 rounded-full border border-white/10 ${spinning ? "animate-spin" : ""}`}
+                      style={{ animationDuration: spinning ? `${500 + colIdx * 140}ms` : undefined }}
+                    />
+                    <div className="relative h-full w-full p-3">
+                      <Image
+                        src={getSymbolImage(symbol)}
+                        alt={symbol}
+                        fill
+                        className={`object-contain drop-shadow-2xl transition-transform duration-500 ${spinning ? "scale-110" : "group-hover:scale-105"}`}
+                      />
+                      <div className="absolute bottom-1 left-1/2 -translate-x-1/2 rounded bg-black/60 px-2 py-0.5 text-[10px] font-bold text-amber-300">
+                        {symbol}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ))}
         </div>
@@ -179,6 +206,7 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
             <input type="number" step="0.1" value={bet} min={cfg.minBet} max={cfg.maxBet} onChange={(e) => setBet(Math.max(cfg.minBet, Math.min(cfg.maxBet, Number(e.target.value) || cfg.minBet)))} className="w-28 rounded-lg border border-amber-500/30 bg-black/40 px-3 py-2 text-center text-amber-400 outline-none" />
             <button onClick={() => setBet((v) => Math.min(cfg.maxBet, +(v + 0.1).toFixed(2)))} disabled={spinning} className="rounded-lg border border-amber-500/30 bg-amber-900/20 px-3 py-1 text-amber-400">+</button>
           </div>
+          <div className="mt-2 text-xs text-white/60">Limits: {cfg.minBet.toFixed(2)} AUD - {cfg.maxBet.toFixed(2)} AUD</div>
         </div>
 
         <LuxeButton label={spinning ? "SPINNING..." : freeSpinsRemaining > 0 ? `FREE SPIN (${freeSpinsRemaining})` : "SPIN"} variant="gold" onClick={runSpin} disabled={spinning || (freeSpinsRemaining === 0 && balance < bet)} />

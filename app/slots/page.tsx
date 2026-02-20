@@ -61,10 +61,9 @@ export default function SlotsGallery() {
         <HeroBackdrop src="/assets/images/jackpot-core.jpg" alt="Slots" />
         <div className="max-w-6xl mx-auto">
           <div className="text-xs tracking-[0.35em] uppercase text-white/55">The Grand Golden Vault · Slots</div>
-          <h1 className="mt-4 text-4xl md:text-5xl font-semibold text-gold animate-shimmer">Grand Golden Slots Lounge</h1>
+          <h1 className="mt-4 text-4xl md:text-5xl font-semibold text-gold animate-shimmer">Ancient Vault Golden Black Bull Lounge</h1>
           <p className="mt-4 text-white/80 max-w-3xl text-lg">
-            Experience premium Vegas-style slot machines featuring vertical scrolling reels, Hold & Win mechanics, 
-            authentic casino features, multiple paylines, certified RTP rates, and progressive jackpots.
+            Experience a luxury high-roller slot floor inspired by VIP Las Vegas rooms — elegance, exclusiveness, excitement, and joy with machine-specific symbols, Hold & Win features, free spins, and progressive jackpots.
           </p>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
