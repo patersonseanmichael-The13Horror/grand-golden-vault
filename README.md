@@ -63,6 +63,14 @@ npm run build
 npm run start
 ```
 
+### Verification Gate
+
+Before merging or deploying, run:
+
+```bash
+npm run verify
+```
+
 ---
 
 ## Project Structure
@@ -93,6 +101,12 @@ This repository is a **visual and user experience foundation only**. The slot ma
 ## Contributing
 
 Contributions are welcome! Please see the `CONTRIBUTING.md` file for details on how to contribute to this project.
+
+---
+
+## Deployment
+
+Use `docs/DEPLOYMENT_FINAL_STAGE.md` as the final rollout checklist.
 
 ---
 

@@ -7,7 +7,8 @@
     "dev": "XDG_CACHE_HOME=.cache next dev",
     "build": "XDG_CACHE_HOME=.cache next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "verify": "npm run lint && npm run build"
   },
   "dependencies": {
     "clsx": "2.1.1",
@@ -22,7 +23,7 @@
     "@types/react-dom": "19.2.3",
     "autoprefixer": "10.4.24",
     "eslint": "9.39.2",
-    "eslint-config-next": "16.1.6",
+    "eslint-config-next": "^15.5.10",
     "postcss": "8.5.6",
     "tailwindcss": "4.2.0",
     "typescript": "5.9.3"
