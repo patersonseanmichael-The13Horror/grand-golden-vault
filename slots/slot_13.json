@@ -4,62 +4,62 @@
   "reels": 5,
   "rows": 3,
   "symbols": [
-    "CROWN",
-    "GEM",
-    "VAULT",
-    "RING",
-    "ACE",
-    "KING",
-    "QUEEN",
-    "JACK",
-    "TEN"
+    "OPULENT__CROWN",
+    "OPULENT__GEM",
+    "OPULENT__VAULT",
+    "OPULENT__RING",
+    "OPULENT__ACE",
+    "OPULENT__KING",
+    "OPULENT__QUEEN",
+    "OPULENT__JACK",
+    "OPULENT__TEN"
   ],
   "baseJackpot": 160000,
   "vipProgressive": true,
   "minBet": 0.1,
-  "maxBet": 250,
+  "maxBet": 500,
   "payTable": {
-    "CROWN": {
+    "OPULENT__CROWN": {
       "3": 65,
       "4": 200,
       "5": 800
     },
-    "GEM": {
+    "OPULENT__GEM": {
       "3": 25,
       "4": 80,
       "5": 320
     },
-    "VAULT": {
+    "OPULENT__VAULT": {
       "3": 16,
       "4": 55,
       "5": 210
     },
-    "RING": {
+    "OPULENT__RING": {
       "3": 14,
       "4": 45,
       "5": 180
     },
-    "ACE": {
+    "OPULENT__ACE": {
       "3": 10,
       "4": 35,
       "5": 150
     },
-    "KING": {
+    "OPULENT__KING": {
       "3": 8,
       "4": 28,
       "5": 120
     },
-    "QUEEN": {
+    "OPULENT__QUEEN": {
       "3": 6,
       "4": 22,
       "5": 95
     },
-    "JACK": {
+    "OPULENT__JACK": {
       "3": 5,
       "4": 18,
       "5": 75
     },
-    "TEN": {
+    "OPULENT__TEN": {
       "3": 4,
       "4": 14,
       "5": 60
@@ -67,22 +67,22 @@
   },
   "rtp": 86.0,
   "volatility": "medium",
-  "wildSymbol": "CROWN",
-  "scatterSymbol": "GEM",
+  "wildSymbol": "OPULENT__CROWN",
+  "scatterSymbol": "OPULENT__GEM",
   "symbolWeights": {
-    "CROWN": 1,
-    "GEM": 2,
-    "VAULT": 3,
-    "RING": 4,
-    "ACE": 7,
-    "KING": 9,
-    "QUEEN": 11,
-    "JACK": 13,
-    "TEN": 16
+    "OPULENT__CROWN": 1,
+    "OPULENT__GEM": 2,
+    "OPULENT__VAULT": 3,
+    "OPULENT__RING": 4,
+    "OPULENT__ACE": 7,
+    "OPULENT__KING": 9,
+    "OPULENT__QUEEN": 11,
+    "OPULENT__JACK": 13,
+    "OPULENT__TEN": 16
   },
   "bonusFeatures": {
     "freeSpins": {
-      "triggerSymbol": "GEM",
+      "triggerSymbol": "OPULENT__GEM",
       "minScatters": 3,
       "awards": {
         "3": 8,
@@ -91,7 +91,7 @@
       }
     },
     "holdAndWin": {
-      "triggerSymbol": "VAULT",
+      "triggerSymbol": "OPULENT__VAULT",
       "minSymbols": 5,
       "respins": 3
     }
@@ -105,7 +105,7 @@
     "switchAfterDays": 10,
     "launchBand": "very-low-to-low",
     "launchRtp": 86.0,
-    "postLaunchBand": "medium-to-high",
-    "postLaunchRtp": 94.8
+    "postLaunchBand": "low-to-medium",
+    "postLaunchRtp": 94.0
   }
 }

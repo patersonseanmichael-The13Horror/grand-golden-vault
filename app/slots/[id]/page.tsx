@@ -147,11 +147,11 @@ export default async function SlotMachinePage({ params }: { params: Promise<{ id
             <div className="space-y-3 text-sm text-cyan-200/70">
               <div className="flex items-start gap-3">
                 <span className="text-cyan-400 font-bold">1.</span>
-                <p>Set your bet amount (0.10 to 250.00 AUD) using the + and - buttons</p>
+                <p>Set your bet amount (0.10 to 500.00 AUD) using the + and - controls</p>
               </div>
               <div className="flex items-start gap-3">
                 <span className="text-cyan-400 font-bold">2.</span>
-                <p>Click SPIN to start - watch symbols scroll vertically from top to bottom</p>
+                <p>Click SPIN to start - reels now run in circular spin mode before settling</p>
               </div>
               <div className="flex items-start gap-3">
                 <span className="text-cyan-400 font-bold">3.</span>
@@ -166,6 +166,16 @@ export default async function SlotMachinePage({ params }: { params: Promise<{ id
                 <p>Trigger 8 free spins and activate Hold & Win only during free spins!</p>
               </div>
             </div>
+          </div>
+
+          <div className="mt-6 rounded-3xl border border-rose-500/20 bg-rose-950/10 p-6">
+            <h2 className="text-2xl font-semibold text-rose-300 mb-4">Security & Fair Play Rules</h2>
+            <ul className="space-y-2 text-sm text-rose-100/75">
+              <li>• No personal payment data is stored in slot game state. Wallet and spin state are isolated client session values.</li>
+              <li>• Bets are constrained to configured machine limits ({cfg.minBet.toFixed(2)} to {cfg.maxBet.toFixed(2)} AUD).</li>
+              <li>• RTP and bonus logic are machine-config driven and disclosed on-screen for transparency.</li>
+              <li>• Responsible play: this experience is entertainment-only and should not be used for real-money wagering operations.</li>
+            </ul>
           </div>
 
 

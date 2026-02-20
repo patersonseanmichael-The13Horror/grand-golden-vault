@@ -34,7 +34,7 @@
   "baseJackpot": 500000,
   "vipProgressive": true,
   "minBet": 0.1,
-  "maxBet": 250,
+  "maxBet": 500,
   "payTable": {
     "DRAGON": {
       "3": 80,
@@ -107,7 +107,7 @@
     "switchAfterDays": 10,
     "launchBand": "very-low-to-low",
     "launchRtp": 82.5,
-    "postLaunchBand": "medium-to-high",
-    "postLaunchRtp": 96.2
+    "postLaunchBand": "low-to-medium",
+    "postLaunchRtp": 94.0
   }
 }
