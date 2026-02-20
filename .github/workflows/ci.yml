@@ -25,5 +25,8 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Predeploy Audit
+        run: npm run audit:predeploy
+
       - name: Build
         run: npm run build

@@ -1,9 +1,11 @@
 import VaultShell from "@/components/VaultShell";
 import HeroBackdrop from "@/components/HeroBackdrop";
 import PremiumBlackjack from "@/components/PremiumBlackjack";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default function BlackjackPage() {
   return (
+    <ProtectedRoute>
     <VaultShell>
       <section className="relative px-6 md:px-10 pt-12 pb-16">
         <HeroBackdrop src="/assets/images/treasure-floor.jpg" alt="Blackjack" />
@@ -75,5 +77,6 @@ export default function BlackjackPage() {
         </div>
       </section>
     </VaultShell>
+    </ProtectedRoute>
   );
 }

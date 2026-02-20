@@ -36,6 +36,8 @@ const BLOCKED_TERMS = [
 ];
 
 const ADMIN_TERMS = ["admin", "security", "protocol", "audit", "logs", "status"];
+const ABUSE_LOG_KEY = "vv.concierge.abuse";
+const MAX_ABUSE_LOGS = 100;
 
 export default function OllamaConcierge() {
   const { user } = useAuth();
@@ -92,12 +94,25 @@ export default function OllamaConcierge() {
     if (!normalized) return;
     const now = Date.now();
 
+    const logAbuse = (reason: string) => {
+      try {
+        const existing = window.localStorage.getItem(ABUSE_LOG_KEY);
+        const parsed = existing ? (JSON.parse(existing) as Array<{ ts: string; reason: string; text: string }>) : [];
+        const next = [{ ts: new Date().toISOString(), reason, text: normalized }, ...parsed].slice(0, MAX_ABUSE_LOGS);
+        window.localStorage.setItem(ABUSE_LOG_KEY, JSON.stringify(next));
+      } catch {
+        // Ignore logging failures in UI guard.
+      }
+    };
+
     if (now < lockedUntil) {
+      logAbuse("rate-limit");
       setReply("Rate limit active. Wait a moment, then ask one short navigation question.");
       return;
     }
 
     if (normalized.length > 180) {
+      logAbuse("length");
       setReply("Request rejected. Keep navigation questions under 180 characters.");
       setLockedUntil(now + 2500);
       return;
@@ -106,18 +121,33 @@ export default function OllamaConcierge() {
     const asksAdmin = ADMIN_TERMS.some((term) => normalized.includes(term));
     if (asksAdmin) {
       if (!isStrictAdmin) {
+        logAbuse("admin-probe");
         setReply("Restricted. Admin features are locked to the configured owner account only.");
         setLockedUntil(now + 3000);
         return;
       }
 
-      setReply("Admin panel status: concierge guardrails active, navigation-only mode enforced, and blocked-topic filters online.");
+      if (normalized.includes("logs")) {
+        try {
+          const existing = window.localStorage.getItem(ABUSE_LOG_KEY);
+          const parsed = existing ? (JSON.parse(existing) as Array<{ ts: string; reason: string; text: string }>) : [];
+          const latest = parsed[0];
+          setReply(
+            `Admin logs: ${parsed.length} abuse events captured. Latest: ${latest ? `${latest.reason} at ${latest.ts}` : "none"}.`
+          );
+        } catch {
+          setReply("Admin logs unavailable due to storage parsing issue.");
+        }
+      } else {
+        setReply("Admin panel status: concierge guardrails active, navigation-only mode enforced, and blocked-topic filters online.");
+      }
       setLockedUntil(now + 1500);
       return;
     }
 
     const blocked = BLOCKED_TERMS.some((term) => normalized.includes(term));
     if (blocked) {
+      logAbuse("blocked-term");
       setReply("Restricted. This concierge only provides page navigation help for visitors.");
       setLockedUntil(now + 2500);
       return;
@@ -125,6 +155,7 @@ export default function OllamaConcierge() {
 
     const matchedRoute = Object.keys(ROUTE_HELP).find((key) => normalized.includes(key));
     if (!matchedRoute) {
+      logAbuse("unknown-request");
       setReply("Navigation-only mode: ask where to find pages like Members, Slots, Bonus, Check-In, Login, or Contact.");
       setLockedUntil(now + 2000);
       return;

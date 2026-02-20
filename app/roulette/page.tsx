@@ -1,9 +1,11 @@
 import VaultShell from "@/components/VaultShell";
 import HeroBackdrop from "@/components/HeroBackdrop";
 import PremiumRoulette from "@/components/PremiumRoulette";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default function RoulettePage() {
   return (
+    <ProtectedRoute>
     <VaultShell>
       <section className="relative px-6 md:px-10 pt-12 pb-16">
         <HeroBackdrop src="/assets/images/treasure-floor.jpg" alt="Roulette" />
@@ -69,5 +71,6 @@ export default function RoulettePage() {
         </div>
       </section>
     </VaultShell>
+    </ProtectedRoute>
   );
 }

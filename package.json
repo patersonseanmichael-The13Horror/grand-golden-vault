@@ -8,6 +8,7 @@
     "build": "XDG_CACHE_HOME=.cache next build",
     "start": "next start",
     "lint": "eslint .",
+    "audit:predeploy": "node scripts/predeploy-audit.mjs",
     "verify": "npm run lint && npm run build"
   },
   "dependencies": {

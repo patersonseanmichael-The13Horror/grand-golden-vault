@@ -13,19 +13,48 @@ type Bet = {
 const AI_CROUPIER = "Valentino";
 const RED_NUMBERS = new Set([1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]);
 const WHEEL_ORDER = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26];
+const MIN_TABLE_CHIP = 20;
+const MAX_TABLE_CHIP = 480;
 
 export default function PremiumRoulette() {
   const { balance, credit, debit } = useSharedWallet();
-  const [chip, setChip] = useState(10);
+  const [chip, setChip] = useState(20);
   const [bets, setBets] = useState<Bet[]>([]);
   const [spinning, setSpinning] = useState(false);
   const [winningNumber, setWinningNumber] = useState<number | null>(null);
   const [message, setMessage] = useState("Valentino is ready. Place premium bets to begin.");
+  const [spinTurns, setSpinTurns] = useState(0);
+  const [ballOffsetDeg, setBallOffsetDeg] = useState(0);
 
   const totalBet = useMemo(() => bets.reduce((sum, b) => sum + b.amount, 0), [bets]);
+  const isBigWin = useMemo(() => {
+    if (!winningNumber) return false;
+    return totalBet >= 200;
+  }, [totalBet, winningNumber]);
+
+  const playTone = (frequency: number, durationMs: number) => {
+    if (typeof window === "undefined") return;
+    try {
+      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.frequency.value = frequency;
+      osc.type = "triangle";
+      gain.gain.value = 0.04;
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      setTimeout(() => {
+        osc.stop();
+        ctx.close();
+      }, durationMs);
+    } catch {
+      // Audio optional.
+    }
+  };
 
   const addBet = (bet: Omit<Bet, "amount">) => {
-    if (spinning || !debit(chip)) return;
+    if (spinning || chip < MIN_TABLE_CHIP || chip > MAX_TABLE_CHIP || !debit(chip)) return;
     setBets((prev) => {
       const idx = prev.findIndex((b) => b.key === bet.key);
       if (idx >= 0) {
@@ -48,6 +77,9 @@ export default function PremiumRoulette() {
     if (spinning || bets.length === 0) return;
     setSpinning(true);
     setMessage("Valentino spins the wheel. Ball velocity and bounce are live...");
+    setSpinTurns((prev) => prev + 6 + Math.random() * 3);
+    setBallOffsetDeg(Math.random() * 360);
+    playTone(420, 160);
 
     await new Promise((r) => setTimeout(r, 2600));
 
@@ -71,9 +103,12 @@ export default function PremiumRoulette() {
 
     if (payout > 0) {
       credit(payout);
-      setMessage(`Result ${result}. Valentino confirms payout: ${payout.toLocaleString()} AUD.`);
+      const winType = payout >= totalBet * 10 ? "BIG WIN" : "WIN";
+      setMessage(`Result ${result}. Valentino confirms ${winType}: ${payout.toLocaleString()} AUD.`);
+      playTone(payout >= totalBet * 10 ? 860 : 620, payout >= totalBet * 10 ? 260 : 180);
     } else {
       setMessage(`Result ${result}. House edge holds this round.`);
+      playTone(220, 120);
     }
 
     setBets([]);
@@ -93,7 +128,7 @@ export default function PremiumRoulette() {
         <div className="rounded-2xl border border-purple-500/25 bg-purple-950/20 p-4">
           <p className="text-xs uppercase tracking-[0.25em] text-purple-200/70">AI Dealer</p>
           <p className="mt-1 text-lg font-semibold text-purple-200">{AI_CROUPIER} • High Roller Focus</p>
-          <p className="text-sm text-white/70">Restricted dealer tools: navigation and deposit-assist only.</p>
+          <p className="text-sm text-white/70">Restricted dealer tools: navigation-only concierge safeguards active.</p>
         </div>
         <div className="rounded-2xl border border-emerald-500/25 bg-emerald-950/20 p-4">
           <p className="text-xs uppercase tracking-[0.25em] text-emerald-200/70">Wheel/Board Sync</p>
@@ -108,7 +143,7 @@ export default function PremiumRoulette() {
         <div className="rounded-3xl border border-amber-500/30 bg-black/35 p-4">
           <h3 className="mb-3 text-lg font-semibold text-amber-300">Premium Roulette Board</h3>
           <div className="mb-3 grid grid-cols-3 gap-2 sm:flex sm:flex-wrap">
-            {[10, 50, 100].map((value) => (
+            {[20, 80, 160, 320, 480].map((value) => (
               <button key={value} onClick={() => setChip(value)} className={`rounded-full px-4 py-2 text-sm font-semibold ${chip === value ? "bg-amber-400 text-black" : "border border-white/20 bg-white/5 text-white/80"}`}>
                 ${value}
               </button>
@@ -140,9 +175,23 @@ export default function PremiumRoulette() {
 
         <div className="rounded-3xl border border-amber-500/30 bg-black/35 p-4">
           <h3 className="mb-2 text-lg font-semibold text-amber-300">Las Vegas Wheel</h3>
-          <div className={`relative mx-auto h-56 w-56 rounded-full border-8 border-amber-500/50 bg-[conic-gradient(#16a34a_0deg,#111827_40deg,#dc2626_80deg,#111827_120deg,#dc2626_160deg,#111827_200deg,#dc2626_240deg,#111827_280deg,#dc2626_320deg,#16a34a_360deg)] ${spinning ? "animate-spin" : ""}`}>
+          <div
+            className="relative mx-auto h-56 w-56 rounded-full border-8 border-amber-500/50 bg-[conic-gradient(#16a34a_0deg,#111827_40deg,#dc2626_80deg,#111827_120deg,#dc2626_160deg,#111827_200deg,#dc2626_240deg,#111827_280deg,#dc2626_320deg,#16a34a_360deg)] transition-transform duration-[2600ms] ease-[cubic-bezier(0.15,0.8,0.2,1)]"
+            style={{ transform: `rotate(${spinTurns * 360}deg)` }}
+          >
             <div className="absolute inset-5 rounded-full border border-white/20 bg-black/65" />
-            <div className={`absolute left-1/2 top-3 h-4 w-4 -translate-x-1/2 rounded-full bg-white shadow-[0_0_12px_#fff] ${spinning ? "animate-bounce" : ""}`} />
+            <div className="absolute inset-3 rounded-full border border-amber-200/30" />
+            {Array.from({ length: 37 }, (_, i) => (
+              <div
+                key={i}
+                className="absolute left-1/2 top-1/2 h-[45%] w-px origin-bottom bg-amber-200/25"
+                style={{ transform: `translate(-50%, -100%) rotate(${(360 / 37) * i}deg)` }}
+              />
+            ))}
+            <div
+              className={`absolute left-1/2 top-3 h-4 w-4 -translate-x-1/2 rounded-full bg-white shadow-[0_0_12px_#fff] transition-transform duration-[2600ms] ${spinning ? "animate-bounce" : ""}`}
+              style={{ transform: `translateX(-50%) rotate(${-spinTurns * 360 + ballOffsetDeg}deg)` }}
+            />
             <div className="absolute inset-0 flex items-center justify-center text-2xl font-bold text-amber-200">{winningNumber ?? "•"}</div>
           </div>
           <div className="mt-3 grid grid-cols-6 gap-1 text-[10px] text-white/70">
@@ -156,11 +205,10 @@ export default function PremiumRoulette() {
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <button onClick={spin} disabled={spinning || bets.length === 0} className="rounded-xl bg-emerald-500 px-4 py-2 font-bold text-black disabled:opacity-50">{spinning ? "SPINNING..." : "SPIN"}</button>
         <button onClick={clearBets} disabled={spinning || bets.length === 0} className="rounded-xl border border-red-400/40 bg-red-950/30 px-4 py-2 text-red-200 disabled:opacity-50">Clear</button>
-      </div>
-
-      <div className="grid gap-2 sm:grid-cols-2">
-        <button onClick={spin} disabled={spinning || bets.length === 0} className="rounded-xl bg-amber-500 px-4 py-3 font-semibold text-black disabled:opacity-50">{spinning ? "Valentino Spinning..." : "Spin Wheel"}</button>
-        <button onClick={clearBets} disabled={spinning || bets.length === 0} className="rounded-xl border border-white/20 bg-white/5 px-4 py-3 font-semibold text-white disabled:opacity-50">Clear Bets</button>
+        <div className="rounded-xl border border-white/20 bg-white/5 px-4 py-2 text-sm text-white/80">Chip Range: ${MIN_TABLE_CHIP} - ${MAX_TABLE_CHIP}</div>
+        <div className={`rounded-xl border px-4 py-2 text-sm ${isBigWin ? "border-emerald-300/50 bg-emerald-950/30 text-emerald-200" : "border-white/20 bg-white/5 text-white/80"}`}>
+          {isBigWin ? "Big Win Event Active" : "Standard Spin"}
+        </div>
       </div>
     </div>
   );

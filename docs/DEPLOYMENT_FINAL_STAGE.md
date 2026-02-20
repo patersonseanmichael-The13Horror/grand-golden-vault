@@ -2,6 +2,7 @@
 
 ## 1. Pre-merge verification
 - Run `npm ci`
+- Run `npm run audit:predeploy`
 - Run `npm run verify`
 - Confirm no uncommitted changes with `git status --short`
 

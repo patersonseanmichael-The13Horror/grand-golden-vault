@@ -5,12 +5,12 @@ import HeroBackdrop from "@/components/HeroBackdrop";
 export default function Page() {
   return (
     <VaultShell>
-      <section className="relative px-6 md:px-10 pt-14 md:pt-20 pb-16 md:pb-20">
+      <section className="relative pt-14 md:pt-20 pb-16 md:pb-20">
         <HeroBackdrop src="/assets/images/executive-chamber.jpg" alt="Privacy" />
-        <div className="max-w-3xl mx-auto">
+        <div className="vv-page-wrap max-w-3xl">
           <div className="flex items-center justify-between gap-4">
-            <div className="text-xs tracking-[0.35em] uppercase text-gold-solid">Privacy</div>
-            <Link href="/" className="rounded-full border border-white/20 bg-white/5 px-4 py-2 text-xs text-white/80 hover:bg-white/10">Back to Home</Link>
+            <div className="vv-kicker">Privacy</div>
+            <Link href="/" className="vv-action-muted">Back to Home</Link>
           </div>
           <h1 className="vv-display mt-4 text-4xl font-semibold">Privacy Policy</h1>
           <div className="mt-6 space-y-5 rounded-2xl vv-panel p-6 text-white/78 leading-relaxed">
