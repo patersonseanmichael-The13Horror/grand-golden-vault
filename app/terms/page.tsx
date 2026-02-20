@@ -5,19 +5,38 @@ import HeroBackdrop from "@/components/HeroBackdrop";
 export default function Page() {
   return (
     <VaultShell>
-      <section className="relative px-6 md:px-10 pt-12 pb-16">
+      <section className="relative px-6 md:px-10 pt-14 md:pt-20 pb-16 md:pb-20">
         <HeroBackdrop src="/assets/images/executive-chamber.jpg" alt="Terms" />
         <div className="max-w-3xl mx-auto">
           <div className="flex items-center justify-between gap-4">
-            <div className="text-xs tracking-[0.35em] uppercase text-white/55">Terms</div>
+            <div className="text-xs tracking-[0.35em] uppercase text-gold-solid">Terms</div>
             <Link href="/" className="rounded-full border border-white/20 bg-white/5 px-4 py-2 text-xs text-white/80 hover:bg-white/10">Back to Home</Link>
           </div>
-          <h1 className="mt-4 text-4xl font-semibold">Terms & Conditions</h1>
-          <div className="mt-6 text-white/70 leading-relaxed space-y-4 rounded-2xl border border-white/10 bg-black/25 p-6">
-            <p>Grand Golden Vault provides digital entertainment content only. Users must be 18+ and comply with local laws in their jurisdiction.</p>
-            <p>Accounts are personal, non-transferable, and may be suspended for fraud, abuse, or policy breaches. Deposits and bonuses are subject to verification and anti-fraud controls.</p>
-            <p>All game visuals, names, and branded materials are original or appropriately licensed. Unauthorized copying, redistribution, or reverse engineering is prohibited.</p>
-            <p>Service availability, promotions, and payout timing may change for compliance, maintenance, or risk management reasons.</p>
+          <h1 className="vv-display mt-4 text-4xl font-semibold">Terms & Conditions</h1>
+          <div className="mt-6 space-y-5 rounded-2xl vv-panel p-6 text-white/78 leading-relaxed">
+            <p>
+              Grand Golden Vault is a private digital entertainment platform. By creating an account or using this site,
+              you confirm you are at least 18 years old and legally permitted to access this type of service in your
+              jurisdiction.
+            </p>
+            <p>
+              Accounts are personal and non-transferable. You are responsible for safeguarding your login credentials and
+              for all activity under your account. We may suspend or close accounts involved in fraud, abuse, identity
+              misuse, chargeback abuse, or violations of platform rules.
+            </p>
+            <p>
+              Promotions, bonuses, loyalty rewards, and payout timing may change based on compliance obligations,
+              operational maintenance, and risk controls. Where verification is required, access to withdrawals or bonuses
+              may be paused until checks are completed.
+            </p>
+            <p>
+              All platform materials, including interface design, branding, media assets, and game-related content, are
+              protected by applicable intellectual property laws. Unauthorized copying, scraping, redistribution, or reverse
+              engineering is prohibited.
+            </p>
+            <p>
+              Continued use of the platform indicates acceptance of these terms and any future updates posted on this page.
+            </p>
           </div>
         </div>
       </section>

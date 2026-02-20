@@ -9,7 +9,7 @@ import {
   onAuthStateChanged,
   sendPasswordResetEmail,
 } from "firebase/auth";
-import { auth } from "./firebase";
+import { getFirebaseAuth, isFirebaseConfigured } from "./firebase";
 
 interface AuthContextType {
   user: User | null;
@@ -42,7 +42,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    if (!isFirebaseConfigured) {
+      setLoading(false);
+      return;
+    }
+
+    const auth = getFirebaseAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user: User | null) => {
       setUser(user);
       setLoading(false);
     });
@@ -51,18 +57,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const signup = async (email: string, password: string) => {
+    const auth = getFirebaseAuth();
     await createUserWithEmailAndPassword(auth, email, password);
   };
 
   const login = async (email: string, password: string) => {
+    const auth = getFirebaseAuth();
     await signInWithEmailAndPassword(auth, email, password);
   };
 
   const logout = async () => {
+    const auth = getFirebaseAuth();
     await signOut(auth);
   };
 
   const resetPassword = async (email: string) => {
+    const auth = getFirebaseAuth();
     await sendPasswordResetEmail(auth, email);
   };
 

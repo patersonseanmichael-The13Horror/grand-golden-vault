@@ -11,20 +11,40 @@
   --vv-muted: #b8b2a6;
   --vv-gold: #c9a45c;
   --vv-gold-2: #8a6a2f;
+  --vv-font-display: "Palatino Linotype", "Book Antiqua", Palatino, "Times New Roman", serif;
+  --vv-font-body: "Trebuchet MS", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
   color: var(--vv-ink);
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  font-family: var(--vv-font-body);
+  background:
+    radial-gradient(1200px 640px at 12% -8%, rgba(201, 164, 92, 0.14), transparent 55%),
+    radial-gradient(900px 520px at 95% 0%, rgba(105, 77, 29, 0.2), transparent 60%),
+    linear-gradient(180deg, rgb(var(--background-start-rgb)) 0%, rgb(var(--background-end-rgb)) 100%);
   min-height: 100vh;
 }
 
 @layer utilities {
+  .vv-display {
+    font-family: var(--vv-font-display);
+    letter-spacing: 0.03em;
+  }
+
+  .vv-grain {
+    background-image: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.045) 1px, transparent 1.2px);
+    background-size: 4px 4px;
+    mix-blend-mode: soft-light;
+    opacity: 0.32;
+    pointer-events: none;
+  }
+
+  .vv-panel {
+    background: linear-gradient(165deg, rgba(28, 17, 12, 0.78), rgba(13, 10, 17, 0.88));
+    border: 1px solid rgba(201, 164, 92, 0.26);
+    box-shadow: 0 18px 55px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
   .text-balance {
     text-wrap: balance;
   }
@@ -137,6 +157,10 @@ body {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  .text-gold-solid {
+    color: #ddbf7a;
   }
 
   .border-gold-gradient {

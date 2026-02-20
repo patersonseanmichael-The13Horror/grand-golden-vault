@@ -2,6 +2,24 @@ import VaultShell from "@/components/VaultShell";
 import LuxeButton from "@/components/LuxeButton";
 import HeroBackdrop from "@/components/HeroBackdrop";
 
+const features = [
+  {
+    title: "Premium Slots",
+    icon: "🎰",
+    body: "25 exclusive machines with engineered RTP pacing, cinematic reels, and progressive jackpot loops.",
+  },
+  {
+    title: "VIP Tiers",
+    icon: "💎",
+    body: "Layered membership tiers with upgraded rewards, concierge treatment, and private room privileges.",
+  },
+  {
+    title: "Secure Gaming",
+    icon: "🔒",
+    body: "Hardened account controls, transparent responsible-gaming tools, and bank-grade session security.",
+  },
+];
+
 export default function LandingPage() {
   return (
     <VaultShell
@@ -12,18 +30,20 @@ export default function LandingPage() {
         </>
       }
     >
-      <section className="relative px-6 md:px-10 pt-12 md:pt-16 pb-16">
+      <section className="relative px-6 md:px-10 pt-14 md:pt-20 pb-16 md:pb-20">
         <HeroBackdrop src="/assets/images/index-hero.jpg" alt="Grand Golden Vault" />
-        <div className="max-w-5xl mx-auto">
-          <div className="text-xs tracking-[0.35em] uppercase text-white/55">Private Access • Members Only</div>
-          <h1 className="mt-4 text-4xl md:text-6xl leading-tight font-semibold">
-            <span className="text-gold animate-shimmer">The Grand Golden Vault</span>
-            <span className="block text-white/70 font-light mt-2">Premium VIP Gaming Lounge</span>
+        <div className="max-w-6xl mx-auto">
+          <div className="inline-flex items-center rounded-full border border-[rgba(221,191,122,0.45)] bg-black/35 px-4 py-2 text-[11px] tracking-[0.34em] uppercase text-gold-solid">
+            Private Access • Members Only
+          </div>
+
+          <h1 className="vv-display mt-6 max-w-4xl text-4xl md:text-6xl leading-[1.08] text-white">
+            <span className="text-gold">The Grand Golden Vault</span>
+            <span className="block text-white/76 font-normal mt-3">Premium VIP Gaming Lounge</span>
           </h1>
 
-          <p className="mt-8 max-w-2xl text-lg md:text-xl text-white/70 leading-relaxed">
-            “Fortune never raises its voice—only its standard.
-            <span className="block mt-2">Enter quietly, and be measured accordingly.”</span>
+          <p className="mt-7 max-w-2xl text-lg md:text-xl text-white/75 leading-relaxed">
+            Fortune never raises its voice. It sharpens the room, narrows the field, and rewards the prepared.
           </p>
 
           <div className="mt-10 flex flex-wrap gap-3">
@@ -31,19 +51,15 @@ export default function LandingPage() {
             <LuxeButton href="/login" label="Member Login" />
           </div>
 
-          <div className="mt-12 grid md:grid-cols-3 gap-4">
-            <div className="rounded-3xl border border-amber-500/20 bg-gradient-to-br from-amber-900/10 to-purple-900/10 p-6 shadow-vv-glow backdrop-blur-md hover:shadow-vv-glow transition-all duration-300">
-              <div className="text-xs tracking-[0.25em] uppercase text-amber-500/80">🎰 Premium Slots</div>
-              <div className="mt-3 text-white/80 leading-relaxed">25 exclusive machines with Vegas-style mechanics, RTP controls, and progressive jackpots.</div>
-            </div>
-            <div className="rounded-3xl border border-amber-500/20 bg-gradient-to-br from-amber-900/10 to-purple-900/10 p-6 shadow-vv-glow backdrop-blur-md hover:shadow-vv-glow transition-all duration-300">
-              <div className="text-xs tracking-[0.25em] uppercase text-amber-500/80">💎 VIP Tiers</div>
-              <div className="mt-3 text-white/80 leading-relaxed">Exclusive membership levels with enhanced rewards, bonuses, and personalized service.</div>
-            </div>
-            <div className="rounded-3xl border border-amber-500/20 bg-gradient-to-br from-amber-900/10 to-purple-900/10 p-6 shadow-vv-glow backdrop-blur-md hover:shadow-vv-glow transition-all duration-300">
-              <div className="text-xs tracking-[0.25em] uppercase text-amber-500/80">🔒 Secure Gaming</div>
-              <div className="mt-3 text-white/80 leading-relaxed">Bank-grade security, responsible gaming tools, and certified fair play systems.</div>
-            </div>
+          <div className="mt-12 grid md:grid-cols-3 gap-4 md:gap-5">
+            {features.map((feature) => (
+              <article key={feature.title} className="vv-panel rounded-3xl p-6 md:p-7 transition duration-300 hover:-translate-y-0.5 hover:border-[rgba(221,191,122,0.44)]">
+                <div className="text-xs tracking-[0.22em] uppercase text-gold-solid">
+                  {feature.icon} {feature.title}
+                </div>
+                <p className="mt-3 text-white/82 leading-relaxed">{feature.body}</p>
+              </article>
+            ))}
           </div>
         </div>
       </section>

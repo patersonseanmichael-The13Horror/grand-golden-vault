@@ -1,6 +1,6 @@
-import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getApp, getApps, initializeApp, type FirebaseApp } from "firebase/app";
+import { getAuth, type Auth } from "firebase/auth";
+import { getFirestore, type Firestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -15,15 +15,41 @@ const missingFirebaseVars = Object.entries(firebaseConfig)
   .filter(([, value]) => !value)
   .map(([key]) => key);
 
-if (missingFirebaseVars.length > 0) {
-  throw new Error(
-    `Missing required Firebase environment variables: ${missingFirebaseVars.join(", ")}. Please configure NEXT_PUBLIC_FIREBASE_* values.`
-  );
-}
+export const isFirebaseConfigured = missingFirebaseVars.length === 0;
 
-// Initialize Firebase (singleton pattern)
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
-const auth = getAuth(app);
-const db = getFirestore(app);
+let app: FirebaseApp | null = null;
+let auth: Auth | null = null;
+let db: Firestore | null = null;
 
-export { app, auth, db };
+const assertFirebaseConfig = () => {
+  if (!isFirebaseConfigured) {
+    throw new Error(
+      `Missing required Firebase environment variables: ${missingFirebaseVars.join(", ")}. Please configure NEXT_PUBLIC_FIREBASE_* values.`
+    );
+  }
+};
+
+const ensureFirebase = () => {
+  if (app && auth && db) return;
+
+  assertFirebaseConfig();
+
+  app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+  auth = getAuth(app);
+  db = getFirestore(app);
+};
+
+export const getFirebaseApp = (): FirebaseApp => {
+  ensureFirebase();
+  return app as FirebaseApp;
+};
+
+export const getFirebaseAuth = (): Auth => {
+  ensureFirebase();
+  return auth as Auth;
+};
+
+export const getFirebaseDb = (): Firestore => {
+  ensureFirebase();
+  return db as Firestore;
+};
