@@ -13,11 +13,11 @@ export default function LandingPage() {
       }
     >
       <section className="relative px-6 md:px-10 pt-12 md:pt-16 pb-16">
-        <HeroBackdrop src="/assets/images/index-hero.jpg" alt="Velvet Vault" />
+        <HeroBackdrop src="/assets/images/index-hero.jpg" alt="Grand Golden Vault" />
         <div className="max-w-5xl mx-auto">
           <div className="text-xs tracking-[0.35em] uppercase text-white/55">Private Access • Members Only</div>
           <h1 className="mt-4 text-4xl md:text-6xl leading-tight font-semibold">
-            <span className="text-gold animate-shimmer">The Velvet Vault</span>
+            <span className="text-gold animate-shimmer">The Grand Golden Vault</span>
             <span className="block text-white/70 font-light mt-2">Premium VIP Gaming Lounge</span>
           </h1>
 

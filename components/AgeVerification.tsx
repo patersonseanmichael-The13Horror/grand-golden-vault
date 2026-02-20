@@ -62,7 +62,7 @@ export default function AgeVerification() {
 
           {/* Title */}
           <h1 className="text-3xl font-bold text-center text-gold mb-2">
-            The Velvet Vault
+            Grand Golden Vault
           </h1>
           <p className="text-center text-gray-400 text-sm tracking-wider uppercase mb-6">
             Digital E-Lounge
@@ -92,13 +92,13 @@ export default function AgeVerification() {
               onClick={handleDecline}
               className="rounded-full border-2 border-red-500/30 bg-red-950/30 px-6 py-3 text-red-300 font-semibold transition-all hover:border-red-500/50 hover:bg-red-950/50 hover:shadow-lg hover:shadow-red-500/20"
             >
-              No, I'm Under 18
+              No, I&apos;m Under 18
             </button>
             <button
               onClick={handleConfirm}
               className="rounded-full bg-gradient-to-r from-amber-600 to-amber-500 px-6 py-3 text-gray-900 font-bold transition-all hover:from-amber-500 hover:to-amber-400 shadow-vv-glow hover:shadow-amber-500/50"
             >
-              Yes, I'm 18+
+              Yes, I&apos;m 18+
             </button>
           </div>
 

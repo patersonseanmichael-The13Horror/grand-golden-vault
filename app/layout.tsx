@@ -3,7 +3,7 @@ import { AuthProvider } from "@/lib/AuthContext";
 import AgeVerification from "@/components/AgeVerification";
 
 export const metadata = {
-  title: "The-Velvet-Vault — Digital E-Lounge",
+  title: "Grand Vault — Digital E-Lounge",
   description: "A private lounge of polished experience and discreet privilege.",
 };
 

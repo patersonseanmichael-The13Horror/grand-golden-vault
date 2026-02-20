@@ -6,10 +6,15 @@
   --foreground-rgb: 255, 255, 255;
   --background-start-rgb: 10, 5, 20;
   --background-end-rgb: 20, 10, 30;
+  --vv-bg: #07070a;
+  --vv-ink: #e9e6df;
+  --vv-muted: #b8b2a6;
+  --vv-gold: #c9a45c;
+  --vv-gold-2: #8a6a2f;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
+  color: var(--vv-ink);
   background: linear-gradient(
       to bottom,
       transparent,
@@ -55,7 +60,7 @@ body {
   }
 
   .animate-spin-slow {
-    animation: spin-slow 0.5s linear infinite;
+    animation: spin-slow 2.5s linear infinite;
   }
 
   @keyframes shimmer {
@@ -136,5 +141,16 @@ body {
 
   .border-gold-gradient {
     border-image: linear-gradient(135deg, #d4af37 0%, #f4e5a1 50%, #d4af37 100%) 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-floaty,
+  .animate-spin-slow,
+  .animate-shimmer,
+  .animate-glow-pulse,
+  .animate-jackpot,
+  .animate-coin-flip {
+    animation: none !important;
   }
 }

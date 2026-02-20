@@ -11,6 +11,7 @@ import LuxeButton from "@/components/LuxeButton";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import WelcomeBonusModal from "@/components/WelcomeBonusModal";
 import DepositModal from "@/components/DepositModal";
+import OllamaConcierge from "@/components/OllamaConcierge";
 import { useAuth } from "@/lib/AuthContext";
 
 export default function Members() {
@@ -36,9 +37,11 @@ export default function Members() {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
               </svg>
-              <span>Wallet</span>
+              <span className="hidden sm:inline">Wallet</span><span className="sm:hidden">$</span>
             </button>
             <LuxeButton href="/slots" label="Slots" variant="gold" />
+            <LuxeButton href="/bonus" label="Bonus" variant="ghost" />
+            <LuxeButton href="/check-in" label="Check-In" variant="ghost" />
             <button
               onClick={handleLogout}
               className="px-4 py-2 rounded-full border border-white/20 bg-white/5 text-white/70 hover:bg-white/10 transition-all text-sm"
@@ -66,12 +69,7 @@ export default function Members() {
             <div className="mt-10 grid lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-6">
                 <GameGallery />
-                <div className="rounded-3xl border border-white/10 bg-black/35 backdrop-blur-md p-6 shadow-vv-soft">
-                  <div className="text-xs tracking-[0.30em] uppercase text-white/60">Concierge (Ollama)</div>
-                  <p className="mt-3 text-white/70 leading-relaxed">
-                    Concierge boot-in point. Wire to a server-side gatekeeper endpoint (never expose your model directly to the browser).
-                  </p>
-                </div>
+                <OllamaConcierge />
               </div>
               <div className="space-y-6">
                 <VipTiers />

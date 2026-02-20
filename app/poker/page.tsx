@@ -9,9 +9,9 @@ export default function PokerPage() {
         <HeroBackdrop src="/assets/images/treasure-floor.jpg" alt="Poker" />
         <div className="max-w-7xl mx-auto">
           <div className="text-xs tracking-[0.35em] uppercase text-white/55">Table Games</div>
-          <h1 className="mt-4 text-4xl md:text-5xl font-semibold text-gold animate-shimmer">Texas Hold'em Poker</h1>
+          <h1 className="mt-4 text-4xl md:text-5xl font-semibold text-gold animate-shimmer">Texas Hold&apos;em Poker</h1>
           <p className="mt-4 text-white/70 max-w-3xl">
-            Play premium Texas Hold'em Poker against AI opponents. Experience authentic casino poker with 
+            Play premium Texas Hold&apos;em Poker against AI opponents. Experience authentic casino poker with 
             professional betting rounds, community cards, and strategic gameplay. No limit betting with realistic AI behavior.
           </p>
 
@@ -26,7 +26,7 @@ export default function PokerPage() {
               <div className="space-y-3 text-sm text-cyan-200/70">
                 <div className="flex items-start gap-3">
                   <span className="text-cyan-400 font-bold">1.</span>
-                  <p>Click "Start New Hand" to begin</p>
+                  <p>Click &quot;Start New Hand&quot; to begin</p>
                 </div>
                 <div className="flex items-start gap-3">
                   <span className="text-cyan-400 font-bold">2.</span>

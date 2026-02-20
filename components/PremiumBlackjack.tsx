@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useSharedWallet } from "@/lib/useSharedWallet";
 
 type Card = {
   suit: string;
@@ -8,381 +9,240 @@ type Card = {
   value: number;
 };
 
-type Hand = {
-  cards: Card[];
-  bet: number;
-  doubled: boolean;
-  split: boolean;
-};
-
 const SUITS = ["♠", "♥", "♦", "♣"];
 const RANKS = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+const AI_DEALER = "Valentino";
 
-export default function PremiumBlackjack() {
-  const [balance, setBalance] = useState(10000);
-  const [bet, setBet] = useState(100);
-  const [playerHands, setPlayerHands] = useState<Hand[]>([]);
-  const [dealerHand, setDealerHand] = useState<Card[]>([]);
-  const [deck, setDeck] = useState<Card[]>([]);
-  const [gameState, setGameState] = useState<"betting" | "playing" | "dealer" | "finished">("betting");
-  const [currentHandIndex, setCurrentHandIndex] = useState(0);
-  const [message, setMessage] = useState("");
-  const [showDealerCard, setShowDealerCard] = useState(false);
-
-  const createDeck = (): Card[] => {
-    const newDeck: Card[] = [];
-    for (let i = 0; i < 6; i++) { // 6 deck shoe
-      for (const suit of SUITS) {
-        for (const rank of RANKS) {
-          let value = parseInt(rank);
-          if (rank === "A") value = 11;
-          else if (["J", "Q", "K"].includes(rank)) value = 10;
-          newDeck.push({ suit, rank, value });
-        }
+const createDeck = () => {
+  const shoe: Card[] = [];
+  for (let d = 0; d < 6; d += 1) {
+    for (const suit of SUITS) {
+      for (const rank of RANKS) {
+        shoe.push({
+          suit,
+          rank,
+          value: rank === "A" ? 11 : ["J", "Q", "K"].includes(rank) ? 10 : Number(rank),
+        });
       }
     }
-    return newDeck.sort(() => Math.random() - 0.5);
-  };
+  }
+  return shoe.sort(() => Math.random() - 0.5);
+};
 
-  const drawCard = (currentDeck: Card[]): [Card, Card[]] => {
-    const card = currentDeck[0];
-    return [card, currentDeck.slice(1)];
-  };
+const handValue = (cards: Card[]) => {
+  let total = cards.reduce((acc, c) => acc + c.value, 0);
+  let aces = cards.filter((c) => c.rank === "A").length;
+  while (total > 21 && aces > 0) {
+    total -= 10;
+    aces -= 1;
+  }
+  return total;
+};
 
-  const calculateHandValue = (cards: Card[]): number => {
-    let value = cards.reduce((sum, card) => sum + card.value, 0);
-    let aces = cards.filter(card => card.rank === "A").length;
-    
-    while (value > 21 && aces > 0) {
-      value -= 10;
-      aces--;
+export default function PremiumBlackjack() {
+  const { balance, credit, debit } = useSharedWallet();
+  const [bet, setBet] = useState(100);
+  const [shoe, setShoe] = useState<Card[]>([]);
+  const [playerCards, setPlayerCards] = useState<Card[]>([]);
+  const [dealerCards, setDealerCards] = useState<Card[]>([]);
+  const [revealHoleCard, setRevealHoleCard] = useState(false);
+  const [stage, setStage] = useState<"betting" | "dealing" | "playing" | "dealer" | "finished">("betting");
+  const [message, setMessage] = useState("Place your wager to challenge Valentino.");
+
+  const playerTotal = useMemo(() => handValue(playerCards), [playerCards]);
+  const dealerVisible = useMemo(() => (revealHoleCard ? dealerCards : dealerCards.slice(0, 1)), [dealerCards, revealHoleCard]);
+  const dealerTotal = useMemo(() => handValue(dealerVisible), [dealerVisible]);
+
+  const draw = (deck: Card[]) => [deck[0], deck.slice(1)] as const;
+
+  const deal = async () => {
+    if (balance < bet || stage === "dealing") return;
+
+    let deck = createDeck();
+    const p: Card[] = [];
+    const d: Card[] = [];
+
+    setStage("dealing");
+    setMessage("Valentino is concentrating... cards incoming.");
+    if (!debit(bet)) return;
+    setRevealHoleCard(false);
+
+    await new Promise((r) => setTimeout(r, 250));
+    [p[0], deck] = draw(deck);
+    setPlayerCards([...p]);
+
+    await new Promise((r) => setTimeout(r, 250));
+    [d[0], deck] = draw(deck);
+    setDealerCards([...d]);
+
+    await new Promise((r) => setTimeout(r, 250));
+    [p[1], deck] = draw(deck);
+    setPlayerCards([...p]);
+
+    await new Promise((r) => setTimeout(r, 250));
+    [d[1], deck] = draw(deck);
+    setDealerCards([...d]);
+
+    setShoe(deck);
+    setStage("playing");
+    setMessage("Your move: hit, stand, or double down.");
+
+    if (handValue(p) === 21) {
+      stand(deck, p, d);
     }
-    
-    return value;
   };
 
-  const dealInitialCards = () => {
-    if (balance < bet) return;
-    
-    let newDeck = createDeck();
-    const playerCards: Card[] = [];
-    const dealerCards: Card[] = [];
-    
-    [playerCards[0], newDeck] = drawCard(newDeck);
-    [dealerCards[0], newDeck] = drawCard(newDeck);
-    [playerCards[1], newDeck] = drawCard(newDeck);
-    [dealerCards[1], newDeck] = drawCard(newDeck);
-    
-    setDeck(newDeck);
-    setPlayerHands([{ cards: playerCards, bet, doubled: false, split: false }]);
-    setDealerHand(dealerCards);
-    setBalance(prev => prev - bet);
-    setGameState("playing");
-    setCurrentHandIndex(0);
-    setShowDealerCard(false);
-    setMessage("");
-    
-    // Check for blackjack
-    if (calculateHandValue(playerCards) === 21) {
-      setTimeout(() => finishGame(), 500);
+  const settle = (pCards: Card[], dCards: Card[], currentBet: number) => {
+    const p = handValue(pCards);
+    const d = handValue(dCards);
+
+    if (p > 21) {
+      setMessage("Bust. Valentino takes the hand.");
+    } else if (d > 21 || p > d) {
+      const blackjackBonus = p === 21 && pCards.length === 2 ? 1.2 : 1;
+      const win = Math.round(currentBet * (1 + blackjackBonus));
+      credit(win);
+      setMessage(`You win ${win.toLocaleString()} AUD against Valentino.`);
+    } else if (p === d) {
+      credit(currentBet);
+      setMessage("Push. Wager returned.");
+    } else {
+      setMessage("Valentino wins this round.");
     }
+
+    setStage("finished");
   };
 
   const hit = () => {
-    if (gameState !== "playing") return;
-    
-    const currentHand = playerHands[currentHandIndex];
-    const [newCard, newDeck] = drawCard(deck);
-    const updatedCards = [...currentHand.cards, newCard];
-    
-    const newHands = [...playerHands];
-    newHands[currentHandIndex] = { ...currentHand, cards: updatedCards };
-    
-    setPlayerHands(newHands);
-    setDeck(newDeck);
-    
-    const handValue = calculateHandValue(updatedCards);
-    if (handValue > 21) {
-      if (currentHandIndex < playerHands.length - 1) {
-        setCurrentHandIndex(prev => prev + 1);
-      } else {
-        finishGame();
-      }
+    if (stage !== "playing" || shoe.length === 0) return;
+    const [card, next] = draw(shoe);
+    const nextPlayer = [...playerCards, card];
+    setPlayerCards(nextPlayer);
+    setShoe(next);
+
+    if (handValue(nextPlayer) > 21) {
+      setRevealHoleCard(true);
+      settle(nextPlayer, dealerCards, bet);
     }
   };
 
-  const stand = () => {
-    if (gameState !== "playing") return;
-    
-    if (currentHandIndex < playerHands.length - 1) {
-      setCurrentHandIndex(prev => prev + 1);
-    } else {
-      finishGame();
+  const stand = async (forcedShoe?: Card[], forcedPlayer?: Card[], forcedDealer?: Card[]) => {
+    if (stage !== "playing" && !forcedShoe) return;
+
+    let deck = forcedShoe ?? shoe;
+    let dealer = [...(forcedDealer ?? dealerCards)];
+    const player = forcedPlayer ?? playerCards;
+
+    setStage("dealer");
+    setRevealHoleCard(true);
+    setMessage("Valentino reveals the hole card and draws...");
+
+    while (handValue(dealer) < 18 && deck.length > 0) {
+      await new Promise((r) => setTimeout(r, 350));
+      const [card, next] = draw(deck);
+      dealer = [...dealer, card];
+      deck = next;
+      setDealerCards([...dealer]);
     }
+
+    setShoe(deck);
+    settle(player, dealer, bet);
   };
 
-  const doubleDown = () => {
-    if (gameState !== "playing" || balance < playerHands[currentHandIndex].bet) return;
-    
-    const currentHand = playerHands[currentHandIndex];
-    if (currentHand.cards.length !== 2) return;
-    
-    const [newCard, newDeck] = drawCard(deck);
-    const updatedCards = [...currentHand.cards, newCard];
-    
-    const newHands = [...playerHands];
-    newHands[currentHandIndex] = { ...currentHand, cards: updatedCards, doubled: true };
-    
-    setPlayerHands(newHands);
-    setDeck(newDeck);
-    setBalance(prev => prev - currentHand.bet);
-    
-    if (currentHandIndex < playerHands.length - 1) {
-      setCurrentHandIndex(prev => prev + 1);
-    } else {
-      finishGame();
-    }
+  const doubleDown = async () => {
+    if (stage !== "playing" || playerCards.length !== 2 || balance < bet || shoe.length === 0) return;
+    if (!debit(bet)) return;
+    const [card, next] = draw(shoe);
+    const nextPlayer = [...playerCards, card];
+    setPlayerCards(nextPlayer);
+    setShoe(next);
+    await stand(next, nextPlayer, dealerCards);
   };
 
-  const split = () => {
-    if (gameState !== "playing" || balance < playerHands[currentHandIndex].bet) return;
-    
-    const currentHand = playerHands[currentHandIndex];
-    if (currentHand.cards.length !== 2 || currentHand.cards[0].rank !== currentHand.cards[1].rank) return;
-    
-    let newDeck = deck;
-    const [card1, deck1] = drawCard(newDeck);
-    const [card2, deck2] = drawCard(deck1);
-    
-    const hand1: Hand = { cards: [currentHand.cards[0], card1], bet: currentHand.bet, doubled: false, split: true };
-    const hand2: Hand = { cards: [currentHand.cards[1], card2], bet: currentHand.bet, doubled: false, split: true };
-    
-    const newHands = [...playerHands];
-    newHands[currentHandIndex] = hand1;
-    newHands.splice(currentHandIndex + 1, 0, hand2);
-    
-    setPlayerHands(newHands);
-    setDeck(deck2);
-    setBalance(prev => prev - currentHand.bet);
+  const reset = () => {
+    setPlayerCards([]);
+    setDealerCards([]);
+    setRevealHoleCard(false);
+    setShoe([]);
+    setStage("betting");
+    setMessage("Place your wager to challenge Valentino.");
   };
 
-  const finishGame = () => {
-    setGameState("dealer");
-    setShowDealerCard(true);
-    
-    let newDeck = deck;
-    let newDealerHand = [...dealerHand];
-    
-    // Dealer draws until 17 or higher
-    while (calculateHandValue(newDealerHand) < 17) {
-      const [card, updatedDeck] = drawCard(newDeck);
-      newDealerHand.push(card);
-      newDeck = updatedDeck;
-    }
-    
-    setDealerHand(newDealerHand);
-    setDeck(newDeck);
-    
-    const dealerValue = calculateHandValue(newDealerHand);
-    let totalWinnings = 0;
-    let results: string[] = [];
-    
-    playerHands.forEach((hand, idx) => {
-      const playerValue = calculateHandValue(hand.cards);
-      const handBet = hand.doubled ? hand.bet * 2 : hand.bet;
-      
-      if (playerValue > 21) {
-        results.push(`Hand ${idx + 1}: Bust`);
-      } else if (dealerValue > 21) {
-        totalWinnings += handBet * 2;
-        results.push(`Hand ${idx + 1}: Win!`);
-      } else if (playerValue > dealerValue) {
-        totalWinnings += handBet * 2;
-        results.push(`Hand ${idx + 1}: Win!`);
-      } else if (playerValue === dealerValue) {
-        totalWinnings += handBet;
-        results.push(`Hand ${idx + 1}: Push`);
-      } else {
-        results.push(`Hand ${idx + 1}: Lose`);
-      }
-      
-      // Blackjack bonus
-      if (playerValue === 21 && hand.cards.length === 2 && !hand.split) {
-        totalWinnings += handBet * 0.5;
-      }
-    });
-    
-    setBalance(prev => prev + totalWinnings);
-    setMessage(results.join(" | "));
-    setGameState("finished");
-  };
-
-  const newRound = () => {
-    setPlayerHands([]);
-    setDealerHand([]);
-    setGameState("betting");
-    setCurrentHandIndex(0);
-    setMessage("");
-  };
-
-  const getSuitColor = (suit: string) => {
-    return suit === "♥" || suit === "♦" ? "text-red-500" : "text-gray-900";
-  };
-
-  const canSplit = () => {
-    const currentHand = playerHands[currentHandIndex];
-    return currentHand && currentHand.cards.length === 2 && 
-           currentHand.cards[0].rank === currentHand.cards[1].rank && 
-           balance >= currentHand.bet;
-  };
-
-  const canDouble = () => {
-    const currentHand = playerHands[currentHandIndex];
-    return currentHand && currentHand.cards.length === 2 && balance >= currentHand.bet;
-  };
+  const renderCard = (card: Card, idx: number, hidden = false) => (
+    <div
+      key={`${card.rank}-${card.suit}-${idx}`}
+      className={`h-24 w-16 rounded-xl border bg-white text-black shadow-xl transition-all duration-500 ${
+        hidden ? "border-slate-700 bg-gradient-to-br from-slate-700 to-slate-900" : "border-black/10"
+      } ${stage === "dealing" ? "animate-pulse" : ""}`}
+    >
+      {hidden ? (
+        <div className="h-full w-full rounded-xl bg-[radial-gradient(circle_at_30%_30%,#334155,#0f172a)]" />
+      ) : (
+        <div className="flex h-full flex-col justify-between p-2 font-bold">
+          <span>{card.rank}</span>
+          <span className={`self-end text-xl ${card.suit === "♥" || card.suit === "♦" ? "text-red-500" : "text-black"}`}>{card.suit}</span>
+        </div>
+      )}
+    </div>
+  );
 
   return (
-    <div className="max-w-6xl mx-auto">
-      {/* Stats */}
-      <div className="mb-6 grid grid-cols-2 gap-4">
-        <div className="rounded-2xl border border-amber-500/20 bg-black/40 p-4">
-          <div className="text-xs uppercase tracking-wider text-amber-500/60">Balance</div>
-          <div className="mt-1 text-2xl font-bold text-amber-400">${balance.toLocaleString()}</div>
+    <div className="rounded-3xl border-2 border-amber-400/30 bg-[radial-gradient(circle_at_50%_0%,rgba(16,185,129,0.25),rgba(2,6,23,0.95))] p-6 shadow-2xl">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/35 p-4">
+        <div>
+          <p className="text-xs uppercase tracking-[0.25em] text-amber-300/70">Balance</p>
+          <p className="text-2xl font-bold text-amber-300">{balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} AUD</p>
         </div>
-        <div className="rounded-2xl border border-emerald-500/20 bg-black/40 p-4">
-          <div className="text-xs uppercase tracking-wider text-emerald-500/60">Current Bet</div>
-          <div className="mt-1 text-2xl font-bold text-emerald-400">${bet.toLocaleString()}</div>
+        <div className="rounded-2xl border border-purple-400/30 bg-purple-950/20 px-4 py-3">
+          <p className="text-xs uppercase tracking-[0.25em] text-purple-200/70">AI Dealer</p>
+          <p className="text-lg font-semibold text-purple-200">{AI_DEALER} • Hard High-Roller Focus</p>
         </div>
       </div>
 
-      {/* Game Table */}
-      <div className="rounded-3xl border-2 border-amber-500/30 bg-gradient-to-br from-green-900/40 to-green-950/60 p-8 shadow-2xl">
-        
-        {/* Dealer Hand */}
-        <div className="mb-8">
-          <div className="text-center mb-4">
-            <div className="text-sm uppercase tracking-wider text-amber-500/60">Dealer</div>
-            {dealerHand.length > 0 && (
-              <div className="text-2xl font-bold text-white mt-2">
-                {showDealerCard ? calculateHandValue(dealerHand) : "?"}
-              </div>
-            )}
-          </div>
-          <div className="flex justify-center gap-2">
-            {dealerHand.map((card, idx) => (
-              <div key={idx} className={`w-20 h-28 rounded-lg bg-white border-2 border-amber-500/40 flex flex-col items-center justify-center shadow-lg ${!showDealerCard && idx === 1 ? 'bg-gradient-to-br from-purple-900 to-purple-950' : ''}`}>
-                {showDealerCard || idx === 0 ? (
-                  <>
-                    <div className={`text-3xl font-bold ${getSuitColor(card.suit)}`}>{card.rank}</div>
-                    <div className={`text-2xl ${getSuitColor(card.suit)}`}>{card.suit}</div>
-                  </>
-                ) : (
-                  <div className="text-4xl text-amber-400">🂠</div>
-                )}
-              </div>
-            ))}
+      <div className="mb-5 rounded-3xl border border-emerald-500/30 bg-emerald-950/20 p-5">
+        <div className="mb-2 flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-emerald-200">Dealer Lane</h3>
+          <div className={`rounded-full px-3 py-1 text-xs ${stage === "dealing" || stage === "dealer" ? "bg-emerald-400 text-black animate-pulse" : "bg-white/10 text-white/70"}`}>
+            {stage === "dealing" || stage === "dealer" ? "Dealing Animation Live" : "Ready"}
           </div>
         </div>
-
-        {/* Player Hands */}
-        <div className="mb-8">
-          <div className="text-center mb-4">
-            <div className="text-sm uppercase tracking-wider text-amber-500/60">Player</div>
-          </div>
-          <div className="flex justify-center gap-6">
-            {playerHands.map((hand, handIdx) => (
-              <div key={handIdx} className={`${currentHandIndex === handIdx && gameState === "playing" ? 'ring-4 ring-amber-500/50 rounded-2xl p-4' : 'p-4'}`}>
-                <div className="text-center mb-2">
-                  <div className="text-2xl font-bold text-white">{calculateHandValue(hand.cards)}</div>
-                  <div className="text-xs text-amber-400">Bet: ${hand.doubled ? hand.bet * 2 : hand.bet}</div>
-                </div>
-                <div className="flex gap-2">
-                  {hand.cards.map((card, cardIdx) => (
-                    <div key={cardIdx} className="w-20 h-28 rounded-lg bg-white border-2 border-amber-500/40 flex flex-col items-center justify-center shadow-lg">
-                      <div className={`text-3xl font-bold ${getSuitColor(card.suit)}`}>{card.rank}</div>
-                      <div className={`text-2xl ${getSuitColor(card.suit)}`}>{card.suit}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
+        <div className="mb-3 flex items-center gap-3">
+          <div className={`h-12 w-12 rounded-full bg-gradient-to-br from-amber-300 to-amber-600 ${stage === "dealer" ? "animate-bounce" : "animate-pulse"}`} />
+          <p className="text-sm text-white/80">Valentino monitors every hand with high concentration. VIP rail lights animate during active dealing.</p>
         </div>
-
-        {/* Message */}
-        {message && (
-          <div className="text-center mb-6">
-            <div className="inline-block rounded-full bg-amber-500/20 border border-amber-500/40 px-6 py-2 text-amber-300 font-semibold">
-              {message}
-            </div>
-          </div>
-        )}
-
-        {/* Controls */}
-        <div className="space-y-4">
-          {gameState === "betting" && (
-            <>
-              <div className="flex justify-center gap-4 mb-4">
-                <button onClick={() => setBet(Math.max(10, bet - 10))} className="rounded-lg bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 font-semibold transition">
-                  - $10
-                </button>
-                <div className="flex items-center px-6 py-2 rounded-lg bg-black/40 border border-amber-500/30">
-                  <span className="text-amber-400 font-bold text-xl">${bet}</span>
-                </div>
-                <button onClick={() => setBet(bet + 10)} className="rounded-lg bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 font-semibold transition">
-                  + $10
-                </button>
-              </div>
-              <button
-                onClick={dealInitialCards}
-                disabled={balance < bet}
-                className="w-full rounded-full bg-gradient-to-r from-emerald-600 to-emerald-500 px-8 py-4 text-white font-bold text-lg transition hover:from-emerald-500 hover:to-emerald-400 shadow-lg shadow-emerald-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Deal Cards
-              </button>
-            </>
-          )}
-
-          {gameState === "playing" && (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <button
-                onClick={hit}
-                className="rounded-full bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-3 text-white font-bold transition hover:from-blue-500 hover:to-blue-400 shadow-lg"
-              >
-                Hit
-              </button>
-              <button
-                onClick={stand}
-                className="rounded-full bg-gradient-to-r from-red-600 to-red-500 px-6 py-3 text-white font-bold transition hover:from-red-500 hover:to-red-400 shadow-lg"
-              >
-                Stand
-              </button>
-              <button
-                onClick={doubleDown}
-                disabled={!canDouble()}
-                className="rounded-full bg-gradient-to-r from-purple-600 to-purple-500 px-6 py-3 text-white font-bold transition hover:from-purple-500 hover:to-purple-400 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Double
-              </button>
-              <button
-                onClick={split}
-                disabled={!canSplit()}
-                className="rounded-full bg-gradient-to-r from-amber-600 to-amber-500 px-6 py-3 text-white font-bold transition hover:from-amber-500 hover:to-amber-400 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Split
-              </button>
-            </div>
-          )}
-
-          {gameState === "finished" && (
-            <button
-              onClick={newRound}
-              className="w-full rounded-full bg-gradient-to-r from-emerald-600 to-emerald-500 px-8 py-4 text-white font-bold text-lg transition hover:from-emerald-500 hover:to-emerald-400 shadow-lg shadow-emerald-500/50"
-            >
-              New Round
-            </button>
-          )}
+        <div className="flex gap-3">
+          {dealerCards.map((c, i) => renderCard(c, i, !revealHoleCard && i === 1))}
         </div>
+        <p className="mt-2 text-sm text-white/70">Dealer total: {dealerTotal}</p>
+      </div>
+
+      <div className="mb-5 rounded-3xl border border-cyan-500/30 bg-cyan-950/20 p-5">
+        <h3 className="mb-2 text-lg font-semibold text-cyan-200">Player Lane</h3>
+        <div className="flex gap-3">{playerCards.map((c, i) => renderCard(c, i))}</div>
+        <p className="mt-2 text-sm text-white/70">Player total: {playerTotal || 0}</p>
+      </div>
+
+      <p className="mb-4 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/80">{message}</p>
+
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <label className="text-xs uppercase tracking-[0.2em] text-white/60">Bet</label>
+        <input
+          type="number"
+          min={10}
+          max={1000}
+          value={bet}
+          onChange={(e) => setBet(Math.max(10, Math.min(1000, Number(e.target.value) || 10)))}
+          className="w-28 rounded-lg border border-white/20 bg-black/40 px-3 py-2 text-amber-300"
+          disabled={stage === "playing" || stage === "dealer" || stage === "dealing"}
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
+        <button onClick={deal} disabled={stage === "playing" || stage === "dealer" || stage === "dealing"} className="rounded-xl bg-amber-500 px-4 py-2 font-semibold text-black disabled:opacity-50">Deal</button>
+        <button onClick={hit} disabled={stage !== "playing"} className="rounded-xl border border-cyan-300/40 bg-cyan-950/40 px-4 py-2 text-cyan-200 disabled:opacity-50">Hit</button>
+        <button onClick={() => void stand()} disabled={stage !== "playing"} className="rounded-xl border border-white/25 bg-white/10 px-4 py-2 text-white disabled:opacity-50">Stand</button>
+        <button onClick={doubleDown} disabled={stage !== "playing" || playerCards.length !== 2 || balance < bet} className="rounded-xl border border-purple-300/40 bg-purple-950/40 px-4 py-2 text-purple-200 disabled:opacity-50">Double</button>
+        <button onClick={reset} className="rounded-xl border border-red-300/40 bg-red-950/40 px-4 py-2 text-red-200">Reset</button>
       </div>
     </div>
   );

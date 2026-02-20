@@ -1,4 +1,4 @@
-# The-Velvet-Vault: A Luxurious Web Experience
+# Grand-Golden-Vault: A Luxurious Web Experience
 
 **Immersive wealth, Luxurious Entertainment, Versatile Navigation, High Class - Antique.**
 
@@ -8,7 +8,7 @@
 
 ## Overview
 
-The Velvet Vault is a Next.js project that provides a visually rich and engaging user experience, designed to evoke a sense of luxury and exclusivity. This repository serves as the front-end foundation for a high-class entertainment platform, featuring a sophisticated design, interactive elements, and a clear path for future expansion.
+Grand Golden Vault is a Next.js project that provides a visually rich and engaging user experience, designed to evoke a sense of luxury and exclusivity. This repository serves as the front-end foundation for a high-class entertainment platform, featuring a sophisticated design, interactive elements, and a clear path for future expansion.
 
 ### Key Features
 
