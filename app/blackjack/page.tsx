@@ -37,7 +37,7 @@ export default function BlackjackPage() {
                 </div>
                 <div className="flex items-start gap-3">
                   <span className="text-cyan-400 font-bold">4.</span>
-                  <p>Split pairs to play two separate hands</p>
+                  <p>Use Double to press advantage on a strong two-card hand</p>
                 </div>
                 <div className="flex items-start gap-3">
                   <span className="text-cyan-400 font-bold">5.</span>

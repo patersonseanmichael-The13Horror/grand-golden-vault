@@ -44,18 +44,6 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
 
   const shellTheme = THEME_STYLES[cfg.theme as string] || "from-[#080808] via-[#1c1408]/50 to-black border-amber-400/40";
 
-  const resolveBaseSymbol = (symbol: string): string => {
-    if (symbol.includes("__")) {
-      return symbol.split("__").pop() || symbol;
-    }
-    return symbol;
-  };
-
-  const displaySymbolLabel = (symbol: string): string => {
-    const base = resolveBaseSymbol(symbol);
-    return base.replaceAll("_", " ");
-  };
-
   const getSymbolImage = (symbol: string) => {
     const key = resolveBaseSymbol(symbol);
     const symbolMap: Record<string, string> = {
@@ -188,7 +176,7 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
                         className={`object-contain drop-shadow-2xl transition-transform duration-500 ${spinning ? "scale-110" : "group-hover:scale-105"}`}
                       />
                       <div className="absolute bottom-1 left-1/2 -translate-x-1/2 rounded bg-black/60 px-2 py-0.5 text-[10px] font-bold text-amber-300">
-                        {displaySymbolLabel(symbol)}
+                        {symbol}
                       </div>
                     </div>
                   </div>
