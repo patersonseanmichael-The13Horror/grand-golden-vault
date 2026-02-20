@@ -4,7 +4,13 @@ import { useAuth } from "@/lib/AuthContext";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 const STARTING_BALANCE = 10000;
+const MAX_BALANCE = 50000000;
 const DECIMALS = 2;
+
+function clampBalance(amount: number): number {
+  if (!Number.isFinite(amount) || amount < 0) return STARTING_BALANCE;
+  return +Math.min(MAX_BALANCE, amount).toFixed(DECIMALS);
+}
 
 export function useSharedWallet() {
   const { user } = useAuth();
@@ -12,36 +18,33 @@ export function useSharedWallet() {
   const [balance, setBalance] = useState<number>(STARTING_BALANCE);
 
   useEffect(() => {
-    const saved = Number(window.localStorage.getItem(storageKey) || STARTING_BALANCE);
-    if (Number.isFinite(saved) && saved >= 0) {
-      setBalance(+saved.toFixed(DECIMALS));
-      return;
-    }
-    setBalance(STARTING_BALANCE);
+    const raw = window.localStorage.getItem(storageKey);
+    const parsed = raw === null ? STARTING_BALANCE : Number(raw);
+    setBalance(clampBalance(parsed));
   }, [storageKey]);
 
   useEffect(() => {
-    window.localStorage.setItem(storageKey, String(+balance.toFixed(DECIMALS)));
+    window.localStorage.setItem(storageKey, String(clampBalance(balance)));
   }, [balance, storageKey]);
 
   const credit = useCallback((amount: number) => {
-    setBalance((prev) => +(prev + Math.max(0, amount)).toFixed(DECIMALS));
+    const safeAmount = Number.isFinite(amount) ? Math.max(0, amount) : 0;
+    setBalance((prev) => clampBalance(prev + safeAmount));
   }, []);
 
   const debit = useCallback((amount: number) => {
-    const safeAmount = Math.max(0, amount);
+    const safeAmount = Number.isFinite(amount) ? Math.max(0, amount) : 0;
     let allowed = false;
     setBalance((prev) => {
       if (prev < safeAmount) return prev;
       allowed = true;
-      return +(prev - safeAmount).toFixed(DECIMALS);
+      return clampBalance(prev - safeAmount);
     });
     return allowed;
   }, []);
 
   const setExactBalance = useCallback((amount: number) => {
-    if (!Number.isFinite(amount) || amount < 0) return;
-    setBalance(+amount.toFixed(DECIMALS));
+    setBalance(clampBalance(amount));
   }, []);
 
   return { balance, credit, debit, setExactBalance, storageKey };
