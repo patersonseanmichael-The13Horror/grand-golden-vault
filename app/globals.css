@@ -225,6 +225,96 @@ body {
     letter-spacing: 0.02em;
   }
 
+  .vv-subtle {
+    color: rgba(255, 255, 255, 0.74);
+  }
+
+  .vv-auth-card {
+    backdrop-filter: blur(4px);
+  }
+
+  .vv-form-label {
+    margin-bottom: 0.5rem;
+    display: block;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.76);
+  }
+
+  .vv-input {
+    width: 100%;
+    border-radius: 0.9rem;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: linear-gradient(170deg, rgba(0, 0, 0, 0.36), rgba(0, 0, 0, 0.2));
+    padding: 0.84rem 1rem;
+    color: #fff;
+    transition: border-color 200ms ease, box-shadow 200ms ease, background-color 200ms ease;
+  }
+
+  .vv-input::placeholder {
+    color: rgba(255, 255, 255, 0.46);
+  }
+
+  .vv-input:focus {
+    outline: none;
+    border-color: rgba(231, 197, 123, 0.64);
+    box-shadow: 0 0 0 2px rgba(231, 197, 123, 0.2);
+  }
+
+  .vv-chip {
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.06));
+    padding: 0.42rem 0.78rem;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.82);
+  }
+
+  .vv-action-emerald {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 999px;
+    border: 1px solid rgba(110, 231, 183, 0.58);
+    background: linear-gradient(125deg, #10b981 0%, #0d9488 55%, #0891b2 100%);
+    padding: 0.72rem 1rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #eafffb;
+    box-shadow: 0 10px 28px rgba(16, 185, 129, 0.34);
+    transition: transform 180ms ease, filter 180ms ease, box-shadow 180ms ease;
+  }
+
+  .vv-action-emerald:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.04);
+    box-shadow: 0 14px 30px rgba(16, 185, 129, 0.4);
+  }
+
+  .vv-action-muted {
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.04));
+    padding: 0.72rem 1rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.82);
+    transition: background-color 180ms ease, border-color 180ms ease;
+  }
+
+  .vv-action-muted:hover {
+    border-color: rgba(255, 255, 255, 0.35);
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.06));
+  }
+
   .vv-button {
     position: relative;
     overflow: hidden;

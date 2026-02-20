@@ -59,10 +59,10 @@ export default function Register() {
       <section className="relative pt-14 md:pt-20 pb-16 md:pb-20">
         <HeroBackdrop src="/assets/images/vault-entry.jpg" alt="Vault Entry" />
         <div className="vv-page-wrap">
-          <div className="max-w-xl mx-auto vv-panel rounded-3xl p-7 md:p-9">
-            <div className="text-xs tracking-[0.35em] uppercase text-gold-solid">Request Entry</div>
-            <h1 className="vv-display mt-4 text-3xl md:text-4xl text-white">Create Membership</h1>
-            <p className="mt-3 text-white/70 leading-relaxed">
+          <div className="max-w-xl mx-auto vv-panel vv-auth-card rounded-3xl p-7 md:p-9 vv-reveal">
+            <div className="vv-kicker">Request Entry</div>
+            <h1 className="vv-display vv-heading mt-4 text-3xl md:text-4xl text-white">Create Membership</h1>
+            <p className="mt-3 vv-subtle leading-relaxed">
               Open your account to access member rooms, tiered benefits, and personalized lounge services.
             </p>
 
@@ -72,9 +72,9 @@ export default function Register() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+            <form onSubmit={handleSubmit} className="mt-6 space-y-4 vv-reveal vv-reveal-delay-2">
               <div>
-                <label htmlFor="email" className="mb-2 block text-sm tracking-wide text-white/78">
+                <label htmlFor="email" className="vv-form-label">
                   Email Address
                 </label>
                 <input
@@ -83,13 +83,13 @@ export default function Register() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full rounded-xl border border-white/15 bg-black/35 px-4 py-3 text-white placeholder-white/45 focus:outline-none focus:ring-2 focus:ring-amber-500/45"
+                  className="vv-input"
                   placeholder="your@email.com"
                 />
               </div>
 
               <div>
-                <label htmlFor="password" className="mb-2 block text-sm tracking-wide text-white/78">
+                <label htmlFor="password" className="vv-form-label">
                   Password
                 </label>
                 <input
@@ -98,13 +98,13 @@ export default function Register() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full rounded-xl border border-white/15 bg-black/35 px-4 py-3 text-white placeholder-white/45 focus:outline-none focus:ring-2 focus:ring-amber-500/45"
+                  className="vv-input"
                   placeholder="Minimum 6 characters"
                 />
               </div>
 
               <div>
-                <label htmlFor="confirmPassword" className="mb-2 block text-sm tracking-wide text-white/78">
+                <label htmlFor="confirmPassword" className="vv-form-label">
                   Confirm Password
                 </label>
                 <input
@@ -113,7 +113,7 @@ export default function Register() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  className="w-full rounded-xl border border-white/15 bg-black/35 px-4 py-3 text-white placeholder-white/45 focus:outline-none focus:ring-2 focus:ring-amber-500/45"
+                  className="vv-input"
                   placeholder="Re-enter password"
                 />
               </div>
@@ -143,11 +143,11 @@ export default function Register() {
                 </label>
               </div>
 
-              <div className="mt-8 flex flex-wrap gap-3">
+              <div className="mt-8 flex flex-wrap gap-3 items-center">
                 <button
                   type="submit"
                   disabled={loading}
-                  className="min-w-[170px] flex-1 rounded-2xl border border-[rgba(231,197,123,0.7)] bg-[linear-gradient(165deg,#f4dc9f_0%,#cda45f_45%,#a37e3e_100%)] px-6 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-[#1e1608] shadow-[0_10px_26px_rgba(185,146,78,0.4)] transition duration-200 hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="vv-button min-w-[170px] flex-1 rounded-2xl border border-[rgba(231,197,123,0.72)] bg-[linear-gradient(165deg,#f4dc9f_0%,#cda45f_45%,#a37e3e_100%)] px-6 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-[#1e1608] shadow-[0_10px_26px_rgba(185,146,78,0.4)] transition duration-200 hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {loading ? "Creating Account..." : "Register"}
                 </button>

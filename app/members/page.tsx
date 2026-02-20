@@ -32,7 +32,7 @@ export default function Members() {
           <div className="flex flex-wrap justify-end gap-2 md:gap-3">
             <button
               onClick={() => setShowDepositModal(true)}
-              className="px-4 py-2 rounded-full bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-semibold transition-all shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 flex items-center gap-2"
+              className="vv-action-emerald"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
@@ -44,7 +44,7 @@ export default function Members() {
             <LuxeButton href="/check-in" label="Check-In" variant="ghost" />
             <button
               onClick={handleLogout}
-              className="px-4 py-2 rounded-full border border-white/20 bg-white/5 text-white/70 hover:bg-white/10 transition-all text-sm"
+              className="vv-action-muted"
             >
               Logout
             </button>
@@ -56,22 +56,29 @@ export default function Members() {
           <HeroBackdrop src="/assets/images/members-page.jpg" alt="Members Hall" />
           <div className="vv-page-wrap">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-              <div>
-                <div className="text-xs tracking-[0.35em] uppercase text-white/55">Members Hall</div>
-                <h1 className="mt-3 text-3xl md:text-5xl font-semibold leading-tight">The Lounge Awaits.</h1>
-                <p className="mt-4 max-w-2xl text-white/70 leading-relaxed">
+              <div className="vv-reveal">
+                <div className="vv-kicker">Members Hall</div>
+                <h1 className="vv-display vv-heading mt-4 text-3xl md:text-5xl text-white leading-tight">The Lounge Awaits.</h1>
+                <p className="mt-4 max-w-2xl vv-subtle leading-relaxed">
                   Conduct is currency. Elegance is policy. Proceed with composure.
                 </p>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  <div className="vv-chip">Private Rooms</div>
+                  <div className="vv-chip">VIP Tiers</div>
+                  <div className="vv-chip">Secure Sessions</div>
+                </div>
               </div>
-              <BrisbaneClock />
+              <div className="vv-reveal vv-reveal-delay-2">
+                <BrisbaneClock />
+              </div>
             </div>
 
-            <div className="mt-10 grid lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2 space-y-6">
+            <div className="mt-10 grid lg:grid-cols-3 gap-6 vv-reveal vv-reveal-delay-3">
+              <div className="lg:col-span-2 space-y-6 min-w-0">
                 <GameGallery />
                 <OllamaConcierge />
               </div>
-              <div className="space-y-6">
+              <div className="space-y-6 min-w-0">
                 <VipTiers />
                 <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-vv-soft">
                   <div className="text-xs tracking-[0.30em] uppercase text-white/60">VIP Deposit Progressive</div>
