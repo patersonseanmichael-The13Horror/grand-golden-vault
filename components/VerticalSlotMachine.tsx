@@ -45,6 +45,7 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
   const shellTheme = THEME_STYLES[cfg.theme as string] || "from-[#080808] via-[#1c1408]/50 to-black border-amber-400/40";
 
   const getSymbolImage = (symbol: string) => {
+    const key = resolveBaseSymbol(symbol);
     const symbolMap: Record<string, string> = {
       CROWN: "/assets/symbols/crown.png",
       GEM: "/assets/symbols/gem.png",
@@ -70,7 +71,7 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
       ANKH: "/assets/symbols/ankh.svg",
     };
 
-    return symbolMap[symbol] || "/assets/symbols/crown.png";
+    return symbolMap[key] || "/assets/symbols/crown.png";
   };
 
   const previewGrid = useMemo(() => [0, 1, 2].map(() => [0, 1, 2, 3, 4].map((c) => cfg.symbols[(c + 2) % cfg.symbols.length])), [cfg.symbols]);
