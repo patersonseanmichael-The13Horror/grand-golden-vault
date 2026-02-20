@@ -29,7 +29,7 @@ export default function Members() {
       
       <VaultShell 
         rightAction={
-          <div className="flex gap-3">
+          <div className="flex flex-wrap justify-end gap-2 md:gap-3">
             <button
               onClick={() => setShowDepositModal(true)}
               className="px-4 py-2 rounded-full bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-semibold transition-all shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 flex items-center gap-2"
@@ -52,9 +52,9 @@ export default function Members() {
         }
       >
         <JackpotTicker />
-        <section className="relative px-6 md:px-10 pt-12 pb-16">
+        <section className="relative pt-12 pb-16">
           <HeroBackdrop src="/assets/images/members-page.jpg" alt="Members Hall" />
-          <div className="max-w-6xl mx-auto">
+          <div className="vv-page-wrap">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
               <div>
                 <div className="text-xs tracking-[0.35em] uppercase text-white/55">Members Hall</div>
