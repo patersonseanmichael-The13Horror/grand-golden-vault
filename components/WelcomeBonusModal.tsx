@@ -69,7 +69,7 @@ export default function WelcomeBonusModal() {
               <span className="text-4xl">🎁</span>
             </div>
             <h2 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 animate-shimmer">
-              Welcome to The Velvet Vault!
+              Welcome to Grand Golden Vault!
             </h2>
             <p className="mt-2 text-gray-400 text-sm tracking-wider uppercase">
               Choose Your Exclusive Welcome Offer

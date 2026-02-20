@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useAuth } from "@/lib/AuthContext";
+import { useSharedWallet } from "@/lib/useSharedWallet";
 import { defaultDepositLedger, getVipTierForDeposits, type DepositLedger } from "@/lib/loyalty";
 
 interface DepositModalProps {
@@ -11,17 +12,48 @@ interface DepositModalProps {
 
 const MIN_DEPOSIT = 5;
 const MAX_DEPOSIT = 500;
+const MAX_RECEIPT_MB = 5;
 
 export default function DepositModal({ isOpen, onClose }: DepositModalProps) {
   const { user } = useAuth();
   const depositStorageKey = useMemo(() => `vv.deposits.${user?.uid ?? "guest"}`, [user?.uid]);
+  const { credit } = useSharedWallet();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [amount, setAmount] = useState<number>(MIN_DEPOSIT);
 
+  const paymentName = process.env.NEXT_PUBLIC_DEPOSIT_NAME || "M Rainbow";
+  const paymentId = process.env.NEXT_PUBLIC_DEPOSIT_PAYID || "0435 750 187";
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setSelectedFile(e.target.files[0]);
+    if (!e.target.files?.[0]) return;
+
+    const file = e.target.files[0];
+    if (!file.type.startsWith("image/")) {
+      alert("Invalid file type. Please upload an image receipt only.");
+      return;
+    }
+
+    if (file.size > MAX_RECEIPT_MB * 1024 * 1024) {
+      alert(`Receipt image must be ${MAX_RECEIPT_MB}MB or less.`);
+      return;
+    }
+
+    setSelectedFile(file);
+  };
+
+  const readDepositLedger = (): DepositLedger => {
+    const raw = window.localStorage.getItem(depositStorageKey);
+    if (!raw) return defaultDepositLedger;
+
+    try {
+      const parsed = JSON.parse(raw) as DepositLedger;
+      if (!Array.isArray(parsed.deposits) || typeof parsed.totalDeposited !== "number") {
+        return defaultDepositLedger;
+      }
+      return parsed;
+    } catch {
+      return defaultDepositLedger;
     }
   };
 
@@ -70,29 +102,40 @@ export default function DepositModal({ isOpen, onClose }: DepositModalProps) {
       };
 
       window.localStorage.setItem(depositStorageKey, JSON.stringify(nextLedger));
-      const tier = getVipTierForDeposits(nextLedger.totalDeposited);
+      credit(amount);
 
+      const tier = getVipTierForDeposits(nextLedger.totalDeposited);
       alert(
-        `Deposit submitted successfully!\n\nAmount: $${amount.toFixed(2)}\nFile: ${selectedFile.name}\nTotal Deposited: $${nextLedger.totalDeposited.toLocaleString()}\nCurrent VIP Tier: ${tier.name}\n\nOur team will verify your payment and credit your account within 24-48 hours.`
+        `Deposit submitted successfully!
+
+Amount: $${amount.toFixed(2)}
+File: ${selectedFile.name}
+Total Deposited: $${nextLedger.totalDeposited.toLocaleString()}
+Current VIP Tier: ${tier.name}
+
+Wallet credited in real time.`
       );
 
       setUploading(false);
       setSelectedFile(null);
       setAmount(MIN_DEPOSIT);
       onClose();
-    }, 1200);
+    }, 800);
   };
 
-  const copyToClipboard = (text: string, label: string) => {
-    navigator.clipboard.writeText(text);
+  const copyToClipboard = async (text: string, label: string) => {
+    await navigator.clipboard.writeText(text);
     alert(`${label} copied to clipboard!`);
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-      <div className="relative w-full max-w-xl rounded-3xl border-2 border-emerald-500/40 bg-gradient-to-br from-black via-gray-900 to-black shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" onClick={onClose}>
+      <div
+        className="relative w-full max-w-xl rounded-3xl border-2 border-emerald-500/40 bg-gradient-to-br from-black via-gray-900 to-black shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
         <button
           onClick={onClose}
           aria-label="Close deposit modal"
@@ -106,7 +149,7 @@ export default function DepositModal({ isOpen, onClose }: DepositModalProps) {
         <form onSubmit={handleSubmit} className="max-h-[80vh] overflow-y-auto p-5 md:p-6">
           <div className="mb-4 text-center">
             <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-300 to-emerald-400">
-              Deposit Funds
+              Secure Wallet Deposit
             </h2>
             <p className="mt-1 text-xs text-gray-400">Deposit range: $5.00 - $500.00</p>
           </div>
@@ -115,17 +158,17 @@ export default function DepositModal({ isOpen, onClose }: DepositModalProps) {
             <div className="flex items-center justify-between rounded-lg border border-emerald-500/20 bg-black/40 p-3">
               <div>
                 <div className="text-[11px] uppercase tracking-wider text-gray-400">Name</div>
-                <div className="font-semibold text-white">M Rainbow</div>
+                <div className="font-semibold text-white">{paymentName}</div>
               </div>
-              <button type="button" onClick={() => copyToClipboard("M Rainbow", "Name")} className="text-emerald-300 text-sm">Copy</button>
+              <button type="button" onClick={() => copyToClipboard(paymentName, "Name")} className="text-emerald-300 text-sm">Copy</button>
             </div>
 
             <div className="flex items-center justify-between rounded-lg border border-cyan-500/20 bg-black/40 p-3">
               <div>
                 <div className="text-[11px] uppercase tracking-wider text-gray-400">PayID</div>
-                <div className="font-semibold text-cyan-300">0435 750 187</div>
+                <div className="font-semibold text-cyan-300">{paymentId}</div>
               </div>
-              <button type="button" onClick={() => copyToClipboard("0435750187", "PayID")} className="text-cyan-300 text-sm">Copy</button>
+              <button type="button" onClick={() => copyToClipboard(paymentId.replace(/\s+/g, ""), "PayID")} className="text-cyan-300 text-sm">Copy</button>
             </div>
           </div>
 
@@ -147,7 +190,7 @@ export default function DepositModal({ isOpen, onClose }: DepositModalProps) {
               <label className="mb-2 block text-sm text-gray-300">Upload Payment Screenshot</label>
               <input
                 type="file"
-                accept="image/*"
+                accept="image/png,image/jpeg,image/webp,image/heic"
                 onChange={handleFileChange}
                 className="w-full rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm text-white"
               />

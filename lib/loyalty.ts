@@ -19,7 +19,7 @@ export interface DepositLedger {
 
 export const vipTiers: VipTier[] = [
   {
-    name: "Tier 1 • Velvet Starter",
+    name: "Tier 1 • Golden Starter",
     minDeposit: 0,
     maxDeposit: 500,
     note: "Entry tier for new members",
@@ -40,7 +40,7 @@ export const vipTiers: VipTier[] = [
     perks: ["Premium bonus offers", "Higher mission reward caps"],
   },
   {
-    name: "Tier 4 • Velvet Noir High Roller",
+    name: "Tier 4 • Golden Noir High Roller",
     minDeposit: 25000,
     maxDeposit: Number.POSITIVE_INFINITY,
     note: "Extremely exclusive high-roller privileges",
