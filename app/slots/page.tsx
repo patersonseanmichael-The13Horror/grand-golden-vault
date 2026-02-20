@@ -25,6 +25,7 @@ export default function SlotsGallery() {
   // Separate themed machines
   const themedMachines = machines.filter(m => m.theme);
   const classicMachines = machines.filter(m => !m.theme);
+  const highestJackpot = Math.max(...machines.map((m) => m.baseJackpot));
 
   const getThemeColor = (theme?: string) => {
     switch(theme) {
@@ -59,20 +60,35 @@ export default function SlotsGallery() {
       <section className="relative px-6 md:px-10 pt-12 pb-16">
         <HeroBackdrop src="/assets/images/jackpot-core.jpg" alt="Slots" />
         <div className="max-w-6xl mx-auto">
-          <div className="text-xs tracking-[0.35em] uppercase text-white/55">Slots</div>
-          <h1 className="mt-4 text-4xl md:text-5xl font-semibold text-gold animate-shimmer">Elite Machine Gallery</h1>
+          <div className="text-xs tracking-[0.35em] uppercase text-white/55">The Grand Golden Vault · Slots</div>
+          <h1 className="mt-4 text-4xl md:text-5xl font-semibold text-gold animate-shimmer">Grand Golden Slots Lounge</h1>
           <p className="mt-4 text-white/80 max-w-3xl text-lg">
             Experience premium Vegas-style slot machines featuring vertical scrolling reels, Hold & Win mechanics, 
             authentic casino features, multiple paylines, certified RTP rates, and progressive jackpots.
           </p>
 
+          <div className="mt-6 grid gap-3 sm:grid-cols-3">
+            <div className="rounded-2xl border border-amber-500/20 bg-black/25 p-4">
+              <div className="text-xs uppercase tracking-wider text-white/50">Machines</div>
+              <div className="mt-1 text-2xl font-semibold text-gold">{machines.length}</div>
+            </div>
+            <div className="rounded-2xl border border-amber-500/20 bg-black/25 p-4">
+              <div className="text-xs uppercase tracking-wider text-white/50">Featured Themes</div>
+              <div className="mt-1 text-2xl font-semibold text-gold">{themedMachines.length}</div>
+            </div>
+            <div className="rounded-2xl border border-amber-500/20 bg-black/25 p-4">
+              <div className="text-xs uppercase tracking-wider text-white/50">Top Progressive Jackpot</div>
+              <div className="mt-1 text-2xl font-semibold text-gold">{highestJackpot.toLocaleString("en-AU")} AUD</div>
+            </div>
+          </div>
+
           {/* Featured Themed Machines */}
           {themedMachines.length > 0 && (
             <div className="mt-12">
               <div className="flex items-center gap-3 mb-6">
-                <h2 className="text-2xl font-semibold text-amber-400">✨ Featured Themed Machines</h2>
-                <span className="rounded-full bg-purple-500/20 px-3 py-1 text-xs text-purple-300 uppercase tracking-wider">New</span>
-              </div>
+              <h2 className="text-2xl font-semibold text-amber-400">✨ Featured Themed Machines</h2>
+              <span className="rounded-full bg-purple-500/20 px-3 py-1 text-xs text-purple-300 uppercase tracking-wider">New</span>
+            </div>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {themedMachines.map((m) => {
                   const badge = getThemeBadge(m.theme);
