@@ -1,6 +1,8 @@
 # Final Stage Deployment Checklist
 
 ## 1. Pre-merge verification
+- Runtime baseline: Node.js `20.16+` and npm `10+`.
+- Run `npm run preflight`
 - Run `pwd` and confirm you are in the project root (`.../grand-golden-vault`).
 - Run `npm ci`
 - Run `npm run audit:predeploy`

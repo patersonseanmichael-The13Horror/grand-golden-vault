@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { getIdTokenResult } from "firebase/auth";
 import { useAuth } from "@/lib/AuthContext";
+import { assessThreat, summarizeThreats, type ThreatEvent } from "@/lib/threatHunter";
 
 const ROUTE_HELP: Record<string, string> = {
   members: "Members hub: /members",
@@ -37,6 +38,7 @@ const BLOCKED_TERMS = [
 
 const ADMIN_TERMS = ["admin", "security", "protocol", "audit", "logs", "status"];
 const ABUSE_LOG_KEY = "vv.concierge.abuse";
+const THREAT_LOG_KEY = "vv.concierge.threats";
 const MAX_ABUSE_LOGS = 100;
 
 export default function OllamaConcierge() {
@@ -104,6 +106,33 @@ export default function OllamaConcierge() {
         // Ignore logging failures in UI guard.
       }
     };
+    const logThreat = (event: ThreatEvent) => {
+      try {
+        const existing = window.localStorage.getItem(THREAT_LOG_KEY);
+        const parsed = existing ? (JSON.parse(existing) as ThreatEvent[]) : [];
+        const next = [event, ...parsed].slice(0, MAX_ABUSE_LOGS);
+        window.localStorage.setItem(THREAT_LOG_KEY, JSON.stringify(next));
+      } catch {
+        // Ignore logging failures in UI guard.
+      }
+    };
+
+    const threat = assessThreat(normalized);
+    if (threat.level !== "none") {
+      logThreat({
+        ts: new Date().toISOString(),
+        level: threat.level,
+        reason: threat.reason,
+        score: threat.score,
+        text: normalized,
+      });
+    }
+    if (threat.block && !isStrictAdmin) {
+      logAbuse(`threat-${threat.level}`);
+      setReply("Request blocked by Site Guard. This assistant only supports safe navigation questions.");
+      setLockedUntil(now + threat.lockMs);
+      return;
+    }
 
     if (now < lockedUntil) {
       logAbuse("rate-limit");
@@ -129,17 +158,17 @@ export default function OllamaConcierge() {
 
       if (normalized.includes("logs")) {
         try {
-          const existing = window.localStorage.getItem(ABUSE_LOG_KEY);
-          const parsed = existing ? (JSON.parse(existing) as Array<{ ts: string; reason: string; text: string }>) : [];
-          const latest = parsed[0];
-          setReply(
-            `Admin logs: ${parsed.length} abuse events captured. Latest: ${latest ? `${latest.reason} at ${latest.ts}` : "none"}.`
-          );
+          const abuseRaw = window.localStorage.getItem(ABUSE_LOG_KEY);
+          const threatRaw = window.localStorage.getItem(THREAT_LOG_KEY);
+          const abuseParsed = abuseRaw ? (JSON.parse(abuseRaw) as Array<{ ts: string; reason: string; text: string }>) : [];
+          const threatParsed = threatRaw ? (JSON.parse(threatRaw) as ThreatEvent[]) : [];
+          const latest = abuseParsed[0];
+          setReply(`Admin logs: ${abuseParsed.length} abuse events. Latest: ${latest ? `${latest.reason} at ${latest.ts}` : "none"}. ${summarizeThreats(threatParsed)}`);
         } catch {
           setReply("Admin logs unavailable due to storage parsing issue.");
         }
       } else {
-        setReply("Admin panel status: concierge guardrails active, navigation-only mode enforced, and blocked-topic filters online.");
+        setReply("Admin panel status: Site Guard active, threat hunter enabled, navigation-only mode enforced, and blocked-topic filters online.");
       }
       setLockedUntil(now + 1500);
       return;

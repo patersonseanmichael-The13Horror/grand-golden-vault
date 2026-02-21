@@ -3,13 +3,21 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=20.16.0",
+    "npm": ">=10.0.0"
+  },
   "scripts": {
     "dev": "XDG_CACHE_HOME=.cache next dev",
     "build": "XDG_CACHE_HOME=.cache next build",
     "start": "next start",
     "lint": "eslint .",
+    "preflight": "node scripts/runtime-preflight.mjs",
     "audit:predeploy": "node scripts/predeploy-audit.mjs",
+    "audit:security": "node scripts/security-audit.mjs",
     "verify": "npm run lint && npm run build",
+    "health:site": "npm run preflight && npm run audit:security && npm run audit:predeploy && npm run verify",
+    "upgrade:safe": "npm run preflight && npm update && npm prune && npm run audit:security && npm run audit:predeploy && npm run verify",
     "firebase:set-concierge-admin": "node scripts/set-concierge-admin-claim.mjs"
   },
   "dependencies": {

@@ -23,6 +23,7 @@ const REQUIRED_ADMIN_ENV = [
   "FIREBASE_SERVICE_ACCOUNT_KEY_PATH",
   "FIREBASE_CONCIERGE_ADMIN_UID",
 ];
+const REQUIRED_SLOT_BET_STEPS = [0.1, 0.25, 0.5, 1, 2.5, 3, 6, 10, 20, 50, 100, 250, 500];
 
 const errors = [];
 const warnings = [];
@@ -93,6 +94,7 @@ function checkSlots() {
   }
   const seen = new Map();
   const seenNamespaces = new Map();
+  let premiumTraitCount = 0;
   for (const file of files) {
     const data = JSON.parse(fs.readFileSync(path.join(SLOTS_DIR, file), "utf8"));
     if (!Array.isArray(data.symbols) || data.symbols.length < 9) {
@@ -123,6 +125,40 @@ function checkSlots() {
     if (typeof data.minBet !== "number" || typeof data.maxBet !== "number" || data.minBet <= 0 || data.maxBet < data.minBet) {
       errors.push(`Slot ${file} has invalid min/max bet values`);
     }
+    if (!Array.isArray(data.betSteps) || data.betSteps.length !== REQUIRED_SLOT_BET_STEPS.length) {
+      errors.push(`Slot ${file} must define the full approved bet ladder.`);
+    } else {
+      const normalizedSteps = data.betSteps.map((v) => +Number(v).toFixed(2));
+      for (let i = 0; i < REQUIRED_SLOT_BET_STEPS.length; i++) {
+        if (normalizedSteps[i] !== REQUIRED_SLOT_BET_STEPS[i]) {
+          errors.push(`Slot ${file} has invalid bet step at index ${i} (expected ${REQUIRED_SLOT_BET_STEPS[i]}, found ${normalizedSteps[i]})`);
+          break;
+        }
+      }
+    }
+    const hasFullPayTable = data.symbols.every((symbol) => data.payTable?.[symbol]);
+    if (!hasFullPayTable) {
+      errors.push(`Slot ${file} payTable must include every symbol.`);
+    }
+    const hasFullWeights = data.symbols.every((symbol) => typeof data.symbolWeights?.[symbol] === "number" && data.symbolWeights[symbol] > 0);
+    if (!hasFullWeights) {
+      errors.push(`Slot ${file} symbolWeights must include every symbol with weight > 0.`);
+    }
+    if (!data.bonusFeatures?.holdAndWin || !data.bonusFeatures?.freeSpins) {
+      errors.push(`Slot ${file} must include both bonus features (holdAndWin and freeSpins).`);
+    }
+    if (data.bonusFeatures?.holdAndWin && !data.symbols.includes(data.bonusFeatures.holdAndWin.triggerSymbol)) {
+      errors.push(`Slot ${file} holdAndWin trigger must exist in symbols.`);
+    }
+    if (data.bonusFeatures?.freeSpins && !data.symbols.includes(data.bonusFeatures.freeSpins.triggerSymbol)) {
+      errors.push(`Slot ${file} freeSpins trigger must exist in symbols.`);
+    }
+    if (typeof data.machineTrait === "string" && data.machineTrait.trim().length > 0) {
+      premiumTraitCount += 1;
+    }
+  }
+  if (premiumTraitCount !== 5) {
+    errors.push(`Expected exactly 5 premium trait slot machines, found ${premiumTraitCount}.`);
   }
 }
 

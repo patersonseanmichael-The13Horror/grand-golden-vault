@@ -108,5 +108,20 @@
     "launchRtp": 84,
     "postLaunchBand": "low-to-medium",
     "postLaunchRtp": 94
-  }
+  },
+  "betSteps": [
+    0.1,
+    0.25,
+    0.5,
+    1,
+    2.5,
+    3,
+    6,
+    10,
+    20,
+    50,
+    100,
+    250,
+    500
+  ]
 }

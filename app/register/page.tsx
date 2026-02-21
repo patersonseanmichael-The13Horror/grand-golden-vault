@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useAuth } from "@/lib/AuthContext";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import VaultShell from "@/components/VaultShell";
 import HeroBackdrop from "@/components/HeroBackdrop";
 import LuxeButton from "@/components/LuxeButton";
@@ -132,17 +133,17 @@ export default function Register() {
                 />
                 <label htmlFor="terms" className="text-sm text-white/72">
                   I agree to the{" "}
-                  <a href="/terms" className="text-amber-400 hover:text-amber-300">
+                  <Link href="/terms" className="text-amber-400 hover:text-amber-300">
                     Terms
-                  </a>
+                  </Link>
                   ,{" "}
-                  <a href="/privacy" className="text-amber-400 hover:text-amber-300">
+                  <Link href="/privacy" className="text-amber-400 hover:text-amber-300">
                     Privacy Policy
-                  </a>
+                  </Link>
                   , and{" "}
-                  <a href="/responsible" className="text-amber-400 hover:text-amber-300">
+                  <Link href="/responsible" className="text-amber-400 hover:text-amber-300">
                     Responsible Gaming
-                  </a>{" "}
+                  </Link>{" "}
                   guidelines.
                 </label>
               </div>

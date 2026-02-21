@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useAuth } from "@/lib/AuthContext";
 
 export default function WelcomeBonusModal() {
@@ -289,9 +290,9 @@ export default function WelcomeBonusModal() {
           <div className="mt-4 text-center text-xs text-gray-500">
             <p>
               By claiming this bonus, you agree to our{" "}
-              <a href="/terms" className="text-amber-400 hover:text-amber-300 underline">
+              <Link href="/terms" className="text-amber-400 hover:text-amber-300 underline">
                 Terms & Conditions
-              </a>
+              </Link>
               . One-time offer for new members only.
             </p>
             <p className="mt-1">

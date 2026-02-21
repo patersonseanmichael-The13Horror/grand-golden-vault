@@ -54,7 +54,7 @@ export default async function SlotMachinePage({ params }: { params: Promise<{ id
           <h1 className="mt-4 text-4xl font-semibold text-gold animate-shimmer">{cfg.name}</h1>
           <p className="mt-4 text-white/70 max-w-2xl">
             Premium Vegas-style {cfg.reels}x{cfg.rows} slot machine with {cfg.paylines || 20} paylines, {cfg.rtp || 96}% RTP, and {cfg.volatility || 'medium'} volatility. 
-            Each machine includes themed symbols, card symbols down to TEN, 8 free spins on feature trigger, and Hold & Win during free spins. Launch RTP is set very-low to low, then shifts to medium-high after day 10.
+            Each machine includes themed symbols, card symbols down to TEN, two bonus features (Feature Spins + Hold & Win), platinum-grade reel animation, and launch-to-post-launch RTP progression.
           </p>
           
           {/* Machine Stats */}
@@ -153,7 +153,7 @@ export default async function SlotMachinePage({ params }: { params: Promise<{ id
             <div className="space-y-3 text-sm text-cyan-200/70">
               <div className="flex items-start gap-3">
                 <span className="text-cyan-400 font-bold">1.</span>
-                <p>Set your bet amount (0.10 to 500.00 AUD) using the + and - controls</p>
+                <p>Choose your bet from the ladder (0.10, 0.25, 0.50, 1.00, 2.50, 3.00, 6.00, 10.00, 20.00, 50.00, 100.00, 250.00, 500.00 AUD)</p>
               </div>
               <div className="flex items-start gap-3">
                 <span className="text-cyan-400 font-bold">2.</span>
@@ -169,7 +169,7 @@ export default async function SlotMachinePage({ params }: { params: Promise<{ id
               </div>
               <div className="flex items-start gap-3">
                 <span className="text-cyan-400 font-bold">5.</span>
-                <p>Trigger 8 free spins and activate Hold & Win only during free spins!</p>
+                <p>Trigger Feature Spins with scatters and activate Hold & Win (bonus symbols) during free spins.</p>
               </div>
             </div>
           </div>

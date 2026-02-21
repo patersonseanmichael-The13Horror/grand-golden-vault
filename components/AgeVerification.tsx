@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 export default function AgeVerification() {
   const [isVerified, setIsVerified] = useState<boolean | null>(null);
@@ -105,13 +106,13 @@ export default function AgeVerification() {
           {/* Legal disclaimer */}
           <div className="mt-6 rounded-lg border border-gray-700/50 bg-gray-900/50 p-3 text-xs text-gray-500 text-center">
             By entering, you confirm that you are of legal age in your jurisdiction and agree to our{" "}
-            <a href="/terms" className="text-amber-400 hover:text-amber-300 underline">
+            <Link href="/terms" className="text-amber-400 hover:text-amber-300 underline">
               Terms of Service
-            </a>
+            </Link>
             {" "}and{" "}
-            <a href="/responsible" className="text-amber-400 hover:text-amber-300 underline">
+            <Link href="/responsible" className="text-amber-400 hover:text-amber-300 underline">
               Responsible Gaming
-            </a>
+            </Link>
             {" "}policies.
           </div>
         </div>
