@@ -22,13 +22,21 @@ node_modules
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+*.swp
+*.swo
+*~
 
 # Local env files
 .env*.local
 .env
+serviceAccountKey.json
+firebase-service-account*.json
 
 # Vercel
 .vercel
+
+# Local editor settings
+.vscode
 
 # TypeScript
 *.tsbuildinfo

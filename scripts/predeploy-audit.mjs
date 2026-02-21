@@ -4,6 +4,25 @@ import path from "node:path";
 const ROOT = process.cwd();
 const APP_DIR = path.join(ROOT, "app");
 const SLOTS_DIR = path.join(ROOT, "slots");
+const LOCAL_ENV = path.join(ROOT, ".env.local");
+
+const REQUIRED_PUBLIC_ENV = [
+  "NEXT_PUBLIC_FIREBASE_API_KEY",
+  "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN",
+  "NEXT_PUBLIC_FIREBASE_PROJECT_ID",
+  "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET",
+  "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID",
+  "NEXT_PUBLIC_FIREBASE_APP_ID",
+  "NEXT_PUBLIC_CONCIERGE_ADMIN_UID",
+  "NEXT_PUBLIC_CONCIERGE_ADMIN_EMAIL",
+  "NEXT_PUBLIC_DEPOSIT_NAME",
+  "NEXT_PUBLIC_DEPOSIT_PAYID",
+];
+
+const REQUIRED_ADMIN_ENV = [
+  "FIREBASE_SERVICE_ACCOUNT_KEY_PATH",
+  "FIREBASE_CONCIERGE_ADMIN_UID",
+];
 
 const errors = [];
 const warnings = [];
@@ -43,7 +62,7 @@ function checkHeroAssets(files) {
 }
 
 function checkInternalLinks(files) {
-  const hrefPattern = /href="(\/[^"]*)"/g;
+  const hrefPattern = /href="(\/[^\"]*)"/g;
   const ignore = [/^\/mailto:/, /^\/assets\//, /^\/api\//];
   for (const file of files) {
     const text = fs.readFileSync(file, "utf8");
@@ -65,7 +84,7 @@ function checkSlots() {
   if (files.length !== 25) {
     errors.push(`Expected 25 slot configs, found ${files.length}`);
   }
-  const seen = new Set();
+  const seen = new Map();
   for (const file of files) {
     const data = JSON.parse(fs.readFileSync(path.join(SLOTS_DIR, file), "utf8"));
     if (!Array.isArray(data.symbols) || data.symbols.length < 9) {
@@ -73,9 +92,9 @@ function checkSlots() {
     }
     const key = JSON.stringify(data.symbols);
     if (seen.has(key)) {
-      warnings.push(`Slot ${file} shares identical symbol order with another machine`);
+      errors.push(`Slot ${file} shares identical symbol order with ${seen.get(key)}; each slot must have unique symbols.`);
     }
-    seen.add(key);
+    seen.set(key, file);
     if (typeof data.minBet !== "number" || typeof data.maxBet !== "number" || data.minBet <= 0 || data.maxBet < data.minBet) {
       errors.push(`Slot ${file} has invalid min/max bet values`);
     }
@@ -90,6 +109,56 @@ function checkCssCollision() {
   }
 }
 
+function walkRepoForArtifacts(dir) {
+  const out = [];
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if ([".git", "node_modules", ".next", "out"].includes(entry.name)) continue;
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      out.push(...walkRepoForArtifacts(full));
+      continue;
+    }
+    if (/\.swp$|\.swo$|~$/.test(entry.name)) {
+      out.push(path.relative(ROOT, full));
+    }
+  }
+  return out;
+}
+
+function parseDotEnv(text) {
+  const vars = {};
+  text
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .forEach((line) => {
+      if (!line || line.startsWith("#")) return;
+      const idx = line.indexOf("=");
+      if (idx <= 0) return;
+      const key = line.slice(0, idx).trim();
+      const value = line.slice(idx + 1).trim();
+      vars[key] = value;
+    });
+  return vars;
+}
+
+function checkEnvReadiness() {
+  if (!fs.existsSync(LOCAL_ENV)) {
+    warnings.push(".env.local is missing; local Firebase/Auth testing will fail until environment values are provided.");
+    return;
+  }
+
+  const env = parseDotEnv(fs.readFileSync(LOCAL_ENV, "utf8"));
+  const missingPublic = REQUIRED_PUBLIC_ENV.filter((k) => !env[k]);
+  const missingAdmin = REQUIRED_ADMIN_ENV.filter((k) => !env[k]);
+
+  if (missingPublic.length > 0) {
+    warnings.push(`.env.local missing required public values: ${missingPublic.join(", ")}`);
+  }
+  if (missingAdmin.length > 0) {
+    warnings.push(`.env.local missing admin-script values: ${missingAdmin.join(", ")}`);
+  }
+}
+
 function main() {
   const sourceFiles = walk(path.join(ROOT, "app"))
     .concat(walk(path.join(ROOT, "components")))
@@ -99,6 +168,12 @@ function main() {
   checkInternalLinks(sourceFiles);
   checkSlots();
   checkCssCollision();
+  checkEnvReadiness();
+
+  const artifacts = walkRepoForArtifacts(ROOT);
+  if (artifacts.length) {
+    errors.push(`Editor/swap artifacts detected: ${artifacts.join(", ")}`);
+  }
 
   if (warnings.length) {
     console.log("Warnings:");
