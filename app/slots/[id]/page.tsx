@@ -40,6 +40,8 @@ export default async function SlotMachinePage({ params }: { params: Promise<{ id
   cfg.symbolWeights = cfg.symbolWeights || {};
   cfg.wildSymbol = cfg.wildSymbol || 'CROWN';
   cfg.scatterSymbol = cfg.scatterSymbol || 'GEM';
+  cfg.reels = cfg.reels || 5;
+  cfg.rows = cfg.rows || 3;
   
   return (
     <VaultShell
@@ -51,7 +53,7 @@ export default async function SlotMachinePage({ params }: { params: Promise<{ id
           <div className="text-xs tracking-[0.35em] uppercase text-white/55">Machine {cfg.id}</div>
           <h1 className="mt-4 text-4xl font-semibold text-gold animate-shimmer">{cfg.name}</h1>
           <p className="mt-4 text-white/70 max-w-2xl">
-            Premium Vegas-style slot machine with {cfg.paylines || 20} paylines, {cfg.rtp || 96}% RTP, and {cfg.volatility || 'medium'} volatility. 
+            Premium Vegas-style {cfg.reels}x{cfg.rows} slot machine with {cfg.paylines || 20} paylines, {cfg.rtp || 96}% RTP, and {cfg.volatility || 'medium'} volatility. 
             Each machine includes themed symbols, card symbols down to TEN, 8 free spins on feature trigger, and Hold & Win during free spins. Launch RTP is set very-low to low, then shifts to medium-high after day 10.
           </p>
           
@@ -64,6 +66,10 @@ export default async function SlotMachinePage({ params }: { params: Promise<{ id
             <div className="rounded-2xl border border-amber-500/20 bg-black/30 p-4">
               <div className="text-xs uppercase tracking-wider text-amber-500/60">RTP</div>
               <div className="mt-1 text-2xl font-bold text-amber-400">{cfg.rtp}%</div>
+            </div>
+            <div className="rounded-2xl border border-amber-500/20 bg-black/30 p-4">
+              <div className="text-xs uppercase tracking-wider text-amber-500/60">Grid</div>
+              <div className="mt-1 text-2xl font-bold text-amber-400">{cfg.reels}x{cfg.rows}</div>
             </div>
             <div className="rounded-2xl border border-amber-500/20 bg-black/30 p-4">
               <div className="text-xs uppercase tracking-wider text-amber-500/60">Volatility</div>

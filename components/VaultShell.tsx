@@ -22,7 +22,7 @@ export default function VaultShell({
               <div className="vv-display text-sm tracking-[0.22em] uppercase text-gold-solid group-hover:text-[#f1d293] transition-colors">
                 Grand Golden Vault
               </div>
-              <div className="text-[10px] tracking-[0.34em] uppercase text-white/48">Digital E-Lounge</div>
+              <div className="text-[10px] tracking-[0.34em] uppercase text-white/48">Institutional Royal Access</div>
             </div>
           </Link>
           <div className="flex flex-wrap items-center justify-end gap-2 md:gap-3">{rightAction}</div>

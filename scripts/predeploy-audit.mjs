@@ -84,17 +84,42 @@ function checkSlots() {
   if (files.length !== 25) {
     errors.push(`Expected 25 slot configs, found ${files.length}`);
   }
+  const expectedIds = Array.from({ length: 25 }, (_, idx) => String(idx + 1).padStart(2, "0"));
+  const actualIds = files.map((f) => f.replace("slot_", "").replace(".json", ""));
+  for (const id of expectedIds) {
+    if (!actualIds.includes(id)) {
+      errors.push(`Missing slot config slot_${id}.json`);
+    }
+  }
   const seen = new Map();
+  const seenNamespaces = new Map();
   for (const file of files) {
     const data = JSON.parse(fs.readFileSync(path.join(SLOTS_DIR, file), "utf8"));
     if (!Array.isArray(data.symbols) || data.symbols.length < 9) {
       errors.push(`Slot ${file} has invalid symbols array`);
+    }
+    if (data.reels !== 5 || data.rows !== 3) {
+      errors.push(`Slot ${file} must be 5x3 (found reels=${String(data.reels)}, rows=${String(data.rows)})`);
+    }
+    if (typeof data.paylines !== "number" || data.paylines < 20) {
+      errors.push(`Slot ${file} must define Vegas paylines (found ${String(data.paylines)})`);
     }
     const key = JSON.stringify(data.symbols);
     if (seen.has(key)) {
       errors.push(`Slot ${file} shares identical symbol order with ${seen.get(key)}; each slot must have unique symbols.`);
     }
     seen.set(key, file);
+    const namespaces = [...new Set(data.symbols.map((sym) => String(sym).split("__")[0]))];
+    if (namespaces.length !== 1 || !namespaces[0]) {
+      errors.push(`Slot ${file} must use one namespaced symbol family (found: ${namespaces.join(", ") || "none"})`);
+    } else {
+      const namespace = namespaces[0];
+      if (seenNamespaces.has(namespace)) {
+        errors.push(`Slot ${file} reuses namespace ${namespace} already used by ${seenNamespaces.get(namespace)}.`);
+      } else {
+        seenNamespaces.set(namespace, file);
+      }
+    }
     if (typeof data.minBet !== "number" || typeof data.maxBet !== "number" || data.minBet <= 0 || data.maxBet < data.minBet) {
       errors.push(`Slot ${file} has invalid min/max bet values`);
     }

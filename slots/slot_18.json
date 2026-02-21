@@ -65,7 +65,7 @@
       "5": 60
     }
   },
-  "rtp": 86.0,
+  "rtp": 86,
   "volatility": "medium",
   "wildSymbol": "PAVILION__CROWN",
   "scatterSymbol": "PAVILION__GEM",
@@ -104,8 +104,9 @@
     "launchDate": "2026-02-20T00:00:00Z",
     "switchAfterDays": 10,
     "launchBand": "very-low-to-low",
-    "launchRtp": 86.0,
+    "launchRtp": 86,
     "postLaunchBand": "low-to-medium",
-    "postLaunchRtp": 94.0
-  }
+    "postLaunchRtp": 94
+  },
+  "paylines": 20
 }

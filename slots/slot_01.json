@@ -4,7 +4,7 @@
   "reels": 5,
   "rows": 3,
   "paylines": 20,
-  "rtp": 84.0,
+  "rtp": 84,
   "volatility": "high",
   "symbolWeights": {
     "OBSIDIAN__CROWN": 1,
@@ -105,8 +105,8 @@
     "launchDate": "2026-02-20T00:00:00Z",
     "switchAfterDays": 10,
     "launchBand": "very-low-to-low",
-    "launchRtp": 84.0,
+    "launchRtp": 84,
     "postLaunchBand": "low-to-medium",
-    "postLaunchRtp": 94.0
+    "postLaunchRtp": 94
   }
 }

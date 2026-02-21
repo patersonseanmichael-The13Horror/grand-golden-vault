@@ -17,6 +17,17 @@ const THEME_STYLES: Record<string, string> = {
   "underwater-adventure": "from-cyan-950/80 via-blue-900/35 to-black border-cyan-300/45",
 };
 
+const MACHINE_SHELLS = [
+  "from-[#080808] via-[#1c1408]/50 to-black border-amber-400/40",
+  "from-[#09070b] via-[#2a120e]/45 to-black border-rose-300/40",
+  "from-[#070a0b] via-[#0f2a24]/45 to-black border-emerald-300/40",
+  "from-[#0b0907] via-[#2a240f]/45 to-black border-yellow-200/40",
+  "from-[#07070d] via-[#17163a]/45 to-black border-indigo-200/40",
+  "from-[#090707] via-[#3a1616]/45 to-black border-red-200/40",
+  "from-[#09090a] via-[#2b203e]/45 to-black border-violet-200/40",
+  "from-[#07090a] via-[#0f2531]/45 to-black border-cyan-200/40",
+];
+
 const resolveBaseSymbol = (symbol: string): string => {
   const normalized = symbol.trim().toUpperCase();
   if (!normalized) return "CROWN";
@@ -37,6 +48,14 @@ const namespaceHue = (namespace: string): number => {
     hash = (hash * 31 + namespace.charCodeAt(i)) % 360;
   }
   return hash;
+};
+
+const resolveMachineShell = (id?: string): string => {
+  const machineNumber = Number.parseInt(String(id || "0"), 10);
+  if (!Number.isFinite(machineNumber) || machineNumber <= 0) {
+    return MACHINE_SHELLS[0];
+  }
+  return MACHINE_SHELLS[(machineNumber - 1) % MACHINE_SHELLS.length];
 };
 
 export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
@@ -64,7 +83,7 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
     bonusSymbol: cfg.bonusSymbol,
   };
 
-  const shellTheme = THEME_STYLES[cfg.theme as string] || "from-[#080808] via-[#1c1408]/50 to-black border-amber-400/40";
+  const shellTheme = THEME_STYLES[cfg.theme as string] || resolveMachineShell(cfg.id);
 
   const getSymbolImage = (symbol: string) => {
     const key = resolveBaseSymbol(symbol);

@@ -39,11 +39,11 @@ export default function LandingPage() {
 
           <h1 className="vv-display vv-heading vv-reveal vv-reveal-delay-1 mt-6 max-w-4xl text-4xl md:text-6xl leading-[1.08] text-white">
             <span className="text-gold">The Grand Golden Vault</span>
-            <span className="block text-white/76 font-normal mt-3">Premium VIP Gaming Lounge</span>
+            <span className="block text-white/76 font-normal mt-3">Private Institutional Royal Gaming Lounge</span>
           </h1>
 
           <p className="vv-reveal vv-reveal-delay-2 mt-7 max-w-2xl text-lg md:text-xl text-white/75 leading-relaxed">
-            Fortune never raises its voice. It sharpens the room, narrows the field, and rewards the prepared.
+            Wealth here moves in silence: strong, precise, and governed by elite vault protocol designed for disciplined members.
           </p>
 
           <div className="vv-reveal vv-reveal-delay-3 mt-10 flex flex-wrap gap-3">

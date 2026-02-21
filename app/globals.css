@@ -34,8 +34,9 @@ body {
   color: var(--vv-ink);
   font-family: var(--vv-font-body);
   background:
-    radial-gradient(1200px 640px at 12% -8%, rgba(201, 164, 92, 0.14), transparent 55%),
-    radial-gradient(900px 520px at 95% 0%, rgba(105, 77, 29, 0.2), transparent 60%),
+    radial-gradient(1200px 640px at 12% -8%, rgba(201, 164, 92, 0.16), transparent 55%),
+    radial-gradient(900px 520px at 95% 0%, rgba(105, 77, 29, 0.24), transparent 60%),
+    radial-gradient(780px 420px at 52% 14%, rgba(221, 191, 122, 0.1), transparent 72%),
     linear-gradient(180deg, rgb(var(--background-start-rgb)) 0%, rgb(var(--background-end-rgb)) 100%);
   min-height: 100vh;
   line-height: 1.45;
@@ -295,6 +296,74 @@ body {
     transform: translateY(-1px);
     filter: brightness(1.04);
     box-shadow: 0 14px 30px rgba(16, 185, 129, 0.4);
+  }
+
+  .vv-action-wallet {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    border-radius: 999px;
+    border: 1px solid rgba(231, 197, 123, 0.62);
+    background: linear-gradient(145deg, rgba(23, 17, 10, 0.95), rgba(10, 8, 12, 0.95));
+    padding: 0.42rem 0.65rem;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #f4e5a1;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255, 238, 200, 0.12);
+    transition: transform 180ms ease, border-color 180ms ease, filter 180ms ease;
+  }
+
+  .vv-action-wallet:hover {
+    transform: translateY(-1px);
+    border-color: rgba(231, 197, 123, 0.85);
+    filter: brightness(1.06);
+  }
+
+  .vv-wallet-modal {
+    border-color: rgba(231, 197, 123, 0.38);
+    background:
+      radial-gradient(160% 120% at 20% 0%, rgba(231, 197, 123, 0.14), transparent 48%),
+      linear-gradient(160deg, rgba(16, 11, 5, 0.97), rgba(7, 7, 12, 0.98));
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6), 0 0 26px rgba(201, 164, 92, 0.18);
+  }
+
+  .vv-wallet-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 2rem;
+    width: 2rem;
+    border-radius: 999px;
+    border: 1px solid rgba(231, 197, 123, 0.58);
+    background: linear-gradient(150deg, rgba(244, 220, 159, 0.94), rgba(163, 126, 62, 0.92));
+    color: #1e1608;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.36);
+    transition: transform 180ms ease, filter 180ms ease;
+  }
+
+  .vv-wallet-close:hover {
+    transform: rotate(90deg) scale(1.05);
+    filter: brightness(1.06);
+  }
+
+  .vv-wallet-action {
+    border-radius: 999px;
+    border: 1px solid rgba(231, 197, 123, 0.4);
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+    padding: 0.34rem 0.66rem;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(250, 240, 203, 0.96);
+    transition: border-color 180ms ease, background 180ms ease;
+  }
+
+  .vv-wallet-action:hover {
+    border-color: rgba(231, 197, 123, 0.72);
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.07));
   }
 
   .vv-action-muted {

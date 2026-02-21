@@ -32,7 +32,7 @@ export default function Members() {
           <div className="flex flex-wrap justify-end gap-2 md:gap-3">
             <button
               onClick={() => setShowDepositModal(true)}
-              className="vv-action-emerald"
+              className="vv-action-wallet"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
@@ -58,9 +58,12 @@ export default function Members() {
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
               <div className="vv-reveal">
                 <div className="vv-kicker">Members Hall</div>
-                <h1 className="vv-display vv-heading mt-4 text-3xl md:text-5xl text-white leading-tight">The Lounge Awaits.</h1>
+                <h1 className="vv-display vv-heading mt-4 text-3xl md:text-5xl text-white leading-tight">
+                  Institutional Silence. Royal Precision.
+                </h1>
                 <p className="mt-4 max-w-2xl vv-subtle leading-relaxed">
-                  Conduct is currency. Elegance is policy. Proceed with composure.
+                  Enter a sealed chamber of ancient vault doctrine where every move is measured, every corridor is deliberate,
+                  and every table is engineered for disciplined wealth execution.
                 </p>
                 <div className="mt-5 flex flex-wrap gap-2">
                   <div className="vv-chip">Private Rooms</div>

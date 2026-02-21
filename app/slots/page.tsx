@@ -53,6 +53,22 @@ export default function SlotsGallery() {
     }
   };
 
+  const getMachineStyle = (id: string) => {
+    const machineNumber = Number.parseInt(id, 10);
+    const palettes = [
+      "from-amber-900/20 to-orange-700/15 border-amber-400/30 hover:border-amber-300/60",
+      "from-rose-900/20 to-red-800/15 border-rose-400/30 hover:border-rose-300/60",
+      "from-emerald-900/20 to-teal-800/15 border-emerald-400/30 hover:border-emerald-300/60",
+      "from-yellow-900/20 to-amber-800/15 border-yellow-300/30 hover:border-yellow-200/60",
+      "from-indigo-900/20 to-violet-800/15 border-indigo-300/30 hover:border-indigo-200/60",
+      "from-cyan-900/20 to-sky-800/15 border-cyan-300/30 hover:border-cyan-200/60",
+      "from-purple-900/20 to-fuchsia-800/15 border-purple-300/30 hover:border-purple-200/60",
+      "from-slate-900/20 to-zinc-800/15 border-slate-300/30 hover:border-slate-200/60",
+    ];
+    const idx = Number.isFinite(machineNumber) && machineNumber > 0 ? (machineNumber - 1) % palettes.length : 0;
+    return palettes[idx];
+  };
+
   return (
     <VaultShell
       rightAction={<LuxeButton href="/members" label="Back to Members" />}
@@ -95,8 +111,8 @@ export default function SlotsGallery() {
                     <Link 
                       key={m.id} 
                       href={`/slots/${m.id}`} 
-                      className={`group rounded-3xl border bg-gradient-to-br backdrop-blur-md p-6 hover:shadow-vv-glow transition-all duration-300 shadow-vv-soft ${getThemeColor(m.theme)}`}
-                    >
+                    className={`group rounded-3xl border bg-gradient-to-br backdrop-blur-md p-6 hover:shadow-vv-glow transition-all duration-300 shadow-vv-soft ${getThemeColor(m.theme)} ${getMachineStyle(m.id)}`}
+                  >
                       {badge && (
                         <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${badge.color}`}>
                           <span>{badge.emoji}</span>
@@ -118,6 +134,7 @@ export default function SlotsGallery() {
                         <span>Bet: {m.minBet} – {m.maxBet} AUD</span>
                         <span className="uppercase">{m.volatility || 'Medium'}</span>
                       </div>
+                      <div className="mt-2 text-[10px] uppercase tracking-[0.18em] text-white/55">Signature Machine #{m.id}</div>
                       <div className="mt-4 flex gap-2">
                         <span className="rounded-full bg-purple-500/20 px-2 py-1 text-xs text-purple-300">Hold & Win</span>
                         <span className="rounded-full bg-emerald-500/20 px-2 py-1 text-xs text-emerald-300">Free Spins</span>
@@ -138,12 +155,13 @@ export default function SlotsGallery() {
                   <Link 
                     key={m.id} 
                     href={`/slots/${m.id}`} 
-                    className={`group rounded-3xl border bg-gradient-to-br backdrop-blur-md p-6 hover:shadow-vv-glow transition-all duration-300 shadow-vv-soft ${getThemeColor()}`}
+                    className={`group rounded-3xl border bg-gradient-to-br backdrop-blur-md p-6 hover:shadow-vv-glow transition-all duration-300 shadow-vv-soft ${getThemeColor()} ${getMachineStyle(m.id)}`}
                   >
                     <div className="text-xs tracking-[0.30em] uppercase text-white/55">Machine {m.id}</div>
                     <div className="mt-3 text-xl text-white/85 group-hover:text-gold transition">{m.name}</div>
                     <div className="mt-3 text-sm text-white/65">Base Jackpot: {m.baseJackpot.toLocaleString("en-AU")} AUD</div>
                     <div className="mt-1 text-sm text-white/65">Bet Range: {m.minBet} – {m.maxBet} AUD</div>
+                    <div className="mt-2 text-[10px] uppercase tracking-[0.18em] text-white/55">Signature Machine #{m.id}</div>
                   </Link>
                 ))}
               </div>

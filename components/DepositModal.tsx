@@ -116,50 +116,50 @@ Wallet credited in real time.`
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-4" onClick={onClose}>
       <div
-        className="relative w-full max-w-xl rounded-3xl border-2 border-emerald-500/40 bg-gradient-to-br from-black via-gray-900 to-black shadow-2xl"
+        className="vv-wallet-modal relative w-full max-w-[22rem] rounded-3xl border shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
           aria-label="Close deposit modal"
-          className="absolute right-3 top-3 z-10 rounded-full border border-white/20 bg-black/40 p-2 text-gray-300 hover:text-white"
+          className="vv-wallet-close absolute right-3 top-3 z-10"
         >
           <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
 
-        <form onSubmit={handleSubmit} className="max-h-[80vh] overflow-y-auto p-5 md:p-6">
+        <form onSubmit={handleSubmit} className="max-h-[80vh] overflow-y-auto p-4">
           <div className="mb-4 text-center">
-            <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-300 to-emerald-400">
-              Secure Wallet Deposit
+            <h2 className="vv-display text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#f4e5a1] via-[#ddbf7a] to-[#a37e3e]">
+              Royal Vault Wallet
             </h2>
-            <p className="mt-1 text-xs text-gray-400">Deposit range: $5.00 - $500.00</p>
+            <p className="mt-1 text-[11px] text-white/65 tracking-[0.08em] uppercase">Deposit Range: $5.00 - $500.00</p>
           </div>
 
-          <div className="space-y-3 rounded-2xl border border-emerald-500/25 bg-emerald-950/20 p-4">
-            <div className="flex items-center justify-between rounded-lg border border-emerald-500/20 bg-black/40 p-3">
+          <div className="space-y-2 rounded-2xl border border-[rgba(231,197,123,0.32)] bg-[rgba(16,11,5,0.62)] p-3">
+            <div className="flex items-center justify-between rounded-xl border border-[rgba(231,197,123,0.26)] bg-black/35 p-2.5">
               <div>
-                <div className="text-[11px] uppercase tracking-wider text-gray-400">Name</div>
-                <div className="font-semibold text-white">{paymentName}</div>
+                <div className="text-[10px] uppercase tracking-[0.14em] text-white/55">Name</div>
+                <div className="text-sm font-semibold text-white">{paymentName}</div>
               </div>
-              <button type="button" onClick={() => copyToClipboard(paymentName, "Name")} className="text-emerald-300 text-sm">Copy</button>
+              <button type="button" onClick={() => copyToClipboard(paymentName, "Name")} className="vv-wallet-action">Copy</button>
             </div>
 
-            <div className="flex items-center justify-between rounded-lg border border-cyan-500/20 bg-black/40 p-3">
+            <div className="flex items-center justify-between rounded-xl border border-[rgba(231,197,123,0.26)] bg-black/35 p-2.5">
               <div>
-                <div className="text-[11px] uppercase tracking-wider text-gray-400">PayID</div>
-                <div className="font-semibold text-cyan-300">{paymentId}</div>
+                <div className="text-[10px] uppercase tracking-[0.14em] text-white/55">PayID</div>
+                <div className="text-sm font-semibold text-[#f4e5a1]">{paymentId}</div>
               </div>
-              <button type="button" onClick={() => copyToClipboard(paymentId.replace(/\s+/g, ""), "PayID")} className="text-cyan-300 text-sm">Copy</button>
+              <button type="button" onClick={() => copyToClipboard(paymentId.replace(/\s+/g, ""), "PayID")} className="vv-wallet-action">Copy</button>
             </div>
           </div>
 
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <div className="mt-3 grid gap-3">
             <div>
-              <label className="mb-2 block text-sm text-gray-300">Deposit Amount (AUD)</label>
+              <label className="mb-1 block text-[11px] uppercase tracking-[0.12em] text-white/72">Deposit Amount (AUD)</label>
               <input
                 type="number"
                 step="0.01"
@@ -167,32 +167,32 @@ Wallet credited in real time.`
                 max={MAX_DEPOSIT}
                 value={amount}
                 onChange={(e) => setAmount(Number(e.target.value) || MIN_DEPOSIT)}
-                className="w-full rounded-xl border border-white/15 bg-black/40 px-4 py-3 text-white outline-none focus:border-emerald-400"
+                className="w-full rounded-xl border border-[rgba(231,197,123,0.3)] bg-black/45 px-3 py-2.5 text-sm text-white outline-none focus:border-[rgba(231,197,123,0.6)]"
               />
             </div>
 
             <div>
-              <label className="mb-2 block text-sm text-gray-300">Upload Payment Screenshot</label>
+              <label className="mb-1 block text-[11px] uppercase tracking-[0.12em] text-white/72">Upload Payment Screenshot</label>
               <input
                 type="file"
                 accept="image/png,image/jpeg,image/webp,image/heic"
                 onChange={handleFileChange}
-                className="w-full rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm text-white"
+                className="w-full rounded-xl border border-[rgba(231,197,123,0.3)] bg-black/45 px-3 py-2 text-xs text-white"
               />
-              {selectedFile && <p className="mt-2 text-xs text-emerald-300">Selected: {selectedFile.name}</p>}
+              {selectedFile && <p className="mt-1.5 text-[11px] text-[#f4e5a1]">Selected: {selectedFile.name}</p>}
             </div>
           </div>
 
-          <div className="mt-5 flex items-center justify-end gap-3 border-t border-white/10 pt-4">
-            <button type="button" onClick={onClose} className="rounded-full border border-white/25 px-4 py-2 text-sm text-white/80 hover:bg-white/10">
+          <div className="mt-4 flex items-center justify-end gap-2 border-t border-white/10 pt-3">
+            <button type="button" onClick={onClose} className="vv-wallet-action">
               Cancel
             </button>
             <button
               type="submit"
               disabled={uploading}
-              className="rounded-full bg-gradient-to-r from-emerald-500 to-cyan-500 px-5 py-2 text-sm font-semibold text-black disabled:opacity-50"
+              className="rounded-full border border-[rgba(231,197,123,0.72)] bg-[linear-gradient(165deg,#f4dc9f_0%,#cda45f_45%,#a37e3e_100%)] px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-[#1e1608] disabled:opacity-50"
             >
-              {uploading ? "Submitting..." : "Submit Deposit"}
+              {uploading ? "Submitting..." : "Submit"}
             </button>
           </div>
         </form>
