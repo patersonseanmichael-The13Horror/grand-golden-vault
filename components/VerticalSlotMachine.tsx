@@ -74,8 +74,13 @@ export default function VerticalSlotMachine({ cfg }: SlotMachineProps) {
   const activeRtp = getActiveRtp(cfg.rtp || 96, cfg.rtpProfile);
   const machineBetSteps = useMemo(() => {
     const source = Array.isArray(cfg.betSteps) ? cfg.betSteps : REQUIRED_BET_STEPS;
-    const normalized = [...new Set(source.map((v: number) => Number(v)).filter((v: number) => Number.isFinite(v) && v >= cfg.minBet && v <= cfg.maxBet))]
-      .map((v) => +v.toFixed(2))
+    const numericSource = source.map((v: unknown) => Number(v));
+    const normalized = [
+      ...new Set<number>(
+        numericSource.filter((v: number) => Number.isFinite(v) && v >= cfg.minBet && v <= cfg.maxBet),
+      ),
+    ]
+      .map((v: number) => +v.toFixed(2))
       .sort((a, b) => a - b);
     return normalized.length > 0 ? normalized : REQUIRED_BET_STEPS.filter((v) => v >= cfg.minBet && v <= cfg.maxBet);
   }, [cfg.betSteps, cfg.maxBet, cfg.minBet]);
